@@ -1,12 +1,15 @@
 import styled from 'styled-components';
 import wrapper from '../store/configStore';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { RadioChangeEvent } from 'antd';
+import Skill from '../components/introduction/Skill';
+import { motion, Variants } from 'framer-motion';
+import Library from '../components/introduction/Library';
 
-const Chart = dynamic(() => import('../components/Chart'), { ssr: false });
+const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
     width: 100%;
 `;
 
@@ -43,6 +46,7 @@ const IntroText = styled.div`
     color: white;
     font-size: 18px;
     font-weight: bold;
+    text-align: center;
     margin-top: 30px;
     p:first-child {
         font-size: 30px;
@@ -122,8 +126,58 @@ const ChartBox = styled.div`
     }
 `;
 
+const CurrentUseSkillBox = styled(motion.div)`
+    width: 70%;
+    margin: 0 auto;
+    margin-top: 150px;
+    padding: 15px;
+    text-align: center;
+    h2 {
+        font-size: 40px;
+        font-weight: bold;
+    }
+    p {
+        margin-top: 20px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+`;
+
+const SkillBox = styled(motion.div)`
+    width: 100%;
+    display: flex;
+`;
+
+const DetailSkillBox = styled.div`
+    margin-top: 30px;
+    &:first-child {
+        width: 70%;
+    }
+    &:last-child {
+        width: 30%;
+    }
+`;
+
+// const cardVariants: Variants = {
+//     offscreen: {
+//         y: 200,
+//         opacity: 0,
+//     },
+//     onscreen: {
+//         y: 50,
+//         opacity: 1,
+//         rotate: 0,
+//         transition: {
+//             type: 'spring',
+//             bounce: 0.3,
+//             duration: 0.5,
+//         },
+//     },
+// };
+
 // InferGetServerSidePropsType<typeof getServerSideProps>
 export default function Home() {
+    const scrollRef = useRef<HTMLDivElement>(null);
     const [skill, setSkill] = useState(1);
     const changeSkill = (e: RadioChangeEvent) => {
         setSkill(e.target.value);
@@ -145,8 +199,8 @@ export default function Home() {
             <CareerBox>
                 <CareerText>
                     <h2>About me</h2>
-                    <p>2년간 사내 portal(회사 웹 어플리케이션), 웹 크롤링, 외부 API 수집 관련 업무를 진행했습니다.</p>
-                    <p>리액트를 사용하여 프론트 단을 작성하고, 노드와 AWS를 사용하여 서버를 구성하였습니다.</p>
+                    <p>2년간 사내 웹 서비스, 웹 크롤링, 외부 API 수집 관련 업무를 진행했습니다.</p>
+                    <p>프론트는 리액트, 서버는 노드와 AWS를 사용하여 구성하였습니다.</p>
                 </CareerText>
                 <Careers>
                     <CareerView>
@@ -169,6 +223,18 @@ export default function Home() {
             <ChartBox>
                 <Chart skill={skill} changeSkill={changeSkill} />
             </ChartBox>
+            <CurrentUseSkillBox>
+                <h2>Current App Use Skill</h2>
+                <p>아이콘을 움직여 보세요!</p>
+                <SkillBox>
+                    <DetailSkillBox>
+                        <Skill />
+                    </DetailSkillBox>
+                    <DetailSkillBox>
+                        <Library />
+                    </DetailSkillBox>
+                </SkillBox>
+            </CurrentUseSkillBox>
         </Wrapper>
     );
 }
