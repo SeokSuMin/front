@@ -19,14 +19,12 @@ const LibraryBox = styled.div`
 const ToolBox = styled.div`
     width: 100%;
     height: 34%;
-    p {
-        margin-top: 15px;
-    }
 `;
 
 const Title = styled.p`
     font-size: 10px;
     color: black;
+    margin-top: 10px;
     margin-bottom: 5px;
 `;
 
@@ -37,6 +35,7 @@ const Library = () => {
                 <LibraryBox>
                     <Title>Library</Title>
                     <h3>next js</h3>
+                    <h3>react query</h3>
                     <h3>redux toolkit</h3>
                     <h3>styled-components</h3>
                     <h3>ant design</h3>

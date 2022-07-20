@@ -1,5 +1,23 @@
 import ApexChart from 'react-apexcharts';
 import { Radio, RadioChangeEvent } from 'antd';
+import styled from 'styled-components';
+
+const ChartBox = styled.div`
+    width: 70%;
+    margin: 0 auto;
+    margin-top: 200px;
+    padding: 15px;
+    text-align: center;
+    h2 {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        font-size: 40px;
+        font-weight: bold;
+    }
+    div {
+        text-align: right;
+    }
+`;
 
 interface ISkillChart {
     skill: number;
@@ -25,7 +43,7 @@ const skillObj = {
 
 const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
     return (
-        <>
+        <ChartBox>
             <h2>Skill Level</h2>
             <div>
                 <Radio.Group onChange={changeSkill} value={skill}>
@@ -108,7 +126,7 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                 }}
                 height={300}
             />
-        </>
+        </ChartBox>
     );
 };
 
