@@ -43,9 +43,7 @@ const Skill = () => {
                         <SkillSvg
                             drag
                             dragConstraints={constraintsRef}
-                            dragMomentum={false}
                             dragElastic={1}
-                            whileTap="click"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 384 512"
                         >
