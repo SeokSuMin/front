@@ -1,4 +1,5 @@
 import { motion, MotionValue } from 'framer-motion';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 interface IProgressBarProps {
@@ -20,4 +21,4 @@ const Progress = ({ scrollYProgress }: IProgressBarProps) => {
     return <ProgressBar style={{ scaleX: scrollYProgress }} />;
 };
 
-export default Progress;
+export default memo(Progress);

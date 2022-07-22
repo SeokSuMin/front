@@ -31,8 +31,8 @@ const GlobalStyle = createGlobalStyle`
         display: none;
     }
     html, body {
-
         height: 100%;
+        font-size: 16px;
     }
     body {
         line-height: 1;
@@ -64,6 +64,7 @@ const GlobalStyle = createGlobalStyle`
     #__next {
         display: flex;
         flex-direction: column;
+        width:auto;
         min-height: 100%;
     }
 `;

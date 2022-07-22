@@ -6,6 +6,7 @@ interface IFourBoxListProps {
     viewType: number;
     leaving: boolean;
     toggleLeaving: () => void;
+    openDetailInfo: (boardId: number | null) => void;
 }
 
 const fourBox = {
@@ -29,7 +30,7 @@ const fourBoxItem = {
     },
 };
 
-const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) => {
+const FourBoxList = ({ viewType, leaving, toggleLeaving, openDetailInfo }: IFourBoxListProps) => {
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 2 && !leaving ? (
@@ -38,7 +39,7 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) =>
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((v) => {
                             return (
                                 <Col key={v} span={6}>
-                                    <motion.div variants={fourBoxItem}>
+                                    <motion.div variants={fourBoxItem} onClick={() => openDetailInfo(v)}>
                                         <Card
                                             style={{ marginBottom: '20px' }}
                                             hoverable

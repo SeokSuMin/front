@@ -58,6 +58,7 @@ const Circle = styled(motion.span)`
 
 const navVariants = {
     top: (custom: string) => {
+        console.log('custom', custom);
         return {
             backgroundColor: custom === '/' ? 'rgba(0, 0, 0, 0)' : 'rgba(213, 184, 255, 0.9)',
         };
@@ -68,23 +69,25 @@ const navVariants = {
 const NavBar = () => {
     const router = useRouter();
     const { scrollY } = useScroll();
-    const navAnimation = useAnimation();
+    // const navAnimation = useAnimation();
+    const scrollArr = router.pathname === '/' ? [350, 600] : [0, 0];
+    const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgba(0,0,0,0.5)']);
 
-    // const backgroundColor = useTransform(scrollY, [0, 600], ['rgba(0,0,0,0)', 'rgba(0,0,0,0.8)']);
-    useEffect(() => {
-        scrollY.onChange(() => {
-            if (scrollY.get() > 500) {
-                // navVariants의 scroll
-                navAnimation.start('scroll');
-            } else {
-                navAnimation.start('top');
-            }
-        });
-    }, [scrollY, router.pathname]);
+    // useEffect(() => {
+    //     scrollY.onChange(() => {
+    //         if (scrollY.get() > 500) {
+    //             // navVariants의 scroll
+    //             navAnimation.start('scroll');
+    //         } else {
+    //             navAnimation.start('top');
+    //         }
+    //     });
+    // }, [scrollY, router.pathname]);
 
+    // custom={router.pathname} variants={navVariants} animate={navAnimation} initial={'top'}
     return (
         <>
-            <Nav custom={router.pathname} variants={navVariants} animate={navAnimation} initial={'top'}>
+            <Nav style={{ backgroundColor }}>
                 <Link href="/">
                     <a>
                         <Logo xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

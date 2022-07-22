@@ -1,4 +1,5 @@
 import { Select } from 'antd';
+import { memo } from 'react';
 import styled from 'styled-components';
 import TwoSquareToggle from '../../public/2-squares.svg';
 import FourSquareToggle from '../../public/4-squares.svg';
@@ -68,4 +69,4 @@ const TopMenu = ({ viewType, changeListView }: ITopMenuProps) => {
     );
 };
 
-export default TopMenu;
+export default memo(TopMenu);

@@ -5,10 +5,11 @@ interface IOneBoxListProps {
     viewType: number;
     leaving: boolean;
     toggleLeaving: () => void;
+    openDetailInfo: (boardId: number | null) => void;
 }
 
 interface IColumn {
-    key: React.Key;
+    key: number;
     no: number;
     title: string;
     writer: string;
@@ -49,7 +50,7 @@ const data: IColumn[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((v) => {
     };
 });
 
-const OneBoxList = ({ viewType, leaving, toggleLeaving }: IOneBoxListProps) => {
+const OneBoxList = ({ viewType, leaving, toggleLeaving, openDetailInfo }: IOneBoxListProps) => {
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 3 && !leaving ? (
@@ -74,7 +75,9 @@ const OneBoxList = ({ viewType, leaving, toggleLeaving }: IOneBoxListProps) => {
                                     }
                                     style={{ padding: 0 }}
                                 >
-                                    <List.Item.Meta title={<a href="https://ant.design">{item.title}</a>} />
+                                    <List.Item.Meta
+                                        title={<a onClick={() => openDetailInfo(item.key)}>{item.title}</a>}
+                                    />
                                 </List.Item>
                             </motion.div>
                         )}
