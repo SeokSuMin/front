@@ -30,8 +30,14 @@ const GlobalStyle = createGlobalStyle`
     *[hidden] {
         display: none;
     }
+    html, body {
+
+        height: 100%;
+    }
     body {
         line-height: 1;
+        font-family: 'Source Sans Pro', sans-serif;
+        
     }
     menu, ol, ul {
         list-style: none;
@@ -51,12 +57,14 @@ const GlobalStyle = createGlobalStyle`
     * {
         box-sizing: border;
     }
-    body {
-        font-family: 'Source Sans Pro', sans-serif;
-    }
     a {
         text-decoration: none;
         color:inherit
+    }
+    #__next {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
     }
 `;
 

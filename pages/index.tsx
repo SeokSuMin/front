@@ -4,10 +4,11 @@ import dynamic from 'next/dynamic';
 import { useRef, useState } from 'react';
 import { RadioChangeEvent } from 'antd';
 import Skill from '../components/introduction/Skill';
-import { motion } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import Library from '../components/introduction/Library';
 import Intro from '../components/introduction/Intro';
 import Career from '../components/introduction/Career';
+import Progress from '../components/animation/Progress';
 
 const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
 
@@ -51,6 +52,7 @@ const DetailSkillBox = styled.div`
 export default function Home() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [skill, setSkill] = useState(1);
+    const { scrollYProgress } = useScroll();
 
     const contactBtn = () => {
         scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -62,6 +64,7 @@ export default function Home() {
     return (
         <>
             <Wrapper>
+                <Progress scrollYProgress={scrollYProgress} />
                 <Intro contactBtn={contactBtn} />
                 <Career scrollRef={scrollRef} />
                 <Chart skill={skill} changeSkill={changeSkill} />

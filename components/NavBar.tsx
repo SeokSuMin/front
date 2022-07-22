@@ -1,8 +1,9 @@
 import { motion, useAnimation, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Progress from './animation/Progress';
 
 const Nav = styled(motion.nav)`
     display: flex;
@@ -55,46 +56,35 @@ const Circle = styled(motion.span)`
     border-radius: 2px;
 `;
 
-const Progress = styled(motion.div)`
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 10px;
-    background: #f9ceee;
-    transform-origin: 0%;
-`;
-
 const navVariants = {
-    top: { backgroundColor: 'rgba(0, 0, 0, 0)' },
+    top: (custom: string) => {
+        return {
+            backgroundColor: custom === '/' ? 'rgba(0, 0, 0, 0)' : 'rgba(213, 184, 255, 0.9)',
+        };
+    },
     scroll: { backgroundColor: 'rgba(213, 184, 255, 0.9)' },
 };
 
 const NavBar = () => {
-    const { pathname } = useRouter();
-    const { scrollYProgress, scrollY } = useScroll();
+    const router = useRouter();
+    const { scrollY } = useScroll();
     const navAnimation = useAnimation();
+
     // const backgroundColor = useTransform(scrollY, [0, 600], ['rgba(0,0,0,0)', 'rgba(0,0,0,0.8)']);
     useEffect(() => {
-        // const yCondition = pathname === '/freeboard' ? -1 : 500;
         scrollY.onChange(() => {
-            if (pathname !== '/freeboard') {
-                if (scrollY.get() > 500) {
-                    // navVariants의 scroll
-                    navAnimation.start('scroll');
-                } else {
-                    console.log('main!');
-                    navAnimation.start('top');
-                }
-            } else {
+            if (scrollY.get() > 500) {
+                // navVariants의 scroll
                 navAnimation.start('scroll');
+            } else {
+                navAnimation.start('top');
             }
         });
-    }, [scrollY, pathname]);
+    }, [scrollY, router.pathname]);
+
     return (
         <>
-            <Nav variants={navVariants} animate={navAnimation} initial={'top'}>
-                <Progress style={{ scaleX: scrollYProgress }} />
+            <Nav custom={router.pathname} variants={navVariants} animate={navAnimation} initial={'top'}>
                 <Link href="/">
                     <a>
                         <Logo xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -107,13 +97,13 @@ const NavBar = () => {
                         <Link href="/">
                             <a>Intro</a>
                         </Link>
-                        {pathname === '/' ? <Circle layoutId="active" /> : null}
+                        {router.pathname === '/' ? <Circle layoutId="active" /> : null}
                     </Menu>
                     <Menu>
                         <Link href="/freeboard">
                             <a>FreeBoard</a>
                         </Link>
-                        {pathname === '/freeboard' ? <Circle layoutId="active" /> : null}
+                        {router.pathname === '/freeboard' ? <Circle layoutId="active" /> : null}
                     </Menu>
                 </Menubar>
             </Nav>
