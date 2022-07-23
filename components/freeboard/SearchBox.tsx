@@ -7,18 +7,25 @@ interface IForm {
     word: string;
 }
 
-const SearchBoardBox = styled.div`
+const Wrapper = styled.div`
     width: 800px;
     margin: 0 auto;
     padding: 10px;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+`;
+
+const SearchBoardBox = styled.div`
+    /* margin: 0 auto; */
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(249, 249, 248);
     .ant-select-single {
         margin-right: 10px;
     }
+    background-color: rgb(249, 249, 248);
 `;
 
 const Search = styled.form`
@@ -54,40 +61,42 @@ const SearchBox = () => {
     const { register, setValue, handleSubmit } = useForm<IForm>();
 
     return (
-        <SearchBoardBox>
-            <Select defaultValue={'all'}>
-                <Option value="all">전체기간</Option>
-            </Select>
-            <Select defaultValue={'title'}>
-                <Option value="title">제목만</Option>
-            </Select>
-            <Search>
-                <motion.svg
-                    // onClick={toggleSerch}
-                    fill="currentColor"
-                    // animate={{ x: searchOpen ? 160 : 30 }}
-                    // transition={{ type: 'linear' }}
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        fillRule="evenodd"
-                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                        clipRule="evenodd"
-                    ></path>
-                </motion.svg>
-                <Input
-                    {...register('word', {
-                        required: true,
-                        minLength: { value: 2, message: '최소 2글자 이상!' },
-                    })}
-                    placeholder="Search for Board..."
-                    // initial={{ scaleX: 0 }}
-                    // animate={inputAnimation}
-                    // transition={{ type: 'linear' }}
-                />
-            </Search>
-        </SearchBoardBox>
+        <Wrapper>
+            <SearchBoardBox>
+                <Select defaultValue={'all'}>
+                    <Option value="all">전체기간</Option>
+                </Select>
+                <Select defaultValue={'title'}>
+                    <Option value="title">제목만</Option>
+                </Select>
+                <Search>
+                    <motion.svg
+                        // onClick={toggleSerch}
+                        fill="currentColor"
+                        // animate={{ x: searchOpen ? 160 : 30 }}
+                        // transition={{ type: 'linear' }}
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clipRule="evenodd"
+                        ></path>
+                    </motion.svg>
+                    <Input
+                        {...register('word', {
+                            required: true,
+                            minLength: { value: 2, message: '최소 2글자 이상!' },
+                        })}
+                        placeholder="Search for Board..."
+                        // initial={{ scaleX: 0 }}
+                        // animate={inputAnimation}
+                        // transition={{ type: 'linear' }}
+                    />
+                </Search>
+            </SearchBoardBox>
+        </Wrapper>
     );
 };
 

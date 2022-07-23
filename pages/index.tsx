@@ -62,26 +62,24 @@ export default function Home() {
     };
 
     return (
-        <>
-            <Wrapper>
-                <Progress scrollYProgress={scrollYProgress} />
-                <Intro contactBtn={contactBtn} />
-                <Career scrollRef={scrollRef} />
-                <Chart skill={skill} changeSkill={changeSkill} />
-                <CurrentUseSkillBox>
-                    <h2>Current App Use Skill</h2>
-                    <p>아이콘을 움직여 보세요!</p>
-                    <SkillBox>
-                        <DetailSkillBox>
-                            <Skill />
-                        </DetailSkillBox>
-                        <DetailSkillBox>
-                            <Library />
-                        </DetailSkillBox>
-                    </SkillBox>
-                </CurrentUseSkillBox>
-            </Wrapper>
-        </>
+        <Wrapper>
+            <Progress scrollYProgress={scrollYProgress} />
+            <Intro contactBtn={contactBtn} />
+            <Career scrollRef={scrollRef} />
+            <Chart skill={skill} changeSkill={changeSkill} />
+            <CurrentUseSkillBox>
+                <h2>Current App Use Skill</h2>
+                <p>아이콘을 움직여 보세요!</p>
+                <SkillBox>
+                    <DetailSkillBox>
+                        <Skill />
+                    </DetailSkillBox>
+                    <DetailSkillBox>
+                        <Library />
+                    </DetailSkillBox>
+                </SkillBox>
+            </CurrentUseSkillBox>
+        </Wrapper>
     );
 }
 
