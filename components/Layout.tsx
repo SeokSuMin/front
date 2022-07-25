@@ -3,7 +3,6 @@ import NavBar from './NavBar';
 
 const Wrapper = styled.div`
     width: 100%;
-    min-width: 800px;
     background-color: white;
     min-height: 100%;
     position: relative;

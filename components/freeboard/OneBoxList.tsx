@@ -53,7 +53,7 @@ const data: IColumn[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((v) => {
 const OneBoxList = ({ viewType, leaving, toggleLeaving, openDetailInfo }: IOneBoxListProps) => {
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            {viewType === 3 && !leaving ? (
+            {viewType === 2 && !leaving ? (
                 <motion.div variants={oneBox} initial="hidden" animate="visible" exit="exit">
                     <List
                         size="small"

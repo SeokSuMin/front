@@ -6,11 +6,13 @@ import styled from 'styled-components';
 import Progress from './animation/Progress';
 
 const Nav = styled(motion.nav)`
+    height: 60px;
     display: flex;
     justify-content: space-between;
+    background-color: white;
     padding: 15px 0px 15px 10px;
-    position: fixed;
-    top: 0;
+    position: sticky;
+    top: 0px;
     z-index: 99;
     width: 100%;
 `;
@@ -18,7 +20,7 @@ const Nav = styled(motion.nav)`
 const Logo = styled.svg`
     width: 35px;
     height: 35px;
-    fill: ${(props) => props.theme.white};
+    fill: ${(props) => props.theme.black};
     /* path {
         stroke-width: 6px;
         stroke: white;
@@ -30,7 +32,7 @@ const Menubar = styled.ul`
     flex-wrap: wrap;
     align-items: center;
     margin-right: 100px;
-    color: white;
+    color: black;
 `;
 const Menu = styled.li`
     height: 30px;
@@ -47,7 +49,7 @@ const Menu = styled.li`
 const Circle = styled(motion.span)`
     width: 5px;
     height: 5px;
-    background-color: white;
+    background-color: black;
     position: absolute;
     bottom: -5px;
     left: 0;
@@ -71,7 +73,7 @@ const NavBar = () => {
     const { scrollY } = useScroll();
     // const navAnimation = useAnimation();
     const scrollArr = router.pathname === '/' ? [350, 600] : [0, 0];
-    const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgba(0,0,0,0.5)']);
+    const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgb(255,255,255,1)']);
 
     // useEffect(() => {
     //     scrollY.onChange(() => {
@@ -101,6 +103,12 @@ const NavBar = () => {
                             <a>Intro</a>
                         </Link>
                         {router.pathname === '/' ? <Circle layoutId="active" /> : null}
+                    </Menu>
+                    <Menu>
+                        <Link href="/blog">
+                            <a>Blog</a>
+                        </Link>
+                        {router.pathname === '/blog' ? <Circle layoutId="active" /> : null}
                     </Menu>
                     <Menu>
                         <Link href="/freeboard">
