@@ -2,6 +2,10 @@ import { AnimatePresence, motion, useScroll } from 'framer-motion';
 import React from 'react';
 import styled from 'styled-components';
 
+const Wrapper = styled.div`
+    width: 100%;
+`;
+
 const DetailInfoBox = styled(motion.div)`
     position: absolute;
     top: 0;
@@ -21,7 +25,6 @@ const BoardInfo = styled(motion.div)`
     left: 0;
     right: 0;
     margin: 0 auto;
-    overflow: hidden;
     z-index: 1;
 `;
 
@@ -34,7 +37,9 @@ const Title = styled.div`
     padding: 15px 15px 10px 15px;
     border-bottom: 1px solid rgb(238, 238, 239);
     h1 {
-        font-size: 25px;
+        font-size: 22px;
+        font-weight: 900;
+        max-width: 95%;
     }
     h2 {
         margin-top: 15px;
@@ -76,44 +81,46 @@ const DetailInfo = ({ boardId, scrollY, openDetailInfo, detailViewExitComplate }
     return (
         <AnimatePresence initial={false} onExitComplete={detailViewExitComplate}>
             {boardId ? (
-                <>
+                <Wrapper>
                     <DetailInfoBox
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => openDetailInfo(null)}
+                    ></DetailInfoBox>
+                    <BoardInfo
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            top: scrollY + 130,
+                        }}
                     >
-                        <BoardInfo
-                            style={{
-                                top: scrollY + 130,
-                            }}
-                        >
-                            <Title>
-                                <h1>안녕하세요 처음뵙겠습니다.</h1>
-                                <h2>니노막시무스</h2>
-                                <SubTitle>
-                                    <h3>2022-07-23</h3>
-                                    <h3>조회 53</h3>
-                                    <span>첨부파일</span>
-                                </SubTitle>
-                            </Title>
-                            <Content>
-                                {[1, 2, 3, 4, 5, 6, 7].map((v) => {
-                                    return (
-                                        <React.Fragment key={v}>
-                                            <p>
-                                                안녕하세요 처음뵙겠습니다.안녕하세요 처음뵙겠습니다.안녕하세요
-                                                처음뵙겠습니다.안녕하세요 처음뵙겠습니다.
-                                            </p>
-                                            <br />
-                                        </React.Fragment>
-                                    );
-                                })}
-                                <img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />
-                            </Content>
-                        </BoardInfo>
-                    </DetailInfoBox>
-                </>
+                        <Title>
+                            <h1>안녕하세요 처음뵙겠습니다.안녕하세요 처음뵙겠습니다. 안녕하세요 처음</h1>
+                            <h2>니노막시무스</h2>
+                            <SubTitle>
+                                <h3>2022-07-23</h3>
+                                <h3>조회 53</h3>
+                                <span>첨부파일</span>
+                            </SubTitle>
+                        </Title>
+                        <Content>
+                            {[1, 2, 3, 4, 5].map((v) => {
+                                return (
+                                    <React.Fragment key={v}>
+                                        <p>
+                                            안녕하세요 처음뵙겠습니다.안녕하세요 처음뵙겠습니다.안녕하세요
+                                            처음뵙겠습니다.안녕하세요 처음뵙겠습니다.
+                                        </p>
+                                        <br />
+                                    </React.Fragment>
+                                );
+                            })}
+                            <img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />
+                        </Content>
+                    </BoardInfo>
+                </Wrapper>
             ) : null}
         </AnimatePresence>
     );
