@@ -1,4 +1,6 @@
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import BlogLayout from './BlogLayout';
 import NavBar from './NavBar';
 
 const Wrapper = styled.div`
@@ -9,7 +11,6 @@ const Wrapper = styled.div`
 `;
 const Footer = styled.div`
     width: 100%;
-    height: 180px;
     margin-top: auto;
     display: flex;
     flex-direction: column;
@@ -24,26 +25,34 @@ const Footer = styled.div`
     ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     h1 {
         color: white;
-        font-size: 25px;
-        margin-top: 30px;
+        font-size: 1.563rem;
+        margin-top: 1.2em;
     }
     svg {
-        margin-top: 10px;
-        width: 35px;
-        height: 35px;
+        margin-top: 0.714em;
+        width: 2.188rem;
+        height: 2.188rem;
         fill: white;
     }
     h3 {
-        margin-top: 15px;
+        margin-top: 0.938em;
+        margin-bottom: 1.875em;
         color: white;
     }
 `;
 
 const Layout = ({ children }) => {
+    const router = useRouter();
     return (
         <Wrapper>
             <NavBar />
-            <div style={{ minHeight: '100%', paddingBottom: '180px' }}>{children}</div>
+            {router.pathname !== '/' ? (
+                <BlogLayout>
+                    <div style={{ width: '100%', minHeight: '100%', paddingBottom: '180px' }}>{children}</div>
+                </BlogLayout>
+            ) : (
+                <div style={{ width: '100%', minHeight: '100%', paddingBottom: '180px' }}>{children}</div>
+            )}
             <Footer>
                 <h1>Mail Address: yahoo2344@naver.com</h1>
                 <a href="">

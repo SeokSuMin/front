@@ -2,30 +2,37 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
     width: 100%;
-    height: 300px;
-    background-color: #cfd2cf;
-    border-radius: 10px;
+    height: 18.75rem;
+    background-color: rgb(245, 245, 245);
+    border-radius: 0.625em;
     display: flex;
     flex-direction: column;
     h3 {
-        font-size: 18px;
-        margin-top: 2px;
+        font-size: 1.125rem;
+        margin-top: 0.111em;
     }
 `;
 const LibraryBox = styled.div`
     width: 100%;
-    height: 60%;
+    height: 65%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 `;
 const ToolBox = styled.div`
     width: 100%;
-    height: 34%;
+    height: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-top: 0.063em solid rgb(207, 210, 207);
 `;
 
-const Title = styled.p`
-    font-size: 10px;
+const Title = styled.span`
+    font-size: 1.25rem;
+    margin-bottom: 0.25em;
+    font-weight: bold;
     color: black;
-    margin-top: 10px;
-    margin-bottom: 5px;
 `;
 
 const Library = () => {
@@ -43,7 +50,6 @@ const Library = () => {
                     <h3>framer-motion</h3>
                 </LibraryBox>
                 <ToolBox>
-                    <hr />
                     <Title>Tool</Title>
                     <h3>vs code</h3>
                     <h3>Git</h3>

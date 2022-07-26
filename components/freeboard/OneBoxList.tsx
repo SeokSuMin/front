@@ -5,7 +5,6 @@ interface IOneBoxListProps {
     viewType: number;
     leaving: boolean;
     toggleLeaving: () => void;
-    openDetailInfo: (boardId: number | null) => void;
 }
 
 interface IColumn {
@@ -50,7 +49,7 @@ const data: IColumn[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((v) => {
     };
 });
 
-const OneBoxList = ({ viewType, leaving, toggleLeaving, openDetailInfo }: IOneBoxListProps) => {
+const OneBoxList = ({ viewType, leaving, toggleLeaving }: IOneBoxListProps) => {
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 2 && !leaving ? (

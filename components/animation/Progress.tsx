@@ -11,7 +11,7 @@ const ProgressBar = styled(motion.div)`
     top: 0;
     left: 0;
     right: 0;
-    height: 10px;
+    height: 0.625rem;
     background: #f9ceee;
     transform-origin: 0%;
     z-index: 100;

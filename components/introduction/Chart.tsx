@@ -5,13 +5,13 @@ import styled from 'styled-components';
 const ChartBox = styled.div`
     width: 70%;
     margin: 0 auto;
-    margin-top: 200px;
-    padding: 15px;
+    margin-top: 12.5em;
+    padding: 0.938em;
     text-align: center;
     h2 {
-        margin-top: 10px;
-        margin-bottom: 20px;
-        font-size: 40px;
+        font-size: 2.5rem;
+        margin-top: 0.25em;
+        margin-bottom: 0.5em;
         font-weight: bold;
     }
     div {
@@ -26,18 +26,18 @@ interface ISkillChart {
 
 const skillObj = {
     '1': [
-        { x: 'HTML', y: 75 },
-        { x: 'CSS', y: 65 },
-        { x: 'JavaScript', y: 80 },
-        { x: 'TypeScript', y: 70 },
-        { x: 'React', y: 75 },
+        { x: 'HTML', y: 70 },
+        { x: 'CSS', y: 55 },
+        { x: 'Js[ES6]', y: 60 },
+        { x: 'TypeScript', y: 60 },
+        { x: 'React', y: 65 },
     ],
     '2': [
-        { x: 'JavaScript', y: 80 },
-        { x: 'Node JS', y: 70 },
-        { x: 'Rest Api', y: 80 },
-        { x: 'Postgresql', y: 60 },
-        { x: 'AWS', y: 75 },
+        { x: 'Js[ES6]', y: 65 },
+        { x: 'Node JS', y: 55 },
+        { x: 'Rest Api', y: 65 },
+        { x: 'Postgresql', y: 50 },
+        { x: 'AWS', y: 55 },
     ],
 };
 

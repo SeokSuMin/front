@@ -4,27 +4,28 @@ import styled from 'styled-components';
 const CareerBox = styled.div`
     width: 70%;
     margin: 0 auto;
-    margin-top: 150px;
-    padding: 15px;
+    margin-top: 9.375em;
+    padding: 0.938em;
     font-weight: bold;
 `;
 
 const CareerText = styled.div`
     text-align: center;
     h2 {
-        font-size: 40px;
-        margin-bottom: 50px;
+        font-size: 2.5rem;
+        margin-bottom: 1.25em;
     }
     P {
-        margin-top: 25px;
-        font-size: 20px;
+        font-size: 1.25rem;
+        line-height: 1.7rem;
+        margin-top: 1.25em;
     }
 `;
 
 const Careers = styled.div`
     display: flex;
     justify-content: space-around;
-    margin-top: 50px;
+    margin-top: 3.125em;
 `;
 
 const CareerView = styled.div`
@@ -33,17 +34,17 @@ const CareerView = styled.div`
     align-items: center;
     text-align: center;
     h2 {
-        margin-top: 10px;
-        font-size: 30px;
+        font-size: 1.875rem;
+        margin-top: 0.333em;
     }
     h3 {
-        margin-top: 5px;
+        margin-top: 0.313em;
     }
 `;
 
 const CareerIcon = styled.svg`
-    width: 110px;
-    height: 110px;
+    width: 6.875rem;
+    height: 6.875rem;
     fill: rgb(105, 160, 199);
 `;
 

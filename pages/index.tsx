@@ -19,16 +19,16 @@ const Wrapper = styled(motion.div)`
 const CurrentUseSkillBox = styled(motion.div)`
     width: 70%;
     margin: 0 auto;
-    margin-top: 200px;
-    padding: 15px;
+    margin-top: 12.5em;
+    padding: 0.938em;
     text-align: center;
     h2 {
-        font-size: 40px;
+        font-size: 2.5rem;
         font-weight: bold;
     }
     p {
-        margin-top: 15px;
-        font-size: 20px;
+        margin-top: 0.938em;
+        font-size: 1.25rem;
         font-weight: bold;
     }
 `;
@@ -39,7 +39,7 @@ const SkillBox = styled(motion.div)`
 `;
 
 const DetailSkillBox = styled.div`
-    margin-top: 30px;
+    margin-top: 1.875em;
     &:first-child {
         width: 70%;
     }

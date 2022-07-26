@@ -1,12 +1,12 @@
-import { motion, useDragControls, Variants } from 'framer-motion';
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const Skills = styled(motion.div)`
     width: 100%;
-    height: 300px;
+    height: 18.75rem;
     background-color: #e6f4f1;
-    border-radius: 10px;
+    border-radius: 0.625em;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14,16 +14,16 @@ const Skills = styled(motion.div)`
 `;
 
 const DragBox = styled(motion.div)`
-    height: 100px;
+    height: 6.25rem;
     display: flex;
     justify-content: center;
     align-items: center;
 `;
 
 const SkillSvg = styled(motion.svg)`
-    width: 60px;
-    height: 60px;
-    margin-right: 5px;
+    width: 3.75rem;
+    height: 3.75rem;
+    margin-right: 0.313em;
     cursor: pointer;
     //
 `;
@@ -35,6 +35,7 @@ const Skill = () => {
         // 드래그 버그때문에 강제 리렌더 한번 더
         setRerenderFlag((prev) => !prev);
     }, []);
+
     return (
         <>
             {rerenderFlag ? (
