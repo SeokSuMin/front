@@ -13,7 +13,7 @@ const Wrapper = styled.div`
     height: 100%;
     border: 0.063em solid rgb(217, 217, 217);
     border-radius: 0.63em;
-    margin-left: 0.63em;
+    margin-right: 0.63em;
     padding: 0.938em;
     position: sticky;
     top: 3.8em;

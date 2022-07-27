@@ -13,16 +13,25 @@ const CardBox = styled(motion.div)`
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    align-content: space-between;
 `;
 
 const Card = styled(motion.div)`
-    width: 23%;
+    width: 22%;
+    height: 45vh;
     border-radius: 0.313em;
+    margin-top: 1.875rem;
+    &:first-child,
+    &:nth-child(2),
+    &:nth-child(3),
+    &:nth-child(4) {
+        margin-top: 0px;
+    }
 `;
 
 const CardContent = styled(motion.div)`
     width: 100%;
-    height: 90%;
+    height: 100%;
     cursor: pointer;
     background-color: white;
 `;

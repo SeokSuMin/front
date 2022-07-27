@@ -1,10 +1,13 @@
-import { UploadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PaperClipOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Input, Space, Upload } from 'antd';
+import dynamic from 'next/dynamic';
 import React, { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
+const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), { ssr: false });
 
 const Wrapper = styled.div`
     width: 100%;
+    padding-right: 0.63em;
 `;
 
 const WriteBox = styled.div`
@@ -50,34 +53,36 @@ const FileListBox = styled.div`
 `;
 
 const FileList = styled.div`
-    width: 40%;
-    padding: 0.63em;
-    border: 0.063em solid rgb(217, 217, 217);
+    padding-top: 0.5em;
     font-size: 0.875rem;
-    table {
-        width: 100%;
-        text-align: center;
-    }
-    table thead tr th {
-        padding: 0px 0px 5px 0px;
-    }
-    table tr th:nth-child(1),
-    table tr td:nth-child(1),
-    table tr th:nth-child(2),
-    table tr td:nth-child(2) {
-        text-align: left;
-    }
-    table td {
-        padding: 2px 0px;
-    }
+    line-height: 1.4rem;
 `;
 
 const File = styled.div`
     display: flex;
-    align-items: center;
+    span:first-child {
+        margin-right: 0.2em;
+    }
+    .anticon-delete {
+        margin-left: 1.5em;
+        cursor: pointer;
+    }
+    &:hover {
+        background-color: rgb(245, 245, 245);
+    }
 `;
 
-const ContentBox = styled.div``;
+const ContentBox = styled.div`
+    width: 100%;
+    height: 45vh;
+    display: flex;
+    flex-direction: column;
+    .quill {
+        height: 100%;
+        min-height: 15rem;
+        flex: 1;
+    }
+`;
 
 const Write = () => {
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -139,42 +144,27 @@ const Write = () => {
                         Upload
                     </Button>
                 </FileUploadBox>
-                {/* <FileListBox>
+                <FileListBox>
                     <Lable></Lable>
                     <FileList>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style={{ width: '5%' }}>
-                                        <Checkbox></Checkbox>
-                                    </th>
-                                    <th style={{ width: '50%' }}>파일명</th>
-                                    <th style={{ width: '30%' }}>용량</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {[1, 2, 3, 4].map((v) => {
-                                    return (
-                                        <React.Fragment key={v}>
-                                            <tr>
-                                                <td>
-                                                    <Checkbox></Checkbox>
-                                                </td>
-                                                <td>
-                                                    <span>테스트 파일.png</span>
-                                                </td>
-                                                <td>
-                                                    <span>1258.kB</span>
-                                                </td>
-                                            </tr>
-                                        </React.Fragment>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                        {[1, 2, 3, 4, 5].map((v) => {
+                            return (
+                                <File key={v}>
+                                    <span>
+                                        <PaperClipOutlined />
+                                    </span>
+                                    <div>테스트 파일.jpg</div>
+                                    <span>
+                                        <DeleteOutlined />
+                                    </span>
+                                </File>
+                            );
+                        })}
                     </FileList>
-                </FileListBox> */}
-                <ContentBox></ContentBox>
+                </FileListBox>
+                <ContentBox>
+                    <QuillEditor />
+                </ContentBox>
             </WriteBox>
         </Wrapper>
     );
