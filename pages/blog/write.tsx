@@ -1,8 +1,16 @@
 import { DeleteOutlined, PaperClipOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Input, Space, Upload } from 'antd';
+import { Button, Checkbox, Input, InputRef, Space, Upload } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
+import * as cheerio from 'cheerio';
+import dayjs from 'dayjs';
+import ReactQuill from 'react-quill';
+import WriteInput from '../../components/blog/WriteTtile';
+import FileLists from '../../components/blog/FileLists';
+import FileUpload from '../../components/blog/FileUpload';
+dayjs().format();
+
 const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), { ssr: false });
 
 const Wrapper = styled.div`
@@ -13,63 +21,7 @@ const Wrapper = styled.div`
 const WriteBox = styled.div`
     display: flex;
     flex-direction: column;
-`;
-
-const TitleBox = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.8em;
-`;
-
-const Lable = styled.label`
-    width: 8%;
-    text-align: left;
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin-right: 0.725em;
-    margin-left: 0.725em;
-`;
-
-const WriteInput = styled(Input)`
-    width: 80%;
-`;
-
-const CategoriBox = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.9em;
-`;
-
-const FileUploadBox = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.9em;
-`;
-
-const FileListBox = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.9em;
-`;
-
-const FileList = styled.div`
-    padding-top: 0.5em;
-    font-size: 0.875rem;
-    line-height: 1.4rem;
-`;
-
-const File = styled.div`
-    display: flex;
-    span:first-child {
-        margin-right: 0.2em;
-    }
-    .anticon-delete {
-        margin-left: 1.5em;
-        cursor: pointer;
-    }
-    &:hover {
-        background-color: rgb(245, 245, 245);
-    }
+    margin-top: 1.56rem;
 `;
 
 const ContentBox = styled.div`
@@ -81,11 +33,20 @@ const ContentBox = styled.div`
         height: 100%;
         min-height: 15rem;
         flex: 1;
+        strong {
+            font-weight: bold;
+        }
+        em {
+            font-style: italic;
+        }
     }
 `;
 
 const Write = () => {
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const titleInputRef = useRef<InputRef | null>(null);
+    const categoriInputRef = useRef<InputRef | null>(null);
+    const quillRef = useRef(null);
     const [files, setFiles] = useState<File[] | null>(null);
 
     const onUploadFile = useCallback(
@@ -117,53 +78,45 @@ const Write = () => {
             return;
         }
         inputRef.current.click();
-    }, []);
+    }, [inputRef.current]);
+
+    const changeQuill = async (content: string) => {
+        // const $ = quillRef.current.state.value
+        //     ? cheerio.load(`<div id='quillContent'>${quillRef.current.state.value}</div>`)
+        //     : '';
+        // if ($) {
+        //     const allTags = Array.from($('#quillContent').find('*'));
+        //     const fileArr: File[] = [];
+        //     // 이미지 변환 병렬처리
+        //     await Promise.all(
+        //         allTags.map(async (tag) => {
+        //             if ($(tag).prop('tagName') === 'IMG') {
+        //                 const base64Img = $(tag).prop('src');
+        //                 const fileName = dayjs().valueOf() + base64Img.slice(-8);
+        //                 const convertIamgeFile = await rlto(base64Img, fileName, { type: 'image/*' });
+        //                 fileArr.push(convertIamgeFile);
+        //                 $(tag).prop('src', fileName);
+        //             }
+        //         }),
+        //     );
+        //     // setFiles((prevFiles) => {
+        //     //     const checkNull = prevFiles || [];
+        //     //     return [...checkNull, ...fileArr];
+        //     // });
+        //     // console.log($.html());
+        // }
+        // console.log(content);
+        // setContentValue(content);
+    };
 
     return (
         <Wrapper>
             <WriteBox>
-                <TitleBox>
-                    <Lable>제목</Lable>
-                    <WriteInput placeholder="Write Title ..." />
-                </TitleBox>
-                <CategoriBox>
-                    <Lable>카테고리</Lable>
-                    <WriteInput placeholder="Write Categori ..." />
-                </CategoriBox>
-                <FileUploadBox>
-                    <Lable>파일첨부</Lable>
-                    <input
-                        type="file"
-                        hidden
-                        accept=".xls, .xlsx, .doc, .docx, .ppt, .pptx"
-                        multiple
-                        ref={inputRef}
-                        onChange={onUploadFile}
-                    />
-                    <Button onClick={onUploadFileButtonClick} icon={<UploadOutlined />}>
-                        Upload
-                    </Button>
-                </FileUploadBox>
-                <FileListBox>
-                    <Lable></Lable>
-                    <FileList>
-                        {[1, 2, 3, 4, 5].map((v) => {
-                            return (
-                                <File key={v}>
-                                    <span>
-                                        <PaperClipOutlined />
-                                    </span>
-                                    <div>테스트 파일.jpg</div>
-                                    <span>
-                                        <DeleteOutlined />
-                                    </span>
-                                </File>
-                            );
-                        })}
-                    </FileList>
-                </FileListBox>
+                <WriteInput {...{ titleInputRef, categoriInputRef }} />
+                <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
+                <FileLists {...{ files }} />
                 <ContentBox>
-                    <QuillEditor />
+                    <QuillEditor {...{ quillRef }} />
                 </ContentBox>
             </WriteBox>
         </Wrapper>

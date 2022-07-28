@@ -18,7 +18,10 @@ const CardBox = styled(motion.div)`
 
 const Card = styled(motion.div)`
     width: 22%;
-    height: 45vh;
+    border-left: 0.063rem solid rgb(245, 245, 245);
+    border-bottom: 0.063rem solid rgb(245, 245, 245);
+    max-height: 45vh;
+    min-height: 23rem;
     border-radius: 0.313em;
     margin-top: 1.875rem;
     &:first-child,

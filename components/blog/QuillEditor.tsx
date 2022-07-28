@@ -1,12 +1,15 @@
-import React from 'react';
-import ReactQuill from 'react-quill';
+import React, { memo } from 'react';
+import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import ImageResize from 'quill-image-resize';
+Quill.register('modules/ImageResize', ImageResize);
 
 // 사용하고 싶은 옵션, 나열 되었으면 하는 순서대로 나열
 const toolbarOptions = [
+    [{ font: [] }],
     [{ header: [1, 2, 3, false] }],
     ['bold', 'italic', 'underline', 'strike'],
-    ['blockquote'],
+    ['blockquote', 'code-block'],
     [{ list: 'ordered' }, { list: 'bullet' }],
     [{ align: [] }],
     [{ color: [] }, { background: [] }],
@@ -33,17 +36,36 @@ const formats = [
     'image',
     'video',
     'width',
+    'code-block',
 ];
 
 const modules = {
     toolbar: {
         container: toolbarOptions,
     },
+    ImageResize: {
+        parchment: Quill.import('parchment'),
+    },
 };
 
-const QuillEditor = () => {
+interface IQuillEditorProps {
+    quillRef: React.MutableRefObject<any>;
+    // contentValue: string;
+    // changeQuill: (content: string) => void;
+    // setContentValue: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
     return (
-        <ReactQuill placeholder="write Text" value={''} theme="snow" modules={modules} formats={formats}></ReactQuill>
+        <ReactQuill
+            ref={quillRef}
+            placeholder="write Text"
+            // value={contentValue}
+            theme="snow"
+            modules={modules}
+            formats={formats}
+            // onChange={(content) => setContentValue(content)}
+        ></ReactQuill>
     );
 };
 
