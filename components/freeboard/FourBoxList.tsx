@@ -62,9 +62,14 @@ const Content = styled.div`
         border: none;
     }
     h2 {
+        width: 100%;
         font-size: 0.875rem;
         font-weight: bold;
         line-height: 1.2rem;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
     }
 `;
 
@@ -78,7 +83,6 @@ const WriteInfo = styled.div`
     display: flex;
     align-items: center;
     color: gray;
-    margin-bottom: 0.63em;
 `;
 
 const ProfileImg = styled.div`
@@ -86,7 +90,8 @@ const ProfileImg = styled.div`
     height: 2.5rem;
     background-image: url('/profile.png');
     background-position: center;
-    background-size: contain;
+    background-size: cover;
+    background-repeat: no-repeat;
     border-radius: 50%;
     margin-right: 0.55em;
 `;

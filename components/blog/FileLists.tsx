@@ -38,9 +38,10 @@ const Files = styled.div`
 
 interface IFileListsProps {
     files: File[];
+    deleteFile: (fileName: string) => void;
 }
 
-const FileLists = ({ files }: IFileListsProps) => {
+const FileLists = ({ files, deleteFile }: IFileListsProps) => {
     return (
         <FileListBox>
             <Lable></Lable>
@@ -53,7 +54,7 @@ const FileLists = ({ files }: IFileListsProps) => {
                             </span>
                             <div>{file.name}</div>
                             <span>
-                                <DeleteOutlined />
+                                <DeleteOutlined onClick={() => deleteFile(file.name)} />
                             </span>
                         </Files>
                     );

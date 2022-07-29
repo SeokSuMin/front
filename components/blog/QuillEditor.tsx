@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize';
+import { Button } from 'antd';
 Quill.register('modules/ImageResize', ImageResize);
 
 // 사용하고 싶은 옵션, 나열 되었으면 하는 순서대로 나열
@@ -57,15 +58,17 @@ interface IQuillEditorProps {
 
 const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
     return (
-        <ReactQuill
-            ref={quillRef}
-            placeholder="write Text"
-            // value={contentValue}
-            theme="snow"
-            modules={modules}
-            formats={formats}
-            // onChange={(content) => setContentValue(content)}
-        ></ReactQuill>
+        <>
+            <ReactQuill
+                ref={quillRef}
+                placeholder="write Text"
+                // value={contentValue}
+                theme="snow"
+                modules={modules}
+                formats={formats}
+                // onChange={(content) => setContentValue(content)}
+            ></ReactQuill>
+        </>
     );
 };
 

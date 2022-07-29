@@ -1,14 +1,14 @@
-import { DeleteOutlined, PaperClipOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Input, InputRef, Space, Upload } from 'antd';
+import { Button, InputRef } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
-import * as cheerio from 'cheerio';
 import dayjs from 'dayjs';
-import ReactQuill from 'react-quill';
 import WriteInput from '../../components/blog/WriteTtile';
 import FileLists from '../../components/blog/FileLists';
 import FileUpload from '../../components/blog/FileUpload';
+import * as Cheerio from 'cheerio';
+import { rlto } from '../../util';
+
 dayjs().format();
 
 const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), { ssr: false });
@@ -26,20 +26,29 @@ const WriteBox = styled.div`
 
 const ContentBox = styled.div`
     width: 100%;
-    height: 45vh;
+    /* min-height: 20rem; */
     display: flex;
     flex-direction: column;
-    .quill {
-        height: 100%;
-        min-height: 15rem;
-        flex: 1;
-        strong {
-            font-weight: bold;
-        }
-        em {
-            font-style: italic;
-        }
+
+    .ql-editor {
+        min-height: 25rem;
+        max-height: 35rem;
     }
+    .ql-editor {
+        overflow-y: auto;
+        resize: vertical;
+    }
+    strong {
+        font-weight: bold;
+    }
+    em {
+        font-style: italic;
+    }
+`;
+
+const SendBox = styled.div`
+    padding-top: 0.63em;
+    text-align: right;
 `;
 
 const Write = () => {
@@ -80,33 +89,49 @@ const Write = () => {
         inputRef.current.click();
     }, [inputRef.current]);
 
-    const changeQuill = async (content: string) => {
-        // const $ = quillRef.current.state.value
-        //     ? cheerio.load(`<div id='quillContent'>${quillRef.current.state.value}</div>`)
-        //     : '';
-        // if ($) {
-        //     const allTags = Array.from($('#quillContent').find('*'));
-        //     const fileArr: File[] = [];
-        //     // 이미지 변환 병렬처리
-        //     await Promise.all(
-        //         allTags.map(async (tag) => {
-        //             if ($(tag).prop('tagName') === 'IMG') {
-        //                 const base64Img = $(tag).prop('src');
-        //                 const fileName = dayjs().valueOf() + base64Img.slice(-8);
-        //                 const convertIamgeFile = await rlto(base64Img, fileName, { type: 'image/*' });
-        //                 fileArr.push(convertIamgeFile);
-        //                 $(tag).prop('src', fileName);
-        //             }
-        //         }),
-        //     );
-        //     // setFiles((prevFiles) => {
-        //     //     const checkNull = prevFiles || [];
-        //     //     return [...checkNull, ...fileArr];
-        //     // });
-        //     // console.log($.html());
-        // }
-        // console.log(content);
-        // setContentValue(content);
+    const deleteFile = (fileName: string) => {
+        setFiles((prevFiles) => {
+            return prevFiles.filter((file) => file.name !== fileName);
+        });
+    };
+
+    const submit = async () => {
+        try {
+            const $ = quillRef.current.state.value
+                ? Cheerio.load(`<div id='quillContent'>${quillRef.current.state.value}</div>`)
+                : '';
+            const formData = new FormData();
+            const fileArr: File[] = [...files];
+            // 에디터 내용이 존재하면
+            if ($) {
+                const allTags = Array.from($('#quillContent').find('*'));
+                // 이미지 변환 병렬처리
+                await Promise.all(
+                    allTags.map(async (tag) => {
+                        if ($(tag).prop('tagName') === 'IMG') {
+                            const base64Img = $(tag).prop('src');
+                            const fileName = dayjs().valueOf() + base64Img.slice(-8).replace(/\//g, '');
+                            const convertIamgeFile = await rlto(base64Img, fileName, { type: 'image/*' });
+                            fileArr.push(convertIamgeFile);
+                            $(tag).prop('src', fileName);
+                        }
+                    }),
+                );
+                for (const file of fileArr) {
+                    formData.append('files', file);
+                }
+
+                const content = $.html().replace('<html><head></head><body>', '').replace('</body></html>', '');
+                formData.append('content', content);
+            }
+
+            const title = titleInputRef.current.input.value;
+            const categori = categoriInputRef.current.input.value;
+            formData.append('title', title);
+            formData.append('categori', categori);
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     return (
@@ -114,11 +139,16 @@ const Write = () => {
             <WriteBox>
                 <WriteInput {...{ titleInputRef, categoriInputRef }} />
                 <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
-                <FileLists {...{ files }} />
+                <FileLists {...{ files, deleteFile }} />
                 <ContentBox>
                     <QuillEditor {...{ quillRef }} />
                 </ContentBox>
             </WriteBox>
+            <SendBox>
+                <Button onClick={submit} type="primary">
+                    작성완료
+                </Button>
+            </SendBox>
         </Wrapper>
     );
 };
