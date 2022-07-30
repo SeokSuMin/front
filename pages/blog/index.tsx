@@ -14,13 +14,13 @@ const Wrapper = styled.div`
 
 const ContentBox = styled.div`
     width: 100%;
-    padding-right: 0.63em;
+    padding-left: 1.875em;
 `;
 
 const Content = styled.div`
     width: 100%;
     /* border-top: 1px solid rgb(217, 217, 217); */
-    background-color: rgb(245, 245, 245);
+    //background-color: rgb(245, 245, 245);
 `;
 
 interface ICategoris {

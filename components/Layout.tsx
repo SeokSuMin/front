@@ -1,16 +1,28 @@
 import { useRouter } from 'next/router';
+import path from 'path';
 import styled from 'styled-components';
 import BlogLayout from './BlogLayout';
 import NavBar from './NavBar';
 
 const Wrapper = styled.div`
-    width: 100%;
     background-color: white;
+    width: 100%;
     min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
 `;
-const Footer = styled.div`
+
+const IntroLayout = styled.div`
     width: 100%;
+    max-width: 68.75rem;
+    min-height: 100%;
+    padding-bottom: 11.25em;
+`;
+const Footer = styled.div<{ path: string }>`
+    width: 100%;
+    max-width: 68.75rem;
     margin-top: auto;
     display: flex;
     flex-direction: column;
@@ -46,14 +58,8 @@ const Layout = ({ children }) => {
     return (
         <Wrapper>
             <NavBar />
-            {router.pathname !== '/' ? (
-                <BlogLayout>
-                    <div style={{ width: '100%', minHeight: '100%', paddingBottom: '180px' }}>{children}</div>
-                </BlogLayout>
-            ) : (
-                <div style={{ width: '100%', minHeight: '100%', paddingBottom: '180px' }}>{children}</div>
-            )}
-            <Footer>
+            {router.pathname !== '/' ? <BlogLayout>{children}</BlogLayout> : <IntroLayout>{children}</IntroLayout>}
+            <Footer path={router.pathname}>
                 <h1>Mail Address: yahoo2344@naver.com</h1>
                 <a href="">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">

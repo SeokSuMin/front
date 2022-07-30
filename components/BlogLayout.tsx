@@ -5,6 +5,11 @@ import LeftProfile from './blog/LeftProfile';
 
 const Wrapper = styled.div`
     width: 100%;
+    max-width: 68.75rem;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 11.25em;
+    min-height: 100%;
 `;
 
 const TopImageBox = styled.div`

@@ -1,5 +1,6 @@
 import { Tag } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 interface IFourBoxListProps {
@@ -18,11 +19,10 @@ const CardBox = styled(motion.div)`
 
 const Card = styled(motion.div)`
     width: 22%;
-    border-left: 0.063rem solid rgb(245, 245, 245);
-    border-bottom: 0.063rem solid rgb(245, 245, 245);
-    max-height: 45vh;
-    min-height: 23rem;
-    border-radius: 0.313em;
+    border: 0.063rem solid rgb(230, 230, 230);
+    max-height: 42vh;
+    min-height: 21rem;
+
     margin-top: 1.875rem;
     &:first-child,
     &:nth-child(2),
@@ -43,7 +43,6 @@ const ThumImg = styled.div`
     width: 100%;
     height: 65%;
     img {
-        border-radius: 0.313em;
         width: 100%;
         height: 100%;
     }
@@ -52,7 +51,7 @@ const ThumImg = styled.div`
 const Content = styled.div`
     width: 100%;
     height: 35%;
-    padding: 0.63em;
+    padding: 0.438em 0.63em;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -63,7 +62,7 @@ const Content = styled.div`
     }
     h2 {
         width: 100%;
-        font-size: 0.875rem;
+        font-size: 0.813rem;
         font-weight: bold;
         line-height: 1.2rem;
         display: -webkit-box;
@@ -83,11 +82,12 @@ const WriteInfo = styled.div`
     display: flex;
     align-items: center;
     color: gray;
+    font-size: 13px;
 `;
 
 const ProfileImg = styled.div`
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 1.9rem;
+    height: 1.9rem;
     background-image: url('/profile.png');
     background-position: center;
     background-size: cover;
@@ -118,6 +118,11 @@ const fourBoxItem = {
 };
 
 const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) => {
+    const router = useRouter();
+    const moveDetailPage = () => {
+        router.push(`/blog/${1}`);
+    };
+
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 1 && !leaving ? (
@@ -125,7 +130,11 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) =>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((v) => {
                         return (
                             <Card key={v} variants={fourBoxItem}>
-                                <CardContent whileHover={{ scale: 1.03 }} transition={{ type: 'tween', duration: 0.2 }}>
+                                <CardContent
+                                    onClick={moveDetailPage}
+                                    whileHover={{ scale: 1.03 }}
+                                    transition={{ type: 'tween', duration: 0.2 }}
+                                >
                                     <ThumImg>
                                         <img
                                             alt="example"

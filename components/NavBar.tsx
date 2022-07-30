@@ -1,15 +1,21 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import styled from 'styled-components';
+import Login from './login/Login';
 
-const Nav = styled(motion.nav)`
-    display: flex;
-    background-color: white;
-    padding: 0.9em 0em 0.9em 0.625em;
+const Wrapper = styled.div<{ path: string }>`
+    width: 100%;
+    max-width: 68.75rem;
     position: sticky;
     top: 0px;
     z-index: 99;
+`;
+const Nav = styled(motion.nav)`
+    display: flex;
+    background-color: white;
+    padding: 1em 0em 0.9em 0.625em;
     width: 100%;
 `;
 
@@ -28,7 +34,7 @@ const Menubar = styled.ul`
     flex-wrap: wrap;
     align-items: center;
     flex: 1;
-    margin-right: 6.25em;
+    /* margin-right: 6.25em; */
     color: black;
 `;
 const Menu = styled.li`
@@ -41,6 +47,11 @@ const Menu = styled.li`
     &:first-child {
         margin-right: auto;
     }
+    &:last-child {
+        margin-left: 2em;
+        cursor: pointer;
+    }
+
     a:hover {
         color: rgba(241, 231, 254, 1);
     }
@@ -80,6 +91,10 @@ const NavBar = () => {
     const scrollArr = router.pathname === '/' ? [350, 600] : [0, 0];
     const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgb(255,255,255,1)']);
 
+    const [isVisible, setIsVisible] = useState(false);
+    const loginView = (visible: boolean) => {
+        setIsVisible(visible);
+    };
     // useEffect(() => {
     //     scrollY.onChange(() => {
     //         if (scrollY.get() > 500) {
@@ -93,7 +108,7 @@ const NavBar = () => {
 
     // custom={router.pathname} variants={navVariants} animate={navAnimation} initial={'top'}
     return (
-        <>
+        <Wrapper path={router.pathname}>
             <Nav style={{ backgroundColor }}>
                 <Menubar>
                     <Menu>
@@ -115,17 +130,21 @@ const NavBar = () => {
                         <Link href="/blog">
                             <a>Blog</a>
                         </Link>
-                        {router.pathname === '/blog' ? <Circle layoutId="active" /> : null}
+                        {router.pathname.includes('/blog') ? <Circle layoutId="active" /> : null}
                     </Menu>
-                    <Menu>
+                    {/* <Menu>
                         <Link href="/freeboard">
                             <a>FreeBoard</a>
                         </Link>
                         {router.pathname === '/freeboard' ? <Circle layoutId="active" /> : null}
+                    </Menu> */}
+                    <Menu>
+                        <span onClick={() => loginView(true)}>Login</span>
                     </Menu>
                 </Menubar>
             </Nav>
-        </>
+            <Login {...{ isVisible, scrollY: scrollY.get(), loginView }} />
+        </Wrapper>
     );
 };
 
