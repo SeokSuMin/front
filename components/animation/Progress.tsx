@@ -7,14 +7,14 @@ interface IProgressBarProps {
 }
 
 const ProgressBar = styled(motion.div)`
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     height: 0.625rem;
     background: #f9ceee;
     transform-origin: 0%;
-    z-index: 100;
+    z-index: 999;
 `;
 
 const Progress = ({ scrollYProgress }: IProgressBarProps) => {

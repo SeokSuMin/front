@@ -1,7 +1,11 @@
+import { useScroll } from 'framer-motion';
 import { useRouter } from 'next/router';
 import path from 'path';
 import styled from 'styled-components';
+import { useAppSelector } from '../store/hooks';
+import Progress from './animation/Progress';
 import BlogLayout from './BlogLayout';
+import Login from './login/Login';
 import NavBar from './NavBar';
 
 const Wrapper = styled.div`
@@ -16,13 +20,14 @@ const Wrapper = styled.div`
 
 const IntroLayout = styled.div`
     width: 100%;
-    max-width: 68.75rem;
+    /* max-width: 68.75rem; */
     min-height: 100%;
     padding-bottom: 11.25em;
 `;
 const Footer = styled.div<{ path: string }>`
     width: 100%;
-    max-width: 68.75rem;
+    /* max-width: ${(props) => (props.path === '/' ? '100%' : '68.75rem')}; */
+    max-width: 100%;
     margin-top: auto;
     display: flex;
     flex-direction: column;
@@ -55,8 +60,11 @@ const Footer = styled.div<{ path: string }>`
 
 const Layout = ({ children }) => {
     const router = useRouter();
+    const { scrollYProgress, scrollY } = useScroll();
+    const { loginVisible } = useAppSelector((state) => state.user);
     return (
         <Wrapper>
+            <Progress scrollYProgress={scrollYProgress} />
             <NavBar />
             {router.pathname !== '/' ? <BlogLayout>{children}</BlogLayout> : <IntroLayout>{children}</IntroLayout>}
             <Footer path={router.pathname}>
@@ -68,6 +76,7 @@ const Layout = ({ children }) => {
                 </a>
                 <h3>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 상단 개인 이미지 무단 복사를 금지합니다.</h3>
             </Footer>
+            {loginVisible ? <Login {...{ isVisible: loginVisible, scrollY: scrollY.get() }} /> : null}
         </Wrapper>
     );
 };

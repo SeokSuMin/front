@@ -1,4 +1,4 @@
-import { Button, InputRef } from 'antd';
+import { Button, Form, Input, InputRef } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -15,7 +15,7 @@ const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), {
 
 const Wrapper = styled.div`
     width: 100%;
-    padding-right: 0.63em;
+    margin-left: 0.63em;
 `;
 
 const WriteBox = styled.div`
@@ -29,7 +29,6 @@ const ContentBox = styled.div`
     /* min-height: 20rem; */
     display: flex;
     flex-direction: column;
-
     .ql-editor {
         min-height: 25rem;
         max-height: 35rem;
@@ -56,7 +55,7 @@ const Write = () => {
     const titleInputRef = useRef<InputRef | null>(null);
     const categoriInputRef = useRef<InputRef | null>(null);
     const quillRef = useRef(null);
-    const [files, setFiles] = useState<File[] | null>(null);
+    const [files, setFiles] = useState<File[] | null>([]);
 
     const onUploadFile = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {

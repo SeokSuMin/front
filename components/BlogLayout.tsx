@@ -42,10 +42,9 @@ const BodyBox = styled.div`
 `;
 
 const BlogLayout = ({ children }) => {
-    const { scrollYProgress } = useScroll();
     return (
         <Wrapper>
-            <Progress scrollYProgress={scrollYProgress} />
+            {/* <Progress scrollYProgress={scrollYProgress} /> */}
             <TopImageBox>
                 <TitleBox>
                     <h1>REACT PROJECT</h1>

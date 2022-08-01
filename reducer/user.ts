@@ -1,20 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface IUser {
-    name: string;
-    age: number;
+    loginVisible: boolean;
     hydration?: boolean;
 }
 
 const user = createSlice({
     name: 'user',
-    initialState: {} as IUser,
+    initialState: { loginVisible: false } as IUser,
     reducers: {
-        addUser: (state, action: PayloadAction<IUser>) => {
-            return { ...state, ...action.payload, hydration: true };
+        togglLogin: (state, action: PayloadAction<IUser>) => {
+            return { ...state, ...action.payload };
         },
     },
 });
 
-export const { addUser } = user.actions;
+export const { togglLogin } = user.actions;
 export default user.reducer;

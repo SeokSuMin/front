@@ -3,11 +3,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { togglLogin } from '../reducer/user';
+import { useAppDispatch } from '../store/hooks';
 import Login from './login/Login';
 
 const Wrapper = styled.div<{ path: string }>`
     width: 100%;
-    max-width: 68.75rem;
+    /* max-width: 68.75rem; */
     position: sticky;
     top: 0px;
     z-index: 99;
@@ -90,11 +92,11 @@ const NavBar = () => {
     // const navAnimation = useAnimation();
     const scrollArr = router.pathname === '/' ? [350, 600] : [0, 0];
     const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgb(255,255,255,1)']);
-
-    const [isVisible, setIsVisible] = useState(false);
-    const loginView = (visible: boolean) => {
-        setIsVisible(visible);
+    const dispatch = useAppDispatch();
+    const loginView = () => {
+        dispatch(togglLogin({ loginVisible: true }));
     };
+
     // useEffect(() => {
     //     scrollY.onChange(() => {
     //         if (scrollY.get() > 500) {
@@ -132,18 +134,17 @@ const NavBar = () => {
                         </Link>
                         {router.pathname.includes('/blog') ? <Circle layoutId="active" /> : null}
                     </Menu>
-                    {/* <Menu>
+                    <Menu>
                         <Link href="/freeboard">
                             <a>FreeBoard</a>
                         </Link>
                         {router.pathname === '/freeboard' ? <Circle layoutId="active" /> : null}
-                    </Menu> */}
-                    <Menu>
-                        <span onClick={() => loginView(true)}>Login</span>
+                    </Menu>
+                    <Menu onClick={loginView}>
+                        <span>Login</span>
                     </Menu>
                 </Menubar>
             </Nav>
-            <Login {...{ isVisible, scrollY: scrollY.get(), loginView }} />
         </Wrapper>
     );
 };

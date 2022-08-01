@@ -22,7 +22,6 @@ const Card = styled(motion.div)`
     border: 0.063rem solid rgb(230, 230, 230);
     max-height: 42vh;
     min-height: 21rem;
-
     margin-top: 1.875rem;
     &:first-child,
     &:nth-child(2),
@@ -37,6 +36,7 @@ const CardContent = styled(motion.div)`
     height: 100%;
     cursor: pointer;
     background-color: white;
+    transform-origin: center right;
 `;
 
 const ThumImg = styled.div`
@@ -132,7 +132,10 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) =>
                             <Card key={v} variants={fourBoxItem}>
                                 <CardContent
                                     onClick={moveDetailPage}
-                                    whileHover={{ scale: 1.03 }}
+                                    whileHover={{
+                                        scale: 1.03,
+                                        boxShadow: '0.313em 0.313em 0.313em rgb(230, 230, 230)',
+                                    }}
                                     transition={{ type: 'tween', duration: 0.2 }}
                                 >
                                     <ThumImg>
