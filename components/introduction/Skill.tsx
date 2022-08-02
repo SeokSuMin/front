@@ -25,7 +25,6 @@ const SkillSvg = styled(motion.svg)`
     height: 3.75rem;
     margin-right: 0.313em;
     cursor: pointer;
-    //
 `;
 
 const Skill = () => {

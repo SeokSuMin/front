@@ -7,7 +7,7 @@ import { togglLogin } from '../reducer/user';
 import { useAppDispatch } from '../store/hooks';
 import Login from './login/Login';
 
-const Wrapper = styled.div<{ path: string }>`
+const Wrapper = styled(motion.div)<{ path: string }>`
     width: 100%;
     /* max-width: 68.75rem; */
     position: sticky;
@@ -89,29 +89,17 @@ const navVariants = {
 const NavBar = () => {
     const router = useRouter();
     const { scrollY } = useScroll();
-    // const navAnimation = useAnimation();
-    const scrollArr = router.pathname === '/' ? [350, 600] : [0, 0];
-    const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgb(255,255,255,1)']);
+    const scrollArr = router.pathname === '/' ? [400, 600] : [0, 0];
+    const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgba(255,255,255,1)']);
+    const borderBottom = useTransform(scrollY, scrollArr, ['1px solid rgba(0,0,0,0)', '1px solid rgba(217,217,217,1)']);
     const dispatch = useAppDispatch();
     const loginView = () => {
         dispatch(togglLogin({ loginVisible: true }));
     };
 
-    // useEffect(() => {
-    //     scrollY.onChange(() => {
-    //         if (scrollY.get() > 500) {
-    //             // navVariants의 scroll
-    //             navAnimation.start('scroll');
-    //         } else {
-    //             navAnimation.start('top');
-    //         }
-    //     });
-    // }, [scrollY, router.pathname]);
-
-    // custom={router.pathname} variants={navVariants} animate={navAnimation} initial={'top'}
     return (
         <Wrapper path={router.pathname}>
-            <Nav style={{ backgroundColor }}>
+            <Nav style={{ backgroundColor, borderBottom }}>
                 <Menubar>
                     <Menu>
                         <Link href="/">
@@ -133,12 +121,6 @@ const NavBar = () => {
                             <a>Blog</a>
                         </Link>
                         {router.pathname.includes('/blog') ? <Circle layoutId="active" /> : null}
-                    </Menu>
-                    <Menu>
-                        <Link href="/freeboard">
-                            <a>FreeBoard</a>
-                        </Link>
-                        {router.pathname === '/freeboard' ? <Circle layoutId="active" /> : null}
                     </Menu>
                     <Menu onClick={loginView}>
                         <span>Login</span>

@@ -11,7 +11,7 @@ const Wrapper = styled.div`
         width: 100%;
         padding: 0.313em 0.625em;
         border: 0.063rem solid rgb(217, 217, 217);
-        border-radius: 0.126rem;
+        border-radius: 0.126em;
     }
     input:focus {
         outline: none;
@@ -90,7 +90,7 @@ const JoinMenu = ({
         <Wrapper>
             <input
                 {...register('password1', {
-                    required: '비밀번호는 확인란은 입니다.',
+                    required: '비밀번호는 확인란은 필수 입니다.',
                 })}
                 type="password"
                 placeholder="비밀번호 확인"

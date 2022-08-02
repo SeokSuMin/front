@@ -22,12 +22,33 @@ const Card = styled(motion.div)`
     border: 0.063rem solid rgb(230, 230, 230);
     max-height: 42vh;
     min-height: 21rem;
-    margin-top: 1.875rem;
+    margin-top: 1.875em;
     &:first-child,
     &:nth-child(2),
     &:nth-child(3),
     &:nth-child(4) {
         margin-top: 0px;
+    }
+    @media screen and (max-width: 57.813rem) {
+        width: 30%;
+        &:nth-child(4) {
+            margin-top: 1.875em;
+        }
+    }
+    @media screen and (max-width: 43.5rem) {
+        width: 46%;
+        &:nth-child(3),
+        &:nth-child(4) {
+            margin-top: 1.875em;
+        }
+    }
+    @media screen and (max-width: 20.063rem) {
+        width: 90%;
+        &:nth-child(2),
+        &:nth-child(3),
+        &:nth-child(4) {
+            margin-top: 1.875em;
+        }
     }
 `;
 

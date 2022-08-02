@@ -26,7 +26,7 @@ const LoginBox = styled(motion.div)`
 const LoginView = styled(motion.div)`
     width: 18.75rem;
     border: 0.063rem solid rgb(238, 238, 239);
-    border-radius: 0.625rem;
+    border-radius: 0.625em;
     background-color: white;
     position: absolute;
     left: 0;

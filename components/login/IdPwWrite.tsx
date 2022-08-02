@@ -8,7 +8,7 @@ const Wrapper = styled.div`
         width: 100%;
         padding: 0.313em 0.625em;
         border: 0.063rem solid rgb(217, 217, 217);
-        border-radius: 0.126rem;
+        border-radius: 0.126em;
     }
     input:focus {
         outline: none;

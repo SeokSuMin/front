@@ -7,6 +7,9 @@ const CareerBox = styled.div`
     margin-top: 9.375em;
     padding: 0.938em;
     font-weight: bold;
+    @media screen and (max-width: 31.25rem) {
+        width: 80%;
+    }
 `;
 
 const CareerText = styled.div`
@@ -26,6 +29,10 @@ const Careers = styled.div`
     display: flex;
     justify-content: space-around;
     margin-top: 3.125em;
+
+    @media screen and (max-width: 31.25rem) {
+        flex-direction: column;
+    }
 `;
 
 const CareerView = styled.div`
@@ -39,6 +46,11 @@ const CareerView = styled.div`
     }
     h3 {
         margin-top: 0.313em;
+    }
+    @media screen and (max-width: 31.25rem) {
+        &:nth-child(2) {
+            margin-top: 3.125em;
+        }
     }
 `;
 
