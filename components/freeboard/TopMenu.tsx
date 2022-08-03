@@ -7,10 +7,10 @@ import BasicListToggle from '../../public/BasicList.svg';
 
 const { Option } = Select;
 
-const TopMenuBox = styled.div`
+const Wrapper = styled.div`
     width: 100%;
-    margin: 0 auto;
-    padding-bottom: 10px;
+    padding-bottom: 0.625em;
+    background-color: white;
 `;
 
 const ToggleBox = styled.div`
@@ -39,7 +39,7 @@ interface ITopMenuProps {
 
 const TopMenu = ({ viewType, changeListView }: ITopMenuProps) => {
     return (
-        <TopMenuBox>
+        <Wrapper>
             <ToggleBox>
                 {/* <BasicListToggle className={viewType === 2 ? 'active' : ''} onClick={() => changeListView(1)} /> */}
                 <TwoSquareToggle className={viewType === 2 ? 'active' : ''} onClick={() => changeListView(2)} />
@@ -47,13 +47,13 @@ const TopMenu = ({ viewType, changeListView }: ITopMenuProps) => {
                 <div>
                     <Select defaultValue="all" style={{ width: 100 }}>
                         <Option value="all">전체</Option>
+                        <Option value="10">10개씩</Option>
+                        <Option value="20">20개씩</Option>
                         <Option value="30">30개씩</Option>
-                        <Option value="45">45개씩</Option>
-                        <Option value="50">50개씩</Option>
                     </Select>
                 </div>
             </ToggleBox>
-        </TopMenuBox>
+        </Wrapper>
     );
 };
 

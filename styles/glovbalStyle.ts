@@ -67,6 +67,21 @@ const GlobalStyle = createGlobalStyle`
         width:auto;
         min-height: 100%;
     }
+    .ant-drawer{
+        display: flex;
+        align-items: center;
+    }
+    .ant-drawer-header {
+        text-align: center;
+        padding: 1em;
+    }
+    .ant-drawer-content {
+        border-radius: 0px 0.625em 0.625em 0px;
+    }
+    .ant-drawer .ant-drawer-content-wrapper {
+        height: 40% !important;
+        width: 9.375rem !important;
+    }
 `;
 
 export default GlobalStyle;

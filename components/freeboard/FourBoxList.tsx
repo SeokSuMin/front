@@ -148,7 +148,7 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) =>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 1 && !leaving ? (
                 <CardBox variants={fourBox} initial="hidden" animate="visible" exit="exit">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((v) => {
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((v) => {
                         return (
                             <Card key={v} variants={fourBoxItem}>
                                 <CardContent

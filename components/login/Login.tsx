@@ -7,7 +7,7 @@ import XToggle from '../../public/x-Toggle.svg';
 import { useRef, useState } from 'react';
 import IdPwWrite from './IdPwWrite';
 import JoinMenu from './JoinMenu';
-import LoginEnter from './loginEnter';
+import LoginEnter from './LoginEnter';
 
 const Wrapper = styled.div`
     width: 100%;

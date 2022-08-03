@@ -5,11 +5,6 @@ import styled from 'styled-components';
 import PencilToggle from '../../public/pencil-solid.svg';
 import GitHub from '../../public/github.svg';
 
-interface ICategoris {
-    name: string;
-    isActive: boolean;
-}
-
 const Wrapper = styled.div`
     width: 20%;
     height: 100%;
@@ -19,6 +14,9 @@ const Wrapper = styled.div`
     padding: 0.938em;
     position: sticky;
     top: 3.9em;
+    @media screen and (max-width: 36rem) {
+        display: none;
+    }
 `;
 
 const ProfileImgeBox = styled.div`
@@ -85,34 +83,13 @@ const EtcBox = styled.div`
     }
 `;
 
-const LeftProfile = () => {
-    const router = useRouter();
-    const [categoris, setCategoris] = useState<ICategoris[]>([
-        { name: '전체', isActive: true },
-        { name: '여행', isActive: false },
-        { name: '공부', isActive: false },
-        { name: '유머', isActive: false },
-        { name: '육아지식', isActive: false },
-        { name: '요리', isActive: false },
-        { name: '맛집탐방', isActive: false },
-        { name: '게임', isActive: false },
-        { name: '기타', isActive: false },
-    ]);
+interface ILeftProfileProps {
+    categoris: { name: string; isActive: boolean }[];
+    openCategori: (name: string, isActive: boolean) => void;
+}
 
-    const openCategori = (name: string, isActive: boolean) => {
-        if (isActive) {
-            return;
-        }
-        setCategoris((prevCategoris) =>
-            prevCategoris.map((categori) => {
-                if (categori.name === name) {
-                    return { name: categori.name, isActive: true };
-                } else {
-                    return { name: categori.name, isActive: false };
-                }
-            }),
-        );
-    };
+const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
+    const router = useRouter();
 
     const moveWritePage = () => {
         router.push('/blog/write');

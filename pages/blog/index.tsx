@@ -1,12 +1,11 @@
-import { Tag } from 'antd';
-import { useScroll } from 'framer-motion';
 import { useState } from 'react';
 import styled from 'styled-components';
-import Progress from '../../components/animation/Progress';
 import FourBoxList from '../../components/freeboard/FourBoxList';
 import OneBoxList from '../../components/freeboard/OneBoxList';
 import TopMenu from '../../components/freeboard/TopMenu';
 import wrapper from '../../store/configStore';
+import { CaretRightOutlined } from '@ant-design/icons';
+import { motion, useScroll } from 'framer-motion';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -15,6 +14,7 @@ const Wrapper = styled.div`
 const ContentBox = styled.div`
     width: 100%;
     padding-left: 1.875em;
+    position: relative;
 `;
 
 const Content = styled.div`
@@ -23,10 +23,20 @@ const Content = styled.div`
     //background-color: rgb(245, 245, 245);
 `;
 
-interface ICategoris {
-    name: string;
-    isActive: boolean;
-}
+const LeftSideToggle = styled(motion.div)`
+    width: 1.875rem;
+    height: 5rem;
+    border: 0.0625rem solid rgb(217, 217, 217);
+    border-left: 0px;
+    border-radius: 0px 0.625rem 0.625rem 0px;
+    color: rgb(170, 170, 170);
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    align-items: center;
+    position: sticky;
+    left: 0;
+`;
 
 const Home = () => {
     const [viewType, setViewType] = useState(1);
@@ -56,6 +66,9 @@ const Home = () => {
                     <OneBoxList {...{ viewType, leaving, toggleLeaving }} />
                 </Content>
             </ContentBox>
+            {/* <LeftSideToggle style={{ top: scrollY.get() }}>
+                <CaretRightOutlined />
+            </LeftSideToggle> */}
         </Wrapper>
     );
 };
