@@ -9,6 +9,7 @@ const Wrapper = styled.div`
     width: 20%;
     height: 100%;
     border: 0.063em solid rgb(217, 217, 217);
+    margin-top: 2.625em;
     border-radius: 0.63em;
     /* margin-right: 3.63em; */
     padding: 0.938em;
@@ -58,22 +59,54 @@ const CategoriBox = styled.div`
     width: 100%;
     margin-top: 1.25em;
     border-top: 0.063em solid rgb(217, 217, 217);
-    text-align: center;
-    padding: 0.63em;
-    p {
-        margin-top: 0.313em;
-        margin-bottom: 0.939em;
-    }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.625em;
     span {
-        margin-bottom: 0.35em;
+        font-size: 0.75rem;
+    }
+    span:first-child {
+        margin-bottom: 1em;
+    }
+    span:hover {
+        text-decoration: underline;
         cursor: pointer;
-        border-radius: 15%;
+    }
+`;
+
+const Categoris = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0.938em;
+    &:last-child {
+        margin-bottom: 0px;
+    }
+    ul {
+        width: 100%;
+        font-size: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    li:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    li:first-child {
+        margin-bottom: 0.625em;
+        pointer-events: none;
+    }
+    li:not(:first-of-type) {
+        margin-bottom: 0.5em;
     }
 `;
 
 const EtcBox = styled.div`
     width: 100%;
-    margin-top: 1.25em;
+    /* margin-top: 1.25em; */
     border-top: 0.063em solid rgb(217, 217, 217);
     text-align: center;
     padding: 0.63em;
@@ -106,18 +139,48 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                 <p>아이스맨 같은 개발자가 되고 싶은 사람입니다.</p>
             </ProfileImgeBox>
             <CategoriBox>
-                <p>Categoris</p>
-                {categoris.map((categori, i) => {
-                    return (
-                        <Tag
-                            onClick={() => openCategori(categori.name, categori.isActive)}
-                            color={categori.isActive ? '#108ee9' : ''}
-                            key={i}
-                        >
-                            {categori.name}
-                        </Tag>
-                    );
-                })}
+                <span>전체보기 (23)</span>
+                <Categoris>
+                    <ul>
+                        <li>
+                            <span>■ 일상의 순간</span>
+                        </li>
+                        <li>
+                            <span>- 여행 (10)</span>
+                        </li>
+                        <li>
+                            <span>- 음식 (10)</span>
+                        </li>
+                        <li>
+                            <span>- 운동 (10)</span>
+                        </li>
+                        <li>
+                            <span>- 게임 (5)</span>
+                        </li>
+                        <li>
+                            <span>- 영화 (90)</span>
+                        </li>
+                    </ul>
+                </Categoris>
+                <Categoris>
+                    <ul>
+                        <li>
+                            <span>■ 프로그래밍</span>
+                        </li>
+                        <li>
+                            <span>- java (10)</span>
+                        </li>
+                        <li>
+                            <span>- React.js (10)</span>
+                        </li>
+                        <li>
+                            <span>- Node.js (10)</span>
+                        </li>
+                        <li>
+                            <span>- 개발일지 (5)</span>
+                        </li>
+                    </ul>
+                </Categoris>
             </CategoriBox>
             <EtcBox>
                 <a href="">

@@ -41,7 +41,7 @@ const TitleBox = styled.div`
 
 const BodyBox = styled.div`
     width: 100%;
-    margin-top: 3.75em;
+    margin-top: 3.125em;
     position: relative;
     display: flex;
 `;

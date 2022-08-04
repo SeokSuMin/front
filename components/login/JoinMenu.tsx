@@ -7,35 +7,17 @@ import { ILoginInfo } from './Login';
 
 const Wrapper = styled.div`
     width: 100%;
-    input {
-        width: 100%;
-        padding: 0.313em 0.625em;
-        border: 0.063rem solid rgb(217, 217, 217);
-        border-radius: 0.126em;
-    }
-    input:focus {
-        outline: none;
-        box-shadow: 0.063em 0.063em 0.063em 0.063em rgb(209, 233, 255);
-        border: 0.063rem solid rgb(64, 169, 255);
-    }
-    input::placeholder {
-        color: rgb(197, 193, 208);
-    }
-    span.userId,
-    span.password {
-        font-size: 0.75rem;
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: 1.563rem;
-        color: red;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
 const FileInputBox = styled.div`
+    width: 80%;
     display: flex;
     align-items: center;
     font-size: 0.75rem;
+    margin-top: 0.35em;
     button {
         font-size: 0.75rem;
         padding: 0.25em 0.417em;
@@ -47,7 +29,7 @@ const FileInputBox = styled.div`
 `;
 
 const ProfileImgBox = styled.div`
-    width: 100%;
+    width: 80%;
     padding: 0.625em 0;
     display: flex;
     svg {
@@ -77,29 +59,12 @@ interface IJoinMenuProps {
     deleteProfileImg: () => void;
 }
 
-const JoinMenu = ({
-    register,
-    errors,
-    clickImgFileInput,
-    profileImgURL,
-    inputRef,
-    changeImgInput,
-    deleteProfileImg,
-}: IJoinMenuProps) => {
+const JoinMenu = ({ clickImgFileInput, profileImgURL, inputRef, changeImgInput, deleteProfileImg }: IJoinMenuProps) => {
     return (
         <Wrapper>
-            <input
-                {...register('password1', {
-                    required: '비밀번호는 확인란은 필수 입니다.',
-                })}
-                type="password"
-                placeholder="비밀번호 확인"
-            />
-            <span className="password">{errors?.password1?.message}</span>
             <FileInputBox>
                 <Button onClick={clickImgFileInput}>이미지 선택</Button>
                 {!profileImgURL ? <span>선택된 프로필 이미지 없음.</span> : null}
-
                 <input type="file" ref={inputRef} onChange={changeImgInput} hidden accept="image/*" />
             </FileInputBox>
             {profileImgURL ? (

@@ -23,21 +23,6 @@ const Content = styled.div`
     //background-color: rgb(245, 245, 245);
 `;
 
-const LeftSideToggle = styled(motion.div)`
-    width: 1.875rem;
-    height: 5rem;
-    border: 0.0625rem solid rgb(217, 217, 217);
-    border-left: 0px;
-    border-radius: 0px 0.625rem 0.625rem 0px;
-    color: rgb(170, 170, 170);
-    display: flex;
-    justify-content: center;
-    cursor: pointer;
-    align-items: center;
-    position: sticky;
-    left: 0;
-`;
-
 const Home = () => {
     const [viewType, setViewType] = useState(1);
     const [leaving, setLeaving] = useState(false);
@@ -61,14 +46,9 @@ const Home = () => {
         <Wrapper>
             <ContentBox>
                 <TopMenu {...{ viewType, changeListView }} />
-                <Content>
-                    <FourBoxList {...{ viewType, leaving, toggleLeaving }} />
-                    <OneBoxList {...{ viewType, leaving, toggleLeaving }} />
-                </Content>
+                <FourBoxList {...{ viewType, leaving, toggleLeaving }} />
+                <OneBoxList {...{ viewType, leaving, toggleLeaving }} />
             </ContentBox>
-            {/* <LeftSideToggle style={{ top: scrollY.get() }}>
-                <CaretRightOutlined />
-            </LeftSideToggle> */}
         </Wrapper>
     );
 };

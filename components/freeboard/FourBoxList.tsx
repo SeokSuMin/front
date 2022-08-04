@@ -12,39 +12,38 @@ interface IFourBoxListProps {
 const CardBox = styled(motion.div)`
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     flex-wrap: wrap;
-    align-content: space-between;
 `;
 
 const Card = styled(motion.div)`
-    width: 22%;
+    flex: 0 1 30%;
+    margin-right: 5%;
+    height: auto;
     border: 0.063rem solid rgb(230, 230, 230);
-    max-height: 42vh;
-    min-height: 21rem;
     margin-top: 1.875em;
+    position: relative;
+    &::after {
+        display: block;
+        content: '';
+        padding-bottom: 100%;
+    }
     &:first-child,
     &:nth-child(2),
-    &:nth-child(3),
-    &:nth-child(4) {
+    &:nth-child(3) {
         margin-top: 0px;
     }
-    @media screen and (max-width: 57.813rem) {
-        width: 30%;
-        &:nth-child(4) {
-            margin-top: 1.875em;
+    @media screen and (min-width: 49.065rem) {
+        &:nth-child(3n + 0) {
+            margin-right: 0;
         }
     }
-    @media screen and (max-width: 43.5rem) {
-        width: 46%;
-        &:nth-child(3),
-        &:nth-child(4) {
-            margin-top: 1.875em;
+    @media screen and (max-width: 49.063rem) {
+        flex: 0 1 47%;
+        margin-right: 6%;
+        &:nth-child(2n + 0) {
+            margin-right: 0;
         }
-    }
-    @media screen and (max-width: 20.063rem) {
-        width: 90%;
-        &:nth-child(2),
         &:nth-child(3),
         &:nth-child(4) {
             margin-top: 1.875em;
@@ -58,11 +57,16 @@ const CardContent = styled(motion.div)`
     cursor: pointer;
     background-color: white;
     transform-origin: center right;
+    position: absolute;
 `;
 
 const ThumImg = styled.div`
     width: 100%;
-    height: 65%;
+    height: 55%;
+    /* background-image: url('https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; */
     img {
         width: 100%;
         height: 100%;
@@ -71,8 +75,8 @@ const ThumImg = styled.div`
 `;
 const Content = styled.div`
     width: 100%;
-    height: 35%;
-    padding: 0.438em 0.63em;
+    height: 45%;
+    padding: 0.313em;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -83,27 +87,32 @@ const Content = styled.div`
     }
     h2 {
         width: 100%;
-        font-size: 0.813rem;
+        font-size: 0.75rem;
         font-weight: bold;
         line-height: 1.2rem;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         overflow: hidden;
+        @media screen and (max-width: 60rem) and (min-width: 49.065rem) {
+            -webkit-line-clamp: 1;
+        }
+        @media screen and (max-width: 40rem) {
+            -webkit-line-clamp: 1;
+        }
     }
 `;
 
 const TagInfo = styled.div`
     width: 100%;
-    padding-top: 0.313em;
-    padding-bottom: 0.313em;
+    padding: 0.125em 0px;
 `;
 
 const WriteInfo = styled.div`
     display: flex;
     align-items: center;
     color: gray;
-    font-size: 13px;
+    font-size: 0.813rem;
 `;
 
 const ProfileImg = styled.div`
@@ -148,7 +157,7 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) =>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 1 && !leaving ? (
                 <CardBox variants={fourBox} initial="hidden" animate="visible" exit="exit">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((v) => {
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((v) => {
                         return (
                             <Card key={v} variants={fourBoxItem}>
                                 <CardContent
@@ -160,10 +169,7 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) =>
                                     transition={{ type: 'tween', duration: 0.2 }}
                                 >
                                     <ThumImg>
-                                        <img
-                                            alt="example"
-                                            src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
-                                        />
+                                        <img alt="example" src="/banner1.png" />
                                     </ThumImg>
                                     <Content>
                                         <TagInfo>

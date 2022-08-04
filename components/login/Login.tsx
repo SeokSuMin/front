@@ -8,6 +8,7 @@ import { useRef, useState } from 'react';
 import IdPwWrite from './IdPwWrite';
 import JoinMenu from './JoinMenu';
 import LoginEnter from './LoginEnter';
+import { SwapLeftOutlined } from '@ant-design/icons';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -24,7 +25,7 @@ const LoginBox = styled(motion.div)`
 `;
 
 const LoginView = styled(motion.div)`
-    width: 18.75rem;
+    width: 25rem;
     border: 0.063rem solid rgb(238, 238, 239);
     border-radius: 0.625em;
     background-color: white;
@@ -51,11 +52,17 @@ const Close = styled.div`
 `;
 
 const LoginText = styled.div`
-    text-align: center;
-    padding-bottom: 1em;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 1.563em;
     font-size: 1.25rem;
     font-weight: bold;
     font-style: italic;
+    div {
+        display: flex;
+        width: 80%;
+        text-align: center;
+    }
 `;
 
 const LoginForm = styled.form`
@@ -93,6 +100,7 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
         register,
         handleSubmit,
         setError,
+        setValue,
         formState: { errors },
     } = useForm<ILoginInfo>({
         defaultValues: {
@@ -113,6 +121,12 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
     const joinMember = (joinToggle: boolean) => {
         setCheckJoinMember(joinToggle);
         setProfileImgURL(null);
+        setValue('userId', '');
+        setValue('password', '');
+        setValue('password1', '');
+        setError('userId', { message: '' });
+        setError('password', { message: '' });
+        setError('password1', { message: '' });
     };
     const clickImgFileInput = () => {
         inputRef.current.click();
@@ -159,7 +173,7 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
                             </Close>
                             <LoginText>{checkJoinMember ? <h1>JOIN MEMBER</h1> : <h1>GUEST LOGIN</h1>}</LoginText>
                             <LoginForm onSubmit={handleSubmit(onSubmit)}>
-                                <IdPwWrite {...{ register, errors }} />
+                                <IdPwWrite {...{ register, errors, checkJoinMember }} />
                                 {checkJoinMember ? (
                                     <JoinMenu
                                         {...{
@@ -173,14 +187,7 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
                                         }}
                                     />
                                 ) : null}
-                                <JoinViewText checkJoinMember={checkJoinMember}>
-                                    {checkJoinMember ? (
-                                        <span onClick={() => joinMember(false)}>돌아가기</span>
-                                    ) : (
-                                        <span onClick={() => joinMember(true)}>간편 가입하기</span>
-                                    )}
-                                </JoinViewText>
-                                <LoginEnter checkJoinMember={checkJoinMember} />
+                                <LoginEnter {...{ checkJoinMember, joinMember }} />
                             </LoginForm>
                         </Content>
                     </LoginView>
