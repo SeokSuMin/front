@@ -1,14 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { joinMember } from '../thunk/userThunk';
-
-interface IUserInfo {
-    userId: string;
-    imgPath: string;
-}
+import { checkExUser, joinMembers, login } from '../thunk/userThunk';
 
 export interface IUser {
-    loginVisible: boolean;
-    userInfo?: IUserInfo;
+    loginVisible?: boolean;
+    userId?: string;
+    password?: string;
+    profileImg?: File | null;
     hydration?: boolean;
 }
 
@@ -22,18 +19,35 @@ const user = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(joinMember.pending, (state, action) => {
-                return {
-                    ...state,
-                    hydration: false,
-                };
-            })
-            .addCase(joinMember.fulfilled, (state, action) => {
+            // .addCase(checkExUser.fulfilled, (state, action) => {
+            //     console.log('액션', action.payload);
+            //     return {
+            //         ...state,
+            //         hydration: true,
+            //     };
+            // })
+            .addCase(joinMembers.pending, (state, action: PayloadAction<IUser>) => {
                 return {
                     ...state,
                     ...action.payload,
+                    hydration: false,
+                };
+            })
+            .addCase(joinMembers.fulfilled, (state, action) => {
+                return {
+                    ...state,
                     loginVisible: true,
                     hydration: true,
+                };
+            })
+            .addCase(login.pending, (state, action) => {
+                return {
+                    ...state,
+                };
+            })
+            .addCase(login.fulfilled, (state, action) => {
+                return {
+                    ...state,
                 };
             });
     },

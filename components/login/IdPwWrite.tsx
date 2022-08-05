@@ -1,7 +1,7 @@
 import { DeepRequired, FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
 import styled from 'styled-components';
 import { ILoginInfo } from './Login';
-
+import { LoadingOutlined } from '@ant-design/icons';
 const Wrapper = styled.div`
     width: 100%;
     display: flex;
@@ -30,25 +30,70 @@ const Wrapper = styled.div`
         height: 1.125rem;
         color: red;
     }
+    span.compalteText {
+        font-size: 0.688rem;
+        display: flex;
+        align-items: center;
+        width: 80%;
+        height: 1.125rem;
+        color: blue;
+    }
+`;
+
+const IdInputBox = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    .anticon-spin {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0.438em;
+        right: 0.938em;
+    }
 `;
 
 interface IIdPwWriteProps {
     register: UseFormRegister<ILoginInfo>;
     errors: FieldErrorsImpl<DeepRequired<ILoginInfo>>;
     checkJoinMember: boolean;
+    checkUserId: (userId: string) => Promise<void>;
+    joinUserId: string;
+    loading: boolean;
 }
 
-const IdPwWrite = ({ register, errors, checkJoinMember }: IIdPwWriteProps) => {
+const IdPwWrite = ({ register, errors, checkJoinMember, checkUserId, joinUserId, loading }: IIdPwWriteProps) => {
     return (
         <Wrapper>
-            <input
-                {...register('userId', {
-                    required: '아이디는 필수 입니다.',
-                })}
-                type="text"
-                placeholder="아이디"
-            />
+            <IdInputBox>
+                <input
+                    {...register('userId', {
+                        required: '아이디는 필수 입니다.',
+                        onBlur: (e: React.FormEvent<HTMLInputElement>) => {
+                            if (checkJoinMember) {
+                                // 기존 유효성 통과된 아이디와 다르거나 공백이 아닐때
+                                if (e.currentTarget.value !== joinUserId && e.currentTarget.value.length !== 0) {
+                                    return checkUserId(e.currentTarget.value);
+                                }
+                            }
+                        },
+                    })}
+                    type="text"
+                    placeholder="아이디"
+                />
+                {loading ? <LoadingOutlined /> : null}
+            </IdInputBox>
             <span className="userId">{errors?.userId?.message}</span>
+            {/* {errors?.userId?.message ? (
+                <span className="userId">{errors?.userId?.message}</span>
+            ) : (
+                <span className="compalteText">
+                    {joinUserId.length !== 0 && checkIdComplate ? '사용가능한 아이디 입니다.' : ''}
+                </span>
+            )} */}
+
             <input
                 {...register('password', {
                     required: '비밀번호는 필수 입니다.',

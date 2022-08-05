@@ -4,11 +4,17 @@ import styled from 'styled-components';
 import { togglLogin } from '../../reducer/user';
 import { useAppDispatch } from '../../store/hooks';
 import XToggle from '../../public/x-Toggle.svg';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import IdPwWrite from './IdPwWrite';
 import JoinMenu from './JoinMenu';
 import LoginEnter from './LoginEnter';
-import { SwapLeftOutlined } from '@ant-design/icons';
+import { checkExUser, joinMembers, login } from '../../thunk/userThunk';
+import { message } from 'antd';
+import { rlto } from '../../util';
+import dayjs from 'dayjs';
+import * as path from 'path';
+
+dayjs().format();
 
 const Wrapper = styled.div`
     width: 100%;
@@ -69,17 +75,6 @@ const LoginForm = styled.form`
     width: 100%;
 `;
 
-const JoinViewText = styled.div<{ checkJoinMember: boolean }>`
-    text-align: center;
-    font-size: 0.688rem;
-    padding: 0em 0em 1.818em 0em;
-    span:first-child {
-        display: inline-block;
-        padding: ${(props) => (props.checkJoinMember ? '2em 0em 1em 0em' : 0)};
-        cursor: pointer;
-    }
-`;
-
 export interface ILoginInfo {
     userId: string;
     password: string;
@@ -94,8 +89,14 @@ interface ILoginProps {
 const Login = ({ isVisible, scrollY }: ILoginProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
+
     const [checkJoinMember, setCheckJoinMember] = useState(false);
     const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(null);
+    const [extName, setExtName] = useState<string>(null);
+    const [joinUserId, setJoinUserId] = useState('');
+    const [checkIdComplate, setCheckIdComplate] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -116,6 +117,7 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
     const joinMember = (joinToggle: boolean) => {
         setCheckJoinMember(joinToggle);
         setProfileImgURL(null);
+        setJoinUserId('');
         setValue('userId', '');
         setValue('password', '');
         setValue('password1', '');
@@ -132,11 +134,13 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
         }
         const imgFile = e.target.files[0];
         const reader = new FileReader();
+
         reader.onloadend = () => {
             setProfileImgURL(reader.result);
+            setExtName(path.extname(imgFile.name));
         };
         reader.onerror = () => {
-            console.log('error!');
+            message.error('이미지 로딩중 에러가 발생했습니다.');
         };
         reader.readAsDataURL(imgFile);
 
@@ -146,13 +150,64 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
     const deleteProfileImg = () => {
         setProfileImgURL(null);
     };
-    const onSubmit = (value: ILoginInfo) => {
-        if (value.password !== value.password1) {
-            setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
-        }
+
+    const checkUserId = async (userId: string) => {
         try {
-            dispatch();
-        } catch (err) {}
+            setLoading(true);
+            await dispatch(checkExUser(userId)).unwrap();
+            setJoinUserId(userId);
+            setError('userId', { message: '' });
+            setCheckIdComplate(true);
+        } catch (err) {
+            if (err.includes('이미 사용중인')) {
+                setError('userId', { type: 'custom', message: '이미 사용중인 아이디 입니다.' });
+            } else {
+                message.error(err);
+            }
+            setCheckIdComplate(false);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const onSubmit = async (value: ILoginInfo) => {
+        try {
+            if (checkJoinMember) {
+                if (checkIdComplate) {
+                    if (value.password !== value.password1) {
+                        setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
+                    } else {
+                        const userInfoObj = { userId: value.userId, password: value.password, profileImg: null };
+                        if (profileImgURL) {
+                            const fileName =
+                                dayjs().valueOf() +
+                                (profileImgURL as string).slice(-8).replace(/\//g, '') +
+                                `${extName}`;
+                            const convertIamgeFile = await rlto(profileImgURL as string, fileName, {
+                                type: 'image/png',
+                            });
+                            userInfoObj.profileImg = convertIamgeFile;
+                        }
+
+                        const memberJoinResult = await dispatch(joinMembers(userInfoObj)).unwrap();
+                        if (memberJoinResult) {
+                            message.success('가입이 완료되었습니다.');
+                            setCheckIdComplate(false);
+                            joinMember(false);
+                        }
+                    }
+                } else {
+                    setError('userId', { type: 'custom', message: '이미 사용중인 아이디 입니다.' });
+                }
+            } else {
+                delete value.password1;
+                const loginUserData = await dispatch(login(value)).unwrap();
+                console.log('loginUserData', loginUserData);
+            }
+        } catch (err) {
+            console.log(err);
+            message.error(err);
+        }
     };
 
     return (
@@ -176,7 +231,9 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
                             </Close>
                             <LoginText>{checkJoinMember ? <h1>JOIN MEMBER</h1> : <h1>GUEST LOGIN</h1>}</LoginText>
                             <LoginForm onSubmit={handleSubmit(onSubmit)}>
-                                <IdPwWrite {...{ register, errors, checkJoinMember }} />
+                                <IdPwWrite
+                                    {...{ register, errors, checkJoinMember, checkUserId, joinUserId, loading }}
+                                />
                                 {checkJoinMember ? (
                                     <JoinMenu
                                         {...{
@@ -190,7 +247,7 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
                                         }}
                                     />
                                 ) : null}
-                                <LoginEnter {...{ checkJoinMember, joinMember }} />
+                                <LoginEnter {...{ checkJoinMember, joinMember, checkIdComplate }} />
                             </LoginForm>
                         </Content>
                     </LoginView>
