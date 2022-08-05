@@ -1,14 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosResponse } from 'axios';
-import { IPopular } from '../reducer/movie';
+import { BackUrl } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
+import { IUser } from '../reducer/user';
 
-export const getMovies = createAsyncThunk<IPopular, void, { state: ReducerType }>(
-    'GET_MOVIES',
+axios.defaults.baseURL = BackUrl + '/user';
+axios.defaults.withCredentials = true;
+
+export const joinMember = createAsyncThunk<IUser, void, { state: ReducerType }>(
+    'JOIN_MEMBER',
     async (_, { getState, requestId, rejectWithValue }) => {
         try {
-            // const { loading } = getState().movie;
-            const response = await axios.get('http://localhost:3001/api/movies');
+            const response = await axios.post('/join');
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);

@@ -110,11 +110,6 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
         },
     });
 
-    const onSubmit = (value: ILoginInfo) => {
-        if (value.password !== value.password1) {
-            setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
-        }
-    };
     const loginView = () => {
         dispatch(togglLogin({ loginVisible: false }));
     };
@@ -150,6 +145,14 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
 
     const deleteProfileImg = () => {
         setProfileImgURL(null);
+    };
+    const onSubmit = (value: ILoginInfo) => {
+        if (value.password !== value.password1) {
+            setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
+        }
+        try {
+            dispatch();
+        } catch (err) {}
     };
 
     return (
