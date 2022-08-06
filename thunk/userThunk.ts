@@ -48,3 +48,11 @@ export const login = createAsyncThunk('LOGIN', async (userInfo: IUser, { getStat
         return rejectWithValue(err.response.data);
     }
 });
+
+export const checkUserlogin = createAsyncThunk(
+    'CHECK_USER_LOGIN',
+    async (_, { getState, requestId, rejectWithValue }) => {
+        const response = await axios.get('/user/');
+        return response.data;
+    },
+);

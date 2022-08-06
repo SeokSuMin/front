@@ -2,6 +2,7 @@ import { DeepRequired, FieldErrorsImpl, UseFormRegister } from 'react-hook-form'
 import styled from 'styled-components';
 import { ILoginInfo } from './Login';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useAppSelector } from '../../store/hooks';
 const Wrapper = styled.div`
     width: 100%;
     display: flex;
@@ -61,10 +62,10 @@ interface IIdPwWriteProps {
     checkJoinMember: boolean;
     checkUserId: (userId: string) => Promise<void>;
     joinUserId: string;
-    loading: boolean;
 }
 
-const IdPwWrite = ({ register, errors, checkJoinMember, checkUserId, joinUserId, loading }: IIdPwWriteProps) => {
+const IdPwWrite = ({ register, errors, checkJoinMember, checkUserId, joinUserId }: IIdPwWriteProps) => {
+    const { loading } = useAppSelector((state) => state.user);
     return (
         <Wrapper>
             <IdInputBox>
@@ -83,7 +84,7 @@ const IdPwWrite = ({ register, errors, checkJoinMember, checkUserId, joinUserId,
                     type="text"
                     placeholder="아이디"
                 />
-                {loading ? <LoadingOutlined /> : null}
+                {checkJoinMember && loading ? <LoadingOutlined /> : null}
             </IdInputBox>
             <span className="userId">{errors?.userId?.message}</span>
             {/* {errors?.userId?.message ? (

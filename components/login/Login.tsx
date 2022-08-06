@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { togglLogin } from '../../reducer/user';
+import { loading, togglLogin } from '../../reducer/user';
 import { useAppDispatch } from '../../store/hooks';
 import XToggle from '../../public/x-Toggle.svg';
 import React, { useRef, useState } from 'react';
@@ -95,7 +95,6 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
     const [extName, setExtName] = useState<string>(null);
     const [joinUserId, setJoinUserId] = useState('');
     const [checkIdComplate, setCheckIdComplate] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     const {
         register,
@@ -153,7 +152,7 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
 
     const checkUserId = async (userId: string) => {
         try {
-            setLoading(true);
+            dispatch(loading({ loading: true }));
             await dispatch(checkExUser(userId)).unwrap();
             setJoinUserId(userId);
             setError('userId', { message: '' });
@@ -166,7 +165,7 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
             }
             setCheckIdComplate(false);
         } finally {
-            setLoading(false);
+            dispatch(loading({ loading: false }));
         }
     };
 
@@ -201,12 +200,13 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
                 }
             } else {
                 delete value.password1;
-                const loginUserData = await dispatch(login(value)).unwrap();
-                console.log('loginUserData', loginUserData);
+                await dispatch(login(value)).unwrap();
+                loginView();
             }
         } catch (err) {
-            console.log(err);
             message.error(err);
+        } finally {
+            dispatch(loading({ loading: false }));
         }
     };
 
@@ -231,9 +231,7 @@ const Login = ({ isVisible, scrollY }: ILoginProps) => {
                             </Close>
                             <LoginText>{checkJoinMember ? <h1>JOIN MEMBER</h1> : <h1>GUEST LOGIN</h1>}</LoginText>
                             <LoginForm onSubmit={handleSubmit(onSubmit)}>
-                                <IdPwWrite
-                                    {...{ register, errors, checkJoinMember, checkUserId, joinUserId, loading }}
-                                />
+                                <IdPwWrite {...{ register, errors, checkJoinMember, checkUserId, joinUserId }} />
                                 {checkJoinMember ? (
                                     <JoinMenu
                                         {...{

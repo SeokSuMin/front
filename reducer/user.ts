@@ -1,11 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { checkExUser, joinMembers, login } from '../thunk/userThunk';
+import { checkExUser, checkUserlogin, joinMembers, login } from '../thunk/userThunk';
 
 export interface IUser {
     loginVisible?: boolean;
     userId?: string;
     password?: string;
     profileImg?: File | null;
+    loading?: boolean;
+    error: boolean;
     hydration?: boolean;
 }
 
@@ -16,16 +18,12 @@ const user = createSlice({
         togglLogin: (state, action: PayloadAction<IUser>) => {
             return { ...state, ...action.payload };
         },
+        loading: (state, action: PayloadAction<IUser>) => {
+            return { ...state, ...action.payload };
+        },
     },
     extraReducers: (builder) => {
         builder
-            // .addCase(checkExUser.fulfilled, (state, action) => {
-            //     console.log('액션', action.payload);
-            //     return {
-            //         ...state,
-            //         hydration: true,
-            //     };
-            // })
             .addCase(joinMembers.pending, (state, action: PayloadAction<IUser>) => {
                 return {
                     ...state,
@@ -43,15 +41,37 @@ const user = createSlice({
             .addCase(login.pending, (state, action) => {
                 return {
                     ...state,
+                    loading: true,
                 };
             })
-            .addCase(login.fulfilled, (state, action) => {
+            .addCase(login.fulfilled, (state, action: PayloadAction<IUser>) => {
                 return {
                     ...state,
+                    ...action.payload,
+                    loading: false,
+                };
+            })
+            .addCase(checkUserlogin.pending, (state, action) => {
+                return {
+                    ...state,
+                };
+            })
+            .addCase(checkUserlogin.fulfilled, (state, action: PayloadAction<IUser>) => {
+                return {
+                    ...state,
+                    ...action.payload,
+                };
+            })
+            .addCase(checkUserlogin.rejected, (state, action) => {
+                const error = action.error.code === 'ERR_BAD_REQUEST' ? false : true;
+                return {
+                    ...state,
+                    error,
+                    loading: false,
                 };
             });
     },
 });
 
-export const { togglLogin } = user.actions;
+export const { togglLogin, loading } = user.actions;
 export default user.reducer;

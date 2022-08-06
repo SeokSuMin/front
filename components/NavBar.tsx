@@ -1,10 +1,12 @@
+import { UserOutlined } from '@ant-design/icons';
+import { Avatar } from 'antd';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { togglLogin } from '../reducer/user';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import Login from './login/Login';
 
 const Wrapper = styled(motion.div)<{ path: string }>`
@@ -58,9 +60,18 @@ const Menu = styled.li`
         color: rgba(241, 231, 254, 1);
     }
     svg {
-        width: 1.875em;
-        height: 1.875em;
+        width: 1.875rem;
+        height: 1.875rem;
         fill: ${(props) => props.theme.black};
+    }
+    .ant-avatar {
+        width: 1.875rem;
+        height: 1.875rem;
+        svg {
+            margin-bottom: 0.313em;
+            width: 0.7em;
+            height: 0.7em;
+        }
     }
 `;
 
@@ -92,6 +103,7 @@ const NavBar = () => {
     const scrollArr = router.pathname === '/' ? [400, 600] : [0, 0];
     const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgba(255,255,255,1)']);
     const borderBottom = useTransform(scrollY, scrollArr, ['1px solid rgba(0,0,0,0)', '1px solid rgba(217,217,217,1)']);
+    const { userId } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const loginView = () => {
         dispatch(togglLogin({ loginVisible: true }));
@@ -122,9 +134,17 @@ const NavBar = () => {
                         </Link>
                         {router.pathname.includes('/blog') ? <Circle layoutId="active" /> : null}
                     </Menu>
-                    <Menu onClick={loginView}>
-                        <span>Login</span>
-                    </Menu>
+                    {userId ? (
+                        <Menu>
+                            <Avatar size="large" icon={<UserOutlined />} />
+
+                            {/* <img path="" /> */}
+                        </Menu>
+                    ) : (
+                        <Menu onClick={loginView}>
+                            <span>Login</span>
+                        </Menu>
+                    )}
                 </Menubar>
             </Nav>
         </Wrapper>
