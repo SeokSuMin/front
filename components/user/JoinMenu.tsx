@@ -1,15 +1,14 @@
 import { Button } from 'antd';
 import { MutableRefObject } from 'react';
-import { DeepRequired, FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
+import { DeepRequired, FieldErrorsImpl } from 'react-hook-form';
 import styled from 'styled-components';
 import XToggle from '../../public/x-Toggle.svg';
-import { ILoginInfo } from './Login';
+import { ILoginInfo } from './Login1';
 
 const Wrapper = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
 `;
 
 const FileInputBox = styled.div`
@@ -50,7 +49,6 @@ const ProfileImg = styled.div<{ imgURL: string | ArrayBuffer }>`
 `;
 
 interface IJoinMenuProps {
-    register: UseFormRegister<ILoginInfo>;
     errors: FieldErrorsImpl<DeepRequired<ILoginInfo>>;
     clickImgFileInput: () => void;
     profileImgURL: string | ArrayBuffer;
@@ -64,7 +62,7 @@ const JoinMenu = ({ clickImgFileInput, profileImgURL, inputRef, changeImgInput, 
         <Wrapper>
             <FileInputBox>
                 <Button onClick={clickImgFileInput}>이미지 선택</Button>
-                {!profileImgURL ? <span>선택된 프로필 이미지 없음.</span> : null}
+                {!profileImgURL ? <span>프로필 이미지 없음.</span> : null}
                 <input type="file" ref={inputRef} onChange={changeImgInput} hidden accept="image/*" />
             </FileInputBox>
             {profileImgURL ? (

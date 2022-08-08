@@ -1,14 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { checkExUser, checkUserlogin, joinMembers, login } from '../thunk/userThunk';
+import {
+    changePassowrd,
+    checkExUser,
+    checkUserlogin,
+    gitHubLogin,
+    joinMembers,
+    login,
+    logout,
+    searchUser,
+} from '../thunk/userThunk';
 
 export interface IUser {
     loginVisible?: boolean;
     userId?: string;
+    email?: string;
     password?: string;
     profileImg?: File | null;
     loading?: boolean;
-    error: boolean;
+    error?: boolean;
     hydration?: boolean;
+    createdAt?: string;
 }
 
 const user = createSlice({
@@ -28,6 +39,7 @@ const user = createSlice({
                 return {
                     ...state,
                     ...action.payload,
+                    loading: true,
                     hydration: false,
                 };
             })
@@ -51,6 +63,19 @@ const user = createSlice({
                     loading: false,
                 };
             })
+            .addCase(gitHubLogin.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(gitHubLogin.fulfilled, (state, action: PayloadAction<IUser>) => {
+                return {
+                    ...state,
+                    ...action.payload,
+                    loading: false,
+                };
+            })
             .addCase(checkUserlogin.pending, (state, action) => {
                 return {
                     ...state,
@@ -68,6 +93,32 @@ const user = createSlice({
                     ...state,
                     error,
                     loading: false,
+                };
+            })
+            .addCase(logout.fulfilled, (state, action) => {
+                return {
+                    ...state,
+                    userId: '',
+                    password: '',
+                    profileImg: null,
+                };
+            })
+            .addCase(searchUser.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(searchUser.fulfilled, (state, action: PayloadAction<IUser>) => {
+                return {
+                    ...state,
+                    loading: false,
+                };
+            })
+            .addCase(changePassowrd.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
                 };
             });
     },

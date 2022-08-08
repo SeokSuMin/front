@@ -1,12 +1,11 @@
 import { useScroll } from 'framer-motion';
 import { useRouter } from 'next/router';
-import path from 'path';
 import styled from 'styled-components';
 import { useAppSelector } from '../store/hooks';
 import Progress from './animation/Progress';
 import BlogLayout from './BlogLayout';
-import Login from './login/Login';
 import NavBar from './NavBar';
+import UserModalView from './user/UserModalView';
 
 const Wrapper = styled.div`
     background-color: white;
@@ -76,7 +75,7 @@ const Layout = ({ children }) => {
                 </a>
                 <h3>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 상단 개인 이미지 무단 복사를 금지합니다.</h3>
             </Footer>
-            {loginVisible ? <Login {...{ isVisible: loginVisible, scrollY: scrollY.get() }} /> : null}
+            {loginVisible ? <UserModalView {...{ isVisible: loginVisible, scrollY: scrollY.get() }} /> : null}
         </Wrapper>
     );
 };

@@ -1,5 +1,5 @@
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar } from 'antd';
+import { Avatar, Dropdown, Menu, message } from 'antd';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -7,7 +7,8 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { togglLogin } from '../reducer/user';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import Login from './login/Login';
+import { logout } from '../thunk/userThunk';
+import Login from './user/Login1';
 
 const Wrapper = styled(motion.div)<{ path: string }>`
     width: 100%;
@@ -41,7 +42,7 @@ const Menubar = styled.ul`
     /* margin-right: 6.25em; */
     color: black;
 `;
-const Menu = styled.li`
+const LiMenu = styled.li`
     height: 100%;
     margin-right: 1.25em;
     display: flex;
@@ -108,12 +109,34 @@ const NavBar = () => {
     const loginView = () => {
         dispatch(togglLogin({ loginVisible: true }));
     };
+    const userLogout = async () => {
+        try {
+            await dispatch(logout()).unwrap();
+            message.success('로그아웃 되었습니다.');
+        } catch (err) {
+            message.error(err);
+        }
+    };
+    const menu = (
+        <Menu
+            items={[
+                {
+                    key: '1',
+                    label: <span onClick={userLogout}>로그아웃</span>,
+                },
+                {
+                    key: '2',
+                    label: <span>대시보드</span>,
+                },
+            ]}
+        />
+    );
 
     return (
         <Wrapper path={router.pathname}>
             <Nav style={{ backgroundColor, borderBottom }}>
                 <Menubar>
-                    <Menu>
+                    <LiMenu>
                         <Link href="/">
                             <a>
                                 <Logo xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -121,29 +144,31 @@ const NavBar = () => {
                                 </Logo>
                             </a>
                         </Link>
-                    </Menu>
-                    <Menu className="active">
+                    </LiMenu>
+                    <LiMenu className="active">
                         <Link href="/">
                             <a>Intro</a>
                         </Link>
                         {router.pathname === '/' ? <Circle layoutId="active" /> : null}
-                    </Menu>
-                    <Menu>
+                    </LiMenu>
+                    <LiMenu>
                         <Link href="/blog">
                             <a>Blog</a>
                         </Link>
                         {router.pathname.includes('/blog') ? <Circle layoutId="active" /> : null}
-                    </Menu>
+                    </LiMenu>
                     {userId ? (
-                        <Menu>
-                            <Avatar size="large" icon={<UserOutlined />} />
+                        <LiMenu>
+                            <Dropdown overlay={menu} placement="bottomRight" arrow>
+                                <Avatar size="large" icon={<UserOutlined />} />
+                            </Dropdown>
 
                             {/* <img path="" /> */}
-                        </Menu>
+                        </LiMenu>
                     ) : (
-                        <Menu onClick={loginView}>
+                        <LiMenu onClick={loginView}>
                             <span>Login</span>
-                        </Menu>
+                        </LiMenu>
                     )}
                 </Menubar>
             </Nav>
