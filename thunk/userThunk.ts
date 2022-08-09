@@ -99,3 +99,15 @@ export const changePassowrd = createAsyncThunk(
         }
     },
 );
+
+export const updateMember = createAsyncThunk(
+    'UPDATE_MEMBER',
+    async (userInfo: IUser, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.post('/user/update', userInfo);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    },
+);

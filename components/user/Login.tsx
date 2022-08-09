@@ -153,11 +153,12 @@ interface ILoginProps {
     handleSubmit: UseFormHandleSubmit<ILoginInfo>;
     errors: FieldErrorsImpl<DeepRequired<ILoginInfo>>;
     setValue: UseFormSetValue<ILoginInfo>;
+    setError: UseFormSetError<ILoginInfo>;
     loginView: () => void;
     moveTypeView: (type: string) => void;
 }
 
-const Login = ({ register, handleSubmit, errors, setValue, loginView, moveTypeView }: ILoginProps) => {
+const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, moveTypeView }: ILoginProps) => {
     useEffect(() => {
         setValue('userId', '');
         setValue('password', '');
@@ -168,13 +169,15 @@ const Login = ({ register, handleSubmit, errors, setValue, loginView, moveTypeVi
     const state = useAppSelector((state) => state.user);
 
     const move = (type: string) => {
+        setValue('userId', '');
+        setValue('password', '');
+        setError('userId', { message: '' });
+        setError('password', { message: '' });
         moveTypeView(type);
     };
 
     const loginSubmit = async (value: ILoginInfo) => {
         try {
-            console.log(value);
-
             await dispatch(login(value)).unwrap();
             loginView();
         } catch (err) {

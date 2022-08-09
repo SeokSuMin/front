@@ -1,5 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Dispatch, SetStateAction, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
     DeepRequired,
     FieldErrorsImpl,
@@ -116,11 +116,12 @@ interface IMemberJoinProps {
     register: UseFormRegister<ILoginInfo>;
     handleSubmit: UseFormHandleSubmit<ILoginInfo>;
     errors: FieldErrorsImpl<DeepRequired<ILoginInfo>>;
+    setValue: UseFormSetValue<ILoginInfo>;
     setError: UseFormSetError<ILoginInfo>;
     moveTypeView: (type: string) => void;
 }
 
-const MemberJoin = ({ register, handleSubmit, errors, setError, moveTypeView }: IMemberJoinProps) => {
+const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTypeView }: IMemberJoinProps) => {
     const state = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const inputRef = useRef<HTMLInputElement>(null);
@@ -132,6 +133,12 @@ const MemberJoin = ({ register, handleSubmit, errors, setError, moveTypeView }: 
     const moveLoginView = () => {
         setProfileImgURL(null);
         setJoinUserId('');
+        setValue('joinUserId', '');
+        setValue('password', '');
+        setValue('password1', '');
+        setError('joinUserId', { message: '' });
+        setError('password', { message: '' });
+        setError('password1', { message: '' });
         moveTypeView('login');
     };
 
@@ -164,7 +171,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setError, moveTypeView }: 
         try {
             dispatch(loading({ loading: true }));
             await dispatch(checkExUser(userId)).unwrap();
-            setError('userId', { message: '' });
+            setError('joinUserId', { message: '' });
             setCheckIdComplate(true);
         } catch (err) {
             if (err.includes('이미 사용중인')) {

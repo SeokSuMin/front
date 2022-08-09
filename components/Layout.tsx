@@ -5,6 +5,7 @@ import { useAppSelector } from '../store/hooks';
 import Progress from './animation/Progress';
 import BlogLayout from './BlogLayout';
 import NavBar from './NavBar';
+import DashBoard from './user/DashBoard';
 import UserModalView from './user/UserModalView';
 
 const Wrapper = styled.div`
@@ -60,7 +61,7 @@ const Footer = styled.div<{ path: string }>`
 const Layout = ({ children }) => {
     const router = useRouter();
     const { scrollYProgress, scrollY } = useScroll();
-    const { loginVisible } = useAppSelector((state) => state.user);
+    const { loginVisible, dashBoardVisible } = useAppSelector((state) => state.user);
     return (
         <Wrapper>
             <Progress scrollYProgress={scrollYProgress} />
@@ -76,6 +77,7 @@ const Layout = ({ children }) => {
                 <h3>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 상단 개인 이미지 무단 복사를 금지합니다.</h3>
             </Footer>
             {loginVisible ? <UserModalView {...{ isVisible: loginVisible, scrollY: scrollY.get() }} /> : null}
+            {dashBoardVisible ? <DashBoard {...{ isVisible: dashBoardVisible, scrollY: scrollY.get() }} /> : null}
         </Wrapper>
     );
 };

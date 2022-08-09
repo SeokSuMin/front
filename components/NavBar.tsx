@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { togglLogin } from '../reducer/user';
+import { fileBackUrl } from '../config';
+import { togglDashBoard, togglLogin } from '../reducer/user';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../thunk/userThunk';
-import Login from './user/Login1';
 
 const Wrapper = styled(motion.div)<{ path: string }>`
     width: 100%;
@@ -74,6 +74,11 @@ const LiMenu = styled.li`
             height: 0.7em;
         }
     }
+    span.profileImg img {
+        width: 1.875rem;
+        height: 1.875rem;
+        border-radius: 50%;
+    }
 `;
 
 const Circle = styled(motion.span)`
@@ -104,10 +109,14 @@ const NavBar = () => {
     const scrollArr = router.pathname === '/' ? [400, 600] : [0, 0];
     const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgba(255,255,255,1)']);
     const borderBottom = useTransform(scrollY, scrollArr, ['1px solid rgba(0,0,0,0)', '1px solid rgba(217,217,217,1)']);
-    const { userId } = useAppSelector((state) => state.user);
+    const { userId, imgPath, strategyType } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
+
     const loginView = () => {
         dispatch(togglLogin({ loginVisible: true }));
+    };
+    const dashBoardView = () => {
+        dispatch(togglDashBoard({ dashBoardVisible: true }));
     };
     const userLogout = async () => {
         try {
@@ -117,6 +126,7 @@ const NavBar = () => {
             message.error(err);
         }
     };
+
     const menu = (
         <Menu
             items={[
@@ -126,7 +136,7 @@ const NavBar = () => {
                 },
                 {
                     key: '2',
-                    label: <span>대시보드</span>,
+                    label: <span onClick={dashBoardView}>대시보드</span>,
                 },
             ]}
         />
@@ -160,10 +170,14 @@ const NavBar = () => {
                     {userId ? (
                         <LiMenu>
                             <Dropdown overlay={menu} placement="bottomRight" arrow>
-                                <Avatar size="large" icon={<UserOutlined />} />
+                                {imgPath ? (
+                                    <span className="profileImg">
+                                        <img src={strategyType === 'local' ? fileBackUrl + imgPath : imgPath} />
+                                    </span>
+                                ) : (
+                                    <Avatar size="large" icon={<UserOutlined />} />
+                                )}
                             </Dropdown>
-
-                            {/* <img path="" /> */}
                         </LiMenu>
                     ) : (
                         <LiMenu onClick={loginView}>

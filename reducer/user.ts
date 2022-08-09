@@ -8,25 +8,32 @@ import {
     login,
     logout,
     searchUser,
+    updateMember,
 } from '../thunk/userThunk';
 
 export interface IUser {
     loginVisible?: boolean;
+    dashBoardVisible?: boolean;
     userId?: string;
     email?: string;
     password?: string;
+    strategyType?: string;
     profileImg?: File | null;
+    imgPath?: string;
     loading?: boolean;
     error?: boolean;
-    hydration?: boolean;
     createdAt?: string;
+    hydration?: boolean;
 }
 
 const user = createSlice({
     name: 'user',
-    initialState: { loginVisible: false } as IUser,
+    initialState: { loginVisible: false, dashBoardVisible: false } as IUser,
     reducers: {
         togglLogin: (state, action: PayloadAction<IUser>) => {
+            return { ...state, ...action.payload };
+        },
+        togglDashBoard: (state, action: PayloadAction<IUser>) => {
             return { ...state, ...action.payload };
         },
         loading: (state, action: PayloadAction<IUser>) => {
@@ -100,7 +107,7 @@ const user = createSlice({
                     ...state,
                     userId: '',
                     password: '',
-                    profileImg: null,
+                    imgPath: null,
                 };
             })
             .addCase(searchUser.pending, (state, action) => {
@@ -120,9 +127,22 @@ const user = createSlice({
                     ...state,
                     loading: true,
                 };
+            })
+            .addCase(updateMember.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(updateMember.fulfilled, (state, action: PayloadAction<IUser>) => {
+                return {
+                    ...state,
+                    ...action.payload,
+                    loading: false,
+                };
             });
     },
 });
 
-export const { togglLogin, loading } = user.actions;
+export const { togglLogin, togglDashBoard, loading } = user.actions;
 export default user.reducer;

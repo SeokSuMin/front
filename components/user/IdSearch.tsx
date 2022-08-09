@@ -146,12 +146,16 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
 
     const changeSubmit = async (value: ILoginInfo) => {
         try {
-            console.log(value);
             if (value.password !== value.password1) {
                 setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
             } else {
                 dispatch(changePassowrd({ userId: user.userId, password: value.password }));
                 message.success('비밀번호가 변경 되었습니다.');
+                setValue('password', '');
+                setValue('password1', '');
+                setError('password', { message: '' });
+                setError('password1', { message: '' });
+                moveTypeView('login');
             }
         } catch (err) {
             console.log(err);

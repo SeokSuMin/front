@@ -79,15 +79,6 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
         dispatch(togglLogin({ loginVisible: false }));
     };
     const moveTypeView = (type: string) => {
-        setValue('userId', '');
-        setValue('joinUserId', '');
-        setValue('email', '');
-        setValue('password', '');
-        setValue('password1', '');
-        setError('userId', { message: '' });
-        setError('joinUserId', { message: '' });
-        setError('password', { message: '' });
-        setError('password1', { message: '' });
         setViewType(type);
     };
 
@@ -111,10 +102,12 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
                         </Close>
                         <Content>
                             {viewType === 'login' ? (
-                                <Login {...{ register, handleSubmit, errors, setValue, loginView, moveTypeView }} />
+                                <Login
+                                    {...{ register, handleSubmit, errors, setValue, setError, loginView, moveTypeView }}
+                                />
                             ) : null}
                             {viewType === 'join' ? (
-                                <MemberJoin {...{ register, handleSubmit, errors, setError, moveTypeView }} />
+                                <MemberJoin {...{ register, handleSubmit, errors, setValue, setError, moveTypeView }} />
                             ) : null}
                             {viewType === 'search' ? (
                                 <IdSearch {...{ register, handleSubmit, errors, setValue, setError, moveTypeView }} />
