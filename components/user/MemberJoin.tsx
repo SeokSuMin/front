@@ -26,7 +26,7 @@ const Wrapper = styled.div`
         width: 100%;
         height: 2.063rem;
         font-size: 0.875rem;
-        margin: 1.25em 0px;
+        margin-bottom: 0.938em;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -53,18 +53,24 @@ const JoinText = styled.div`
 
 const LoginForm = styled.form`
     width: 100%;
+    div {
+        position: relative;
+        margin-bottom: 0.938em;
+        display: flex;
+        align-items: center;
+    }
     input {
         width: 100%;
-        padding: 0.313em 0.625em;
-        border: 0.063rem solid rgb(217, 217, 217);
-        border-radius: 0.126em;
+        font-size: 0.875rem;
+        padding-bottom: 0.214em;
+        border: none;
+        border-bottom: 0.0625rem solid black;
     }
     input:focus {
         outline: none;
-        box-shadow: 0.063em 0.063em 0.063em 0.063em rgb(209, 233, 255);
-        border: 0.063rem solid rgb(64, 169, 255);
     }
     input::placeholder {
+        font-size: 0.75rem;
         color: rgb(197, 193, 208);
     }
 
@@ -72,10 +78,12 @@ const LoginForm = styled.form`
         font-size: 0.75rem;
         color: rgb(160, 160, 160);
     }
-
     span.userId,
     span.password,
     span.email {
+        position: absolute;
+        top: 1.3rem;
+        left: 0px;
         font-size: 0.688rem;
         display: flex;
         align-items: center;
@@ -93,13 +101,14 @@ const IdInputBox = styled.div`
     display: flex;
     justify-content: center;
     position: relative;
+    margin-bottom: 0px !important;
     .anticon-spin {
         display: flex;
         justify-content: center;
         align-items: center;
         position: absolute;
-        top: 0.8em;
-        right: 0.7em;
+        top: 0.5em;
+        right: 0.3em;
     }
 `;
 
@@ -133,13 +142,14 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
     const moveLoginView = () => {
         setProfileImgURL(null);
         setJoinUserId('');
-        setValue('joinUserId', '');
+        setValue('userId', '');
         setValue('password', '');
         setValue('password1', '');
-        setError('joinUserId', { message: '' });
+        setError('userId', { message: '', type: 'custom' });
         setError('password', { message: '' });
         setError('password1', { message: '' });
         moveTypeView('login');
+        console.log('register', register('userId', {}));
     };
 
     const clickImgFileInput = () => {
@@ -167,25 +177,28 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
         setProfileImgURL(null);
     };
 
-    const checkUserId = async (userId: string) => {
+    const checkUserId = async (prevUserId: string, newUserId: string) => {
         try {
-            dispatch(loading({ loading: true }));
-            await dispatch(checkExUser(userId)).unwrap();
-            setError('joinUserId', { message: '' });
-            setCheckIdComplate(true);
+            console.log('여기?', prevUserId, newUserId);
+            if (newUserId !== '' && prevUserId !== newUserId) {
+                dispatch(loading({ loading: true }));
+                await dispatch(checkExUser(newUserId)).unwrap();
+                console.log('사용가능!');
+                setError('userId', { message: '' });
+                setCheckIdComplate(() => true);
+            }
         } catch (err) {
             if (err.includes('이미 사용중인')) {
-                setError(
-                    'joinUserId',
-                    { type: 'custom', message: '이미 사용중인 아이디 입니다.' },
-                    { shouldFocus: true },
-                );
+                setError('userId', { message: '이미 사용중인 아이디 입니다.?' }, { shouldFocus: true });
             } else {
                 message.error(err);
             }
-            setCheckIdComplate(false);
+            setCheckIdComplate(() => false);
         } finally {
-            setJoinUserId(userId);
+            // if (!checkIdComplate && prevUserId !== '') {
+            //     setError('userId', { message: '이미 사용중인 아이디 입니다.' }, { shouldFocus: true });
+            // }
+            setJoinUserId(newUserId);
             dispatch(loading({ loading: false }));
         }
     };
@@ -197,7 +210,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                     setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
                 } else {
                     const userInfoObj = {
-                        userId: value.joinUserId,
+                        userId: value.userId,
                         email: value.email,
                         password: value.password,
                         profileImg: null,
@@ -212,17 +225,13 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                     }
                     const memberJoinResult = await dispatch(joinMembers(userInfoObj)).unwrap();
                     if (memberJoinResult) {
-                        message.success('가입이 완료되었습니다.');
-                        setCheckIdComplate(false);
                         moveLoginView();
+                        setCheckIdComplate(false);
+                        message.success('가입이 완료되었습니다.');
                     }
                 }
             } else {
-                setError(
-                    'joinUserId',
-                    { type: 'custom', message: '이미 사용중인 아이디 입니다.' },
-                    { shouldFocus: true },
-                );
+                setError('userId', { message: '이미 사용중인 아이디 입니다.' }, { shouldFocus: true });
             }
         } catch (err) {
             message.error(err);
@@ -237,42 +246,50 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                 <h1>JOIN MEMBER</h1>
             </JoinText>
             <LoginForm onSubmit={handleSubmit(joinSubmit)}>
-                <IdInputBox>
+                <div>
+                    <IdInputBox>
+                        <input
+                            {...register('userId', {
+                                required: '아이디는 필수 입니다.',
+                                onBlur: (e: React.FormEvent<HTMLInputElement>) => {
+                                    // 기존 유효성 통과된 아이디와 다르거나 공백이 아닐때
+                                    console.log('블라블라');
+                                    if (e.currentTarget.value !== joinUserId && e.currentTarget.value.length !== 0) {
+                                        return checkUserId(joinUserId, e.currentTarget.value);
+                                    }
+                                },
+                            })}
+                            type="text"
+                            placeholder="아이디"
+                        />
+                        {!checkIdComplate && state.loading ? <LoadingOutlined /> : null}
+                    </IdInputBox>
+                    <span className="userId">{errors?.userId?.message}</span>
+                </div>
+                <div>
+                    <input {...register('email', {})} type="text" placeholder="이메일 (필수x)" />
+                    <span className="email">계정 정보를 찾을때 사용됩니다.</span>
+                </div>
+                <div>
                     <input
-                        {...register('joinUserId', {
-                            required: '아이디는 필수 입니다.',
-                            onBlur: (e: React.FormEvent<HTMLInputElement>) => {
-                                // 기존 유효성 통과된 아이디와 다르거나 공백이 아닐때
-                                if (e.currentTarget.value !== joinUserId && e.currentTarget.value.length !== 0) {
-                                    return checkUserId(e.currentTarget.value);
-                                }
-                            },
+                        {...register('password', {
+                            required: '비밀번호는 필수 입니다.',
                         })}
-                        type="text"
-                        placeholder="아이디"
+                        type="password"
+                        placeholder="비밀번호"
                     />
-                    {!checkIdComplate && state.loading ? <LoadingOutlined /> : null}
-                </IdInputBox>
-                <span className="userId">{errors?.joinUserId?.message}</span>
-
-                <input {...register('email', {})} type="text" placeholder="이메일 (필수x)" />
-                <span className="email">계정 정보를 찾을때 사용됩니다.</span>
-                <input
-                    {...register('password', {
-                        required: '비밀번호는 필수 입니다.',
-                    })}
-                    type="password"
-                    placeholder="비밀번호"
-                />
-                <span className="password">{errors?.password?.message}</span>
-                <input
-                    {...register('password1', {
-                        required: '비밀번호는 확인란은 필수 입니다.',
-                    })}
-                    type="password"
-                    placeholder="비밀번호 확인"
-                />
-                <span className="password">{errors?.password1?.message}</span>
+                    <span className="password">{errors?.password?.message}</span>
+                </div>
+                <div>
+                    <input
+                        {...register('password1', {
+                            required: '비밀번호는 확인란은 필수 입니다.',
+                        })}
+                        type="password"
+                        placeholder="비밀번호 확인"
+                    />
+                    <span className="password">{errors?.password1?.message}</span>
+                </div>
                 <JoinMenu
                     {...{
                         errors,

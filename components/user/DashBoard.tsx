@@ -1,16 +1,16 @@
-import { Button, message } from 'antd';
+import { Alert, Button, message } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import XToggle from '../../public/x-Toggle.svg';
-import { togglDashBoard } from '../../reducer/user';
+import { togglDashBoard, togglLogin } from '../../reducer/user';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import * as path from 'path';
 import dayjs from 'dayjs';
 import { rlto } from '../../util';
-import { updateMember } from '../../thunk/userThunk';
+import { changePassowrd, updateMember, logout } from '../../thunk/userThunk';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -64,6 +64,7 @@ const DashBoardText = styled.div`
 const DashBoardBox = styled.div`
     width: 100%;
     display: flex;
+    justify-content: center;
 `;
 const PropfileImgBox = styled.div`
     width: 30%;
@@ -75,19 +76,20 @@ const PropfileImgBox = styled.div`
         height: 5rem;
         border-radius: 50%;
     }
-    button {
+    .imageBtn {
         padding: 0px 0.357em;
         font-size: 0.75rem;
         height: 1.5rem;
-        margin-top: 0.938em;
+        margin-top: 1em;
     }
 `;
 
-const DashBoardForm = styled.form`
+const DashBoardForm = styled.form<{ mode: string }>`
     width: 70%;
     padding: 0px 1.5em;
-    div {
-        margin-bottom: 0.625em;
+    div:not(:last-of-type) {
+        position: relative;
+        margin-bottom: 0.938em;
         display: flex;
         align-items: center;
     }
@@ -110,6 +112,17 @@ const DashBoardForm = styled.form`
         font-size: 0.75rem;
         color: rgb(197, 193, 208);
     }
+    span.password {
+        position: absolute;
+        top: 1.3rem;
+        left: 2.9rem;
+        font-size: 0.688rem;
+        display: flex;
+        align-items: center;
+        width: 80%;
+        height: 1.125rem;
+        color: red;
+    }
 `;
 
 const ButtonBox = styled.div`
@@ -117,17 +130,18 @@ const ButtonBox = styled.div`
     margin-top: 1.5em;
     button {
         font-size: 0.875rem;
-        padding: 0.5em;
+        padding: 0.4em;
         color: white;
         cursor: pointer;
+        margin-top: 1.25em;
     }
-    button:first-child {
+    button.passwordBtn {
         margin-right: 0.625em;
         background-color: transparent;
-        color: rgb(255, 77, 79);
-        border: 1px solid rgb(255, 77, 79);
+        color: rgb(24, 144, 255);
+        border: 1px solid rgb(24, 144, 255);
     }
-    button:nth-child(2) {
+    button.save {
         background-color: rgb(24, 144, 255);
         border: 1px solid rgb(24, 144, 255);
     }
@@ -148,8 +162,11 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const user = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
-    const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(fileBackUrl + user.imgPath);
+    const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(
+        user.imgPath ? fileBackUrl + user.imgPath : '',
+    );
     const [extName, setExtName] = useState<string>(null);
+    const [viewMode, setViewMode] = useState('user');
     const {
         register,
         handleSubmit,
@@ -159,6 +176,8 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
     } = useForm<IUserInfo>({
         defaultValues: {
             email: user.email,
+            password: '',
+            password1: '',
         },
     });
     const dashBoardView = () => {
@@ -187,27 +206,56 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
         e.target.value = '';
     };
 
+    const changeViewMode = () => {
+        if (viewMode === 'user') {
+            setViewMode('password');
+            setValue('password', '');
+            setValue('password1', '');
+            setError('password', { message: '' });
+            setError('password1', { message: '' });
+        } else {
+            setViewMode('user');
+            setValue('email', user.email);
+        }
+    };
+
     const dashBoardSubmit = async (value: IUserInfo) => {
         try {
-            if (value.password !== value.password1) {
-                setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
-            } else {
+            if (viewMode === 'user') {
                 const userInfoObj = {
                     userId: user.userId,
                     email: value.email,
-                    password: value.password,
                     profileImg: null,
+                    imgPath: null,
                 };
-                if (profileImgURL) {
+
+                if (profileImgURL !== fileBackUrl + user.imgPath) {
                     const fileName =
                         dayjs().valueOf() + (profileImgURL as string).slice(-8).replace(/\//g, '') + `${extName}`;
                     const convertIamgeFile = await rlto(profileImgURL as string, fileName, {
                         type: 'image/png',
                     });
                     userInfoObj.profileImg = convertIamgeFile;
+                } else {
+                    userInfoObj.imgPath = user.imgPath;
                 }
+
                 await dispatch(updateMember(userInfoObj)).unwrap();
                 message.success('저장되었습니다.');
+            } else {
+                if (value.password !== value.password1) {
+                    setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
+                } else {
+                    const userInfoObj = {
+                        userId: user.userId,
+                        password: value.password,
+                    };
+                    await dispatch(changePassowrd(userInfoObj)).unwrap();
+                    message.success('비밀번호가 변경되어 자동 로그아웃 합니다.');
+                    await dispatch(logout()).unwrap();
+                    dispatch(togglDashBoard({ dashBoardVisible: false }));
+                    dispatch(togglLogin({ loginVisible: true }));
+                }
             }
         } catch (err) {
             message.error(err);
@@ -236,48 +284,65 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                             <h1>DASH BOARD</h1>
                         </DashBoardText>
                         <DashBoardBox>
-                            <PropfileImgBox>
-                                <span>
-                                    <img src={profileImgURL as string}></img>
-                                </span>
-                                <Button onClick={clickImgFileInput}>이미지 변경</Button>
-                            </PropfileImgBox>
-                            <DashBoardForm onSubmit={handleSubmit(dashBoardSubmit)}>
-                                <div>
-                                    <label>ID</label>
-                                    <span>{user.userId}</span>
-                                </div>
-                                <div>
-                                    <label>EMAIL</label>
-                                    <input {...register('email', {})} type="text" placeholder="선택사항" />
-                                </div>
-                                <div>
-                                    <label>PW</label>
-                                    <input {...register('email', {})} type="text" placeholder="PASSWORD" />
-                                </div>
-                                <div>
-                                    <label>RE_PW</label>
-                                    <input {...register('email', {})} type="text" placeholder="RE PASSWORD" />
-                                </div>
-                                {/* <input
-                                    {...register('password', {
-                                        required: '비밀번호는 필수 입니다.',
-                                    })}
-                                    type="password"
-                                    placeholder="비밀번호"
-                                />
-                                <span className="password">{errors?.password?.message}</span>
-                                <input
-                                    {...register('password1', {
-                                        required: '확인란은 필수 입니다.',
-                                    })}
-                                    type="password"
-                                    placeholder="비밀번호 확인"
-                                />
-                                <span className="password">{errors?.password1?.message}</span> */}
+                            {viewMode === 'user' ? (
+                                <PropfileImgBox>
+                                    <span>
+                                        <img src={profileImgURL as string}></img>
+                                    </span>
+                                    <Button className="imageBtn" onClick={clickImgFileInput}>
+                                        이미지 변경
+                                    </Button>
+                                </PropfileImgBox>
+                            ) : null}
+                            <DashBoardForm mode={viewMode} onSubmit={handleSubmit(dashBoardSubmit)}>
+                                {viewMode === 'user' ? (
+                                    <>
+                                        <div>
+                                            <label>ID</label>
+                                            <span>{user.userId}</span>
+                                        </div>
+                                        <div>
+                                            <label>EMAIL</label>
+                                            <input {...register('email', {})} type="text" placeholder="선택사항" />
+                                        </div>
+                                        <div>
+                                            <label>REGIST</label>
+                                            <span>{dayjs(user.createdAt).format('YYYY. MM. DD HH:mm')}</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div>
+                                            <label>PW</label>
+                                            <input
+                                                {...register('password', {
+                                                    required: '비밀번호는 필수 입니다.',
+                                                })}
+                                                type="password"
+                                                placeholder="비밀번호"
+                                            />
+                                            <span className="password">{errors?.password?.message}</span>
+                                        </div>
+                                        <div>
+                                            <label>RE_PW</label>
+                                            <input
+                                                {...register('password1', {
+                                                    required: '확인란은 필수 입니다.',
+                                                })}
+                                                type="password"
+                                                placeholder="비밀번호 확인"
+                                            />
+                                            <span className="password">{errors?.password1?.message}</span>
+                                        </div>
+                                    </>
+                                )}
                                 <ButtonBox>
-                                    <button type="button">계정탈퇴</button>
-                                    <button type="submit">저장</button>
+                                    <button onClick={changeViewMode} className="passwordBtn" type="button">
+                                        {viewMode === 'user' ? '비밀번호 변경' : '돌아가기'}
+                                    </button>
+                                    <button className="save" type="submit">
+                                        저장
+                                    </button>
                                 </ButtonBox>
                             </DashBoardForm>
                         </DashBoardBox>

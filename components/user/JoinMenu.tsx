@@ -3,16 +3,18 @@ import { MutableRefObject } from 'react';
 import { DeepRequired, FieldErrorsImpl } from 'react-hook-form';
 import styled from 'styled-components';
 import XToggle from '../../public/x-Toggle.svg';
-import { ILoginInfo } from './Login1';
+import { ILoginInfo } from './UserModalView';
 
 const Wrapper = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
+    margin: 1.25em 0px !important;
 `;
 
 const FileInputBox = styled.div`
-    width: 80%;
+    width: 100%;
+    margin-bottom: 0px !important;
     display: flex;
     align-items: center;
     font-size: 0.75rem;
@@ -28,10 +30,15 @@ const FileInputBox = styled.div`
 `;
 
 const ProfileImgBox = styled.div`
-    width: 80%;
+    width: 100%;
     padding: 0.625em 0;
     display: flex;
+    margin-bottom: 0px !important;
+    position: relative;
     svg {
+        position: absolute;
+        top: 0.5em;
+        left: 3.8em;
         width: 0.9rem;
         height: 0.9rem;
     }
@@ -46,6 +53,7 @@ const ProfileImg = styled.div<{ imgURL: string | ArrayBuffer }>`
     background-repeat: no-repeat;
     border-radius: 50%;
     border: 0.063rem solid rgb(217, 217, 217);
+    margin-bottom: 0px !important;
 `;
 
 interface IJoinMenuProps {

@@ -12,7 +12,7 @@ import {
 import { ILoginInfo } from './UserModalView';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { checkExUser, login } from '../../thunk/userThunk';
+import { login } from '../../thunk/userThunk';
 import { message } from 'antd';
 import { loading } from '../../reducer/user';
 
@@ -40,7 +40,6 @@ const LoginText = styled.div`
     padding-bottom: 1.563em;
     font-size: 1.25rem;
     font-weight: bold;
-    font-style: italic;
     div {
         display: flex;
         width: 80%;
@@ -50,19 +49,25 @@ const LoginText = styled.div`
 
 const LoginForm = styled.form`
     width: 100%;
+    div {
+        position: relative;
+        margin-bottom: 0.938em;
+        display: flex;
+        align-items: center;
+    }
 
     input {
         width: 100%;
-        padding: 0.313em 0.625em;
-        border: 0.063rem solid rgb(217, 217, 217);
-        border-radius: 0.126em;
+        font-size: 0.875rem;
+        padding-bottom: 0.214em;
+        border: none;
+        border-bottom: 0.0625rem solid black;
     }
     input:focus {
         outline: none;
-        box-shadow: 0.063em 0.063em 0.063em 0.063em rgb(209, 233, 255);
-        border: 0.063rem solid rgb(64, 169, 255);
     }
     input::placeholder {
+        font-size: 0.75rem;
         color: rgb(197, 193, 208);
     }
 
@@ -73,6 +78,9 @@ const LoginForm = styled.form`
 
     span.userId,
     span.password {
+        position: absolute;
+        top: 1.3rem;
+        left: 0px;
         font-size: 0.688rem;
         display: flex;
         align-items: center;
@@ -171,6 +179,7 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
     const move = (type: string) => {
         setValue('userId', '');
         setValue('password', '');
+        setValue('email', '');
         setError('userId', { message: '' });
         setError('password', { message: '' });
         moveTypeView(type);
@@ -180,6 +189,7 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
         try {
             await dispatch(login(value)).unwrap();
             loginView();
+            message.success(value.userId + '님 환영합니다!');
         } catch (err) {
             message.error(err);
         } finally {
@@ -187,29 +197,37 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
         }
     };
 
+    // useEffect(() => {
+    //     // hook 버그인지 에러 메시지 초기화가 안됨
+    //     console.log('message', errors?.userId?.message);
+    // });
+
     return (
         <Wrapper>
             <LoginText>
                 <h1>GUEST LOGIN</h1>
             </LoginText>
             <LoginForm onSubmit={handleSubmit(loginSubmit)}>
-                <input
-                    {...register('userId', {
-                        required: '아이디는 필수 입니다.',
-                    })}
-                    type="text"
-                    placeholder="아이디"
-                />
-                <span className="userId">{errors?.userId?.message}</span>
-                <input
-                    {...register('password', {
-                        required: '비밀번호는 필수 입니다.',
-                    })}
-                    type="password"
-                    placeholder="비밀번호"
-                />
-                <span className="password">{errors?.password?.message}</span>
-
+                <div>
+                    <input
+                        {...register('userId', {
+                            required: '아이디는 필수 입니다.',
+                        })}
+                        type="text"
+                        placeholder="아이디"
+                    />
+                    <span className="userId">{errors?.userId?.message}</span>
+                </div>
+                <div>
+                    <input
+                        {...register('password', {
+                            required: '비밀번호는 필수 입니다.',
+                        })}
+                        type="password"
+                        placeholder="비밀번호"
+                    />
+                    <span className="password">{errors?.password?.message}</span>
+                </div>
                 <button disabled={state.loading} type="submit">
                     Login
                 </button>

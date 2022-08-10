@@ -26,7 +26,6 @@ const SearchText = styled.div`
     padding-bottom: 1.563em;
     font-size: 1.25rem;
     font-weight: bold;
-    font-style: italic;
     div {
         display: flex;
         width: 80%;

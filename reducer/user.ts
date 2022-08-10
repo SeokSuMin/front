@@ -108,6 +108,7 @@ const user = createSlice({
                     userId: '',
                     password: '',
                     imgPath: null,
+                    loading: false,
                 };
             })
             .addCase(searchUser.pending, (state, action) => {

@@ -102,9 +102,14 @@ export const changePassowrd = createAsyncThunk(
 
 export const updateMember = createAsyncThunk(
     'UPDATE_MEMBER',
-    async (userInfo: IUser, { getState, requestId, rejectWithValue }) => {
+    async (memberInfo: IUser, { getState, requestId, rejectWithValue }) => {
         try {
-            const response = await axios.post('/user/update', userInfo);
+            const formData = new FormData();
+            formData.append('userId', memberInfo.userId);
+            formData.append('email', memberInfo.email);
+            formData.append('imgPath', memberInfo.imgPath);
+            formData.append('file', memberInfo.profileImg);
+            const response = await axios.post('/user/update', formData);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);

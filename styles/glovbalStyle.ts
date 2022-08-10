@@ -82,6 +82,13 @@ const GlobalStyle = createGlobalStyle`
         height: 40% !important;
         width: 9.375rem !important;
     }
+    .ant-dropdown-menu-item {
+        padding: 0px;
+        div {
+            padding: 5px 10px;
+        }
+
+    }
 `;
 
 export default GlobalStyle;

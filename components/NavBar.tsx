@@ -95,7 +95,6 @@ const Circle = styled(motion.span)`
 
 const navVariants = {
     top: (custom: string) => {
-        console.log('custom', custom);
         return {
             backgroundColor: custom === '/' ? 'rgba(0, 0, 0, 0)' : 'rgba(213, 184, 255, 0.9)',
         };
@@ -132,11 +131,15 @@ const NavBar = () => {
             items={[
                 {
                     key: '1',
-                    label: <span onClick={userLogout}>로그아웃</span>,
+                    label: <div onClick={userLogout}>로그아웃</div>,
                 },
                 {
                     key: '2',
-                    label: <span onClick={dashBoardView}>대시보드</span>,
+                    label: <div onClick={dashBoardView}>대시보드</div>,
+                },
+                {
+                    key: '3',
+                    label: <div>계정탈퇴</div>,
                 },
             ]}
         />
