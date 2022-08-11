@@ -50,15 +50,6 @@ export const login = createAsyncThunk('LOGIN', async (userInfo: IUser, { getStat
     }
 });
 
-export const gitHubLogin = createAsyncThunk('GITHUB_LOGIN', async (_, { getState, requestId, rejectWithValue }) => {
-    try {
-        const response = await axios.get('/user/github/login');
-        return response.data;
-    } catch (err) {
-        return rejectWithValue(err.response.data);
-    }
-});
-
 export const checkUserlogin = createAsyncThunk(
     'CHECK_USER_LOGIN',
     async (_, { getState, requestId, rejectWithValue }) => {
@@ -80,7 +71,7 @@ export const searchUser = createAsyncThunk(
     'SEARCH_USER',
     async (email: string, { getState, requestId, rejectWithValue }) => {
         try {
-            const response = await axios.post('/user/search', { email });
+            const response = await axios.get(`/user/${email}`);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -109,8 +100,20 @@ export const updateMember = createAsyncThunk(
             formData.append('email', memberInfo.email);
             formData.append('imgPath', memberInfo.imgPath);
             formData.append('file', memberInfo.profileImg);
-            const response = await axios.post('/user/update', formData);
+            const response = await axios.patch('/user/update', formData);
             return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    },
+);
+
+export const deleteMember = createAsyncThunk(
+    'DELETE_MEMBER',
+    async (userId: string, { getState, requestId, rejectWithValue }) => {
+        try {
+            await axios.delete(`/user/${userId}`);
+            return true;
         } catch (err) {
             return rejectWithValue(err.response.data);
         }

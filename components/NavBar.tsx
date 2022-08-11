@@ -1,5 +1,5 @@
-import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Menu, message } from 'antd';
+import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Button, Dropdown, Menu, message, Modal } from 'antd';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { fileBackUrl } from '../config';
 import { togglDashBoard, togglLogin } from '../reducer/user';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { logout } from '../thunk/userThunk';
+import { deleteMember, logout } from '../thunk/userThunk';
 
 const Wrapper = styled(motion.div)<{ path: string }>`
     width: 100%;
@@ -102,6 +102,18 @@ const navVariants = {
     scroll: { backgroundColor: 'rgba(213, 184, 255, 0.9)' },
 };
 
+const config = {
+    title: '계정탈퇴!',
+    content: (
+        <>
+            <p>계정 탈퇴시 모든 정보가 삭제됩니다.</p>
+            <p>등록된 계정을 탈퇴하시겠습니까?</p>
+        </>
+    ),
+};
+
+const { confirm } = Modal;
+
 const NavBar = () => {
     const router = useRouter();
     const { scrollY } = useScroll();
@@ -126,6 +138,27 @@ const NavBar = () => {
         }
     };
 
+    const showConfirm = () => {
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            title: '계정탈퇴',
+            content: <p>모든 정보를 삭제하고 계정을 탈퇴하시겠습니까?</p>,
+            okText: '탈퇴',
+            cancelText: '취소',
+            async onOk() {
+                try {
+                    await dispatch(deleteMember(userId));
+                    message.success('탈퇴되었습니다.');
+                } catch (err) {
+                    message.success(err);
+                }
+            },
+            onCancel() {
+                // Modal.destroyAll();
+            },
+        });
+    };
+
     const menu = (
         <Menu
             items={[
@@ -139,7 +172,7 @@ const NavBar = () => {
                 },
                 {
                     key: '3',
-                    label: <div>계정탈퇴</div>,
+                    label: <div onClick={showConfirm}>계정탈퇴</div>,
                 },
             ]}
         />

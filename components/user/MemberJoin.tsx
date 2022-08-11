@@ -131,11 +131,11 @@ interface IMemberJoinProps {
 }
 
 const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTypeView }: IMemberJoinProps) => {
+    const joinButton = useRef<HTMLButtonElement>(null);
     const state = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const inputRef = useRef<HTMLInputElement>(null);
     const [joinUserId, setJoinUserId] = useState('');
-    const [checkIdComplate, setCheckIdComplate] = useState(false);
     const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(null);
     const [extName, setExtName] = useState<string>(null);
 
@@ -145,11 +145,10 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
         setValue('userId', '');
         setValue('password', '');
         setValue('password1', '');
-        setError('userId', { message: '', type: 'custom' });
+        setError('userId', { message: '' });
         setError('password', { message: '' });
         setError('password1', { message: '' });
         moveTypeView('login');
-        console.log('register', register('userId', {}));
     };
 
     const clickImgFileInput = () => {
@@ -177,35 +176,26 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
         setProfileImgURL(null);
     };
 
-    const checkUserId = async (prevUserId: string, newUserId: string) => {
+    const checkUserId = async (userId: string) => {
         try {
-            console.log('여기?', prevUserId, newUserId);
-            if (newUserId !== '' && prevUserId !== newUserId) {
-                dispatch(loading({ loading: true }));
-                await dispatch(checkExUser(newUserId)).unwrap();
-                console.log('사용가능!');
-                setError('userId', { message: '' });
-                setCheckIdComplate(() => true);
-            }
+            dispatch(loading({ loading: true }));
+            await dispatch(checkExUser(userId)).unwrap();
+            setError('userId', { message: '' });
+            return true;
         } catch (err) {
             if (err.includes('이미 사용중인')) {
-                setError('userId', { message: '이미 사용중인 아이디 입니다.?' }, { shouldFocus: true });
+                return false;
             } else {
                 message.error(err);
             }
-            setCheckIdComplate(() => false);
         } finally {
-            // if (!checkIdComplate && prevUserId !== '') {
-            //     setError('userId', { message: '이미 사용중인 아이디 입니다.' }, { shouldFocus: true });
-            // }
-            setJoinUserId(newUserId);
             dispatch(loading({ loading: false }));
         }
     };
 
     const joinSubmit = async (value: ILoginInfo) => {
         try {
-            if (checkIdComplate) {
+            if (joinUserId !== value.userId && (await checkUserId(value.userId))) {
                 if (value.password !== value.password1) {
                     setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
                 } else {
@@ -226,11 +216,11 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                     const memberJoinResult = await dispatch(joinMembers(userInfoObj)).unwrap();
                     if (memberJoinResult) {
                         moveLoginView();
-                        setCheckIdComplate(false);
                         message.success('가입이 완료되었습니다.');
                     }
                 }
             } else {
+                setJoinUserId(value.userId);
                 setError('userId', { message: '이미 사용중인 아이디 입니다.' }, { shouldFocus: true });
             }
         } catch (err) {
@@ -251,18 +241,10 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                         <input
                             {...register('userId', {
                                 required: '아이디는 필수 입니다.',
-                                onBlur: (e: React.FormEvent<HTMLInputElement>) => {
-                                    // 기존 유효성 통과된 아이디와 다르거나 공백이 아닐때
-                                    console.log('블라블라');
-                                    if (e.currentTarget.value !== joinUserId && e.currentTarget.value.length !== 0) {
-                                        return checkUserId(joinUserId, e.currentTarget.value);
-                                    }
-                                },
                             })}
                             type="text"
                             placeholder="아이디"
                         />
-                        {!checkIdComplate && state.loading ? <LoadingOutlined /> : null}
                     </IdInputBox>
                     <span className="userId">{errors?.userId?.message}</span>
                 </div>
@@ -300,7 +282,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                         deleteProfileImg,
                     }}
                 />
-                <button disabled={state.loading} className="join" type="submit">
+                <button ref={joinButton} disabled={state.loading} className="join" type="submit">
                     가입하기
                 </button>
             </LoginForm>

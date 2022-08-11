@@ -167,12 +167,8 @@ interface ILoginProps {
 }
 
 const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, moveTypeView }: ILoginProps) => {
-    useEffect(() => {
-        setValue('userId', '');
-        setValue('password', '');
-    }, []);
-
     const gitLoginRef = useRef<HTMLAnchorElement>(null);
+    const googleLoginRef = useRef<HTMLAnchorElement>(null);
     const dispatch = useAppDispatch();
     const state = useAppSelector((state) => state.user);
 
@@ -246,13 +242,14 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
                         <GitHub />
                     </span>
                     <span>Login with GitHub</span>
-                    <a ref={gitLoginRef} href="http://localhost:3004/api/user/github/login" hidden />
+                    <a ref={gitLoginRef} href={'http://localhost:3005/api/user/github/login'} hidden />
                 </button>
-                <button className="google">
+                <button onClick={() => googleLoginRef.current.click()} className="google">
                     <span>
                         <Google />
                     </span>
                     <span>Login with Google</span>
+                    <a ref={googleLoginRef} href="http://localhost:3005/api/user/google/login" hidden />
                 </button>
             </EtcLogin>
         </Wrapper>

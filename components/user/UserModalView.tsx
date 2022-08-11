@@ -60,7 +60,6 @@ interface ILoginProps {
 
 export interface ILoginInfo {
     userId?: string;
-    joinUserId?: string;
     email?: string;
     password?: string;
     password1?: string;
@@ -74,7 +73,15 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
         setError,
         setValue,
         formState: { errors },
-    } = useForm<ILoginInfo>();
+    } = useForm<ILoginInfo>({
+        defaultValues: {
+            userId: '',
+            password: '',
+            password1: '',
+            email: '',
+        },
+        shouldFocusError: true,
+    });
     const loginView = () => {
         dispatch(togglLogin({ loginVisible: false }));
     };

@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
     changePassowrd,
-    checkExUser,
     checkUserlogin,
-    gitHubLogin,
+    deleteMember,
     joinMembers,
     login,
     logout,
@@ -70,19 +69,6 @@ const user = createSlice({
                     loading: false,
                 };
             })
-            .addCase(gitHubLogin.pending, (state, action) => {
-                return {
-                    ...state,
-                    loading: true,
-                };
-            })
-            .addCase(gitHubLogin.fulfilled, (state, action: PayloadAction<IUser>) => {
-                return {
-                    ...state,
-                    ...action.payload,
-                    loading: false,
-                };
-            })
             .addCase(checkUserlogin.pending, (state, action) => {
                 return {
                     ...state,
@@ -139,6 +125,21 @@ const user = createSlice({
                 return {
                     ...state,
                     ...action.payload,
+                    loading: false,
+                };
+            })
+            .addCase(deleteMember.pending, (state, action: PayloadAction<IUser>) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(deleteMember.fulfilled, (state, action) => {
+                return {
+                    ...state,
+                    userId: '',
+                    password: '',
+                    imgPath: null,
                     loading: false,
                 };
             });

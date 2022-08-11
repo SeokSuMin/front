@@ -1,4 +1,4 @@
-import { Alert, Button, message } from 'antd';
+import { Alert, Avatar, Button, message } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -11,6 +11,7 @@ import * as path from 'path';
 import dayjs from 'dayjs';
 import { rlto } from '../../util';
 import { changePassowrd, updateMember, logout } from '../../thunk/userThunk';
+import { UserOutlined } from '@ant-design/icons';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -26,7 +27,7 @@ const Overlay = styled(motion.div)`
     z-index: 99;
 `;
 
-const ModalView = styled(motion.div)`
+const DashBoardModalView = styled(motion.div)`
     width: 25rem;
     border: 0.063rem solid rgb(238, 238, 239);
     border-radius: 0.625em;
@@ -71,10 +72,20 @@ const PropfileImgBox = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    span img {
+    span.photo {
+        position: relative;
+    }
+    span.photo img {
         width: 5rem;
         height: 5rem;
         border-radius: 50%;
+    }
+    span.photo .xtoggle {
+        position: absolute;
+        right: 0px;
+        top: -0.625em;
+        width: 1rem;
+        height: 1rem;
     }
     .imageBtn {
         padding: 0px 0.357em;
@@ -163,7 +174,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
     const user = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(
-        user.imgPath ? fileBackUrl + user.imgPath : '',
+        user.strategyType !== 'local' ? user.imgPath : user.imgPath ? fileBackUrl + user.imgPath : '',
     );
     const [extName, setExtName] = useState<string>(null);
     const [viewMode, setViewMode] = useState('user');
@@ -219,6 +230,10 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
         }
     };
 
+    const deleteImg = () => {
+        setProfileImgURL('');
+    };
+
     const dashBoardSubmit = async (value: IUserInfo) => {
         try {
             if (viewMode === 'user') {
@@ -229,7 +244,8 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                     imgPath: null,
                 };
 
-                if (profileImgURL !== fileBackUrl + user.imgPath) {
+                const prevFileName = fileBackUrl + user.imgPath;
+                if (profileImgURL !== '' && profileImgURL !== prevFileName) {
                     const fileName =
                         dayjs().valueOf() + (profileImgURL as string).slice(-8).replace(/\//g, '') + `${extName}`;
                     const convertIamgeFile = await rlto(profileImgURL as string, fileName, {
@@ -237,11 +253,12 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                     });
                     userInfoObj.profileImg = convertIamgeFile;
                 } else {
-                    userInfoObj.imgPath = user.imgPath;
+                    userInfoObj.imgPath = profileImgURL !== '' ? user.imgPath : '';
                 }
 
                 await dispatch(updateMember(userInfoObj)).unwrap();
                 message.success('저장되었습니다.');
+                dispatch(togglDashBoard({ dashBoardVisible: false }));
             } else {
                 if (value.password !== value.password1) {
                     setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
@@ -253,7 +270,6 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                     await dispatch(changePassowrd(userInfoObj)).unwrap();
                     message.success('비밀번호가 변경되어 자동 로그아웃 합니다.');
                     await dispatch(logout()).unwrap();
-                    dispatch(togglDashBoard({ dashBoardVisible: false }));
                     dispatch(togglLogin({ loginVisible: true }));
                 }
             }
@@ -265,14 +281,14 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
     return (
         <AnimatePresence initial={false}>
             {isVisible ? (
-                <Wrapper>
+                <Wrapper key="dashBoard">
                     <Overlay
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={dashBoardView}
                     />
-                    <ModalView
+                    <DashBoardModalView
                         style={{
                             top: scrollY + 200,
                         }}
@@ -286,12 +302,23 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                         <DashBoardBox>
                             {viewMode === 'user' ? (
                                 <PropfileImgBox>
-                                    <span>
-                                        <img src={profileImgURL as string}></img>
+                                    <span className="photo">
+                                        {profileImgURL ? (
+                                            <>
+                                                {user.strategyType === 'local' ? (
+                                                    <XToggle className="xtoggle" onClick={deleteImg}></XToggle>
+                                                ) : null}
+                                                <img src={profileImgURL as string}></img>
+                                            </>
+                                        ) : (
+                                            <Avatar size="large" icon={<UserOutlined />} />
+                                        )}
                                     </span>
-                                    <Button className="imageBtn" onClick={clickImgFileInput}>
-                                        이미지 변경
-                                    </Button>
+                                    {user.strategyType === 'local' && (
+                                        <Button className="imageBtn" onClick={clickImgFileInput}>
+                                            이미지 변경
+                                        </Button>
+                                    )}
                                 </PropfileImgBox>
                             ) : null}
                             <DashBoardForm mode={viewMode} onSubmit={handleSubmit(dashBoardSubmit)}>
@@ -299,11 +326,20 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                                     <>
                                         <div>
                                             <label>ID</label>
-                                            <span>{user.userId}</span>
+                                            <span>
+                                                {user.strategyType === 'local'
+                                                    ? user.userId
+                                                    : user.userId.split('_')[1]}
+                                            </span>
                                         </div>
                                         <div>
                                             <label>EMAIL</label>
-                                            <input {...register('email', {})} type="text" placeholder="선택사항" />
+                                            <input
+                                                disabled={user.strategyType !== 'local'}
+                                                {...register('email', {})}
+                                                type="text"
+                                                placeholder="선택사항"
+                                            />
                                         </div>
                                         <div>
                                             <label>REGIST</label>
@@ -337,16 +373,20 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                                     </>
                                 )}
                                 <ButtonBox>
-                                    <button onClick={changeViewMode} className="passwordBtn" type="button">
-                                        {viewMode === 'user' ? '비밀번호 변경' : '돌아가기'}
-                                    </button>
-                                    <button className="save" type="submit">
-                                        저장
-                                    </button>
+                                    {user.strategyType === 'local' && (
+                                        <>
+                                            <button onClick={changeViewMode} className="passwordBtn" type="button">
+                                                {viewMode === 'user' ? '비밀번호 변경' : '돌아가기'}
+                                            </button>
+                                            <button className="save" type="submit">
+                                                저장
+                                            </button>
+                                        </>
+                                    )}
                                 </ButtonBox>
                             </DashBoardForm>
                         </DashBoardBox>
-                    </ModalView>
+                    </DashBoardModalView>
                 </Wrapper>
             ) : null}
             <input type="file" ref={inputRef} onChange={changeImgInput} hidden accept="image/*" />
