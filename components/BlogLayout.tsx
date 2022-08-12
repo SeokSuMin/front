@@ -6,6 +6,7 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import { Drawer, Tag } from 'antd';
 import { useEffect, useState } from 'react';
 import CategorisDrawer from './CategorisDrawer';
+import { useRouter } from 'next/router';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -75,6 +76,7 @@ interface ICategoris {
 }
 
 const BlogLayout = ({ children }) => {
+    const router = useRouter();
     const [visible, setVisible] = useState(false);
     const [categoris, setCategoris] = useState<ICategoris[]>([
         { name: '전체', isActive: true },
@@ -125,7 +127,7 @@ const BlogLayout = ({ children }) => {
 
     return (
         <Wrapper>
-            <TopImageBox>
+            <TopImageBox onClick={() => router.push('/blog')}>
                 <TitleBox>
                     <h1>REACT PROJECT</h1>
                     <h2>MY BLOG</h2>

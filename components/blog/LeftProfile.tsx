@@ -4,12 +4,15 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import PencilToggle from '../../public/pencil-solid.svg';
 import GitHub from '../../public/github.svg';
+import { EditOutlined } from '@ant-design/icons';
+import { useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
     width: 20%;
+    min-width: 8.125rem;
     height: 100%;
     border: 0.063em solid rgb(217, 217, 217);
-    margin-top: 2.625em;
+    margin-top: 2.188em;
     border-radius: 0.63em;
     /* margin-right: 3.63em; */
     padding: 0.938em;
@@ -33,9 +36,6 @@ const ProfileImgeBox = styled.div`
             width: 1rem;
             height: 1rem;
         }
-    }
-    span:nth-child(2) {
-        color: blue;
     }
     p {
         font-size: 0.75rem;
@@ -62,14 +62,19 @@ const CategoriBox = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding: 0.625em;
+    align-items: flex-start;
+    padding: 1.875em 0em 1.875em 0.63em;
+    .writeBox {
+        width: 100%;
+        text-align: right;
+        margin-bottom: 1.25em;
+    }
     span {
         font-size: 0.75rem;
     }
-    span:first-child {
+    /* span:first-child {
         margin-bottom: 1em;
-    }
+    } */
     span:hover {
         text-decoration: underline;
         cursor: pointer;
@@ -80,9 +85,11 @@ const Categoris = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    margin-top: 1.25em;
     margin-bottom: 0.938em;
     &:last-child {
         margin-bottom: 0px;
+        margin-top: 0px;
     }
     ul {
         width: 100%;
@@ -97,6 +104,7 @@ const Categoris = styled.div`
     }
     li:first-child {
         margin-bottom: 0.625em;
+        font-weight: bold;
         pointer-events: none;
     }
     li:not(:first-of-type) {
@@ -123,7 +131,7 @@ interface ILeftProfileProps {
 
 const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
     const router = useRouter();
-
+    const { userId } = useAppSelector((state) => state.user);
     const moveWritePage = () => {
         router.push('/blog/write');
     };
@@ -131,53 +139,58 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
     return (
         <Wrapper>
             <ProfileImgeBox>
-                <span style={{ cursor: 'pointer' }} onClick={moveWritePage}>
-                    <PencilToggle />
-                </span>
                 <ProfileImg></ProfileImg>
                 <span>IceMan</span>
                 <p>아이스맨 같은 개발자가 되고 싶은 사람입니다.</p>
             </ProfileImgeBox>
             <CategoriBox>
-                <span>전체보기 (23)</span>
+                {userId === 'shark' ? (
+                    <div className="writeBox">
+                        <span onClick={moveWritePage}>
+                            <EditOutlined />
+                            글쓰기
+                        </span>
+                    </div>
+                ) : null}
+                <span style={{ fontWeight: 'bold' }}>전체보기 (23)</span>
                 <Categoris>
                     <ul>
                         <li>
-                            <span>■ 일상의 순간</span>
+                            <span>• 일상의 순간</span>
                         </li>
                         <li>
-                            <span>- 여행 (10)</span>
+                            <span>└ 여행 (10)</span>
                         </li>
                         <li>
-                            <span>- 음식 (10)</span>
+                            <span>└ 음식 (10)</span>
                         </li>
                         <li>
-                            <span>- 운동 (10)</span>
+                            <span>└ 운동 (10)</span>
                         </li>
                         <li>
-                            <span>- 게임 (5)</span>
+                            <span>└ 게임 (5)</span>
                         </li>
                         <li>
-                            <span>- 영화 (90)</span>
+                            <span>└ 영화 (90)</span>
                         </li>
                     </ul>
                 </Categoris>
                 <Categoris>
                     <ul>
                         <li>
-                            <span>■ 프로그래밍</span>
+                            <span>• 프로그래밍</span>
                         </li>
                         <li>
-                            <span>- java (10)</span>
+                            <span>└ java (10)</span>
                         </li>
                         <li>
-                            <span>- React.js (10)</span>
+                            <span>└ React.js (10)</span>
                         </li>
                         <li>
-                            <span>- Node.js (10)</span>
+                            <span>└ Node.js (10)</span>
                         </li>
                         <li>
-                            <span>- 개발일지 (5)</span>
+                            <span>└ 개발일지 (5)</span>
                         </li>
                     </ul>
                 </Categoris>

@@ -22,6 +22,11 @@ const FileUploadBox = styled.div`
     display: flex;
     align-items: center;
     margin-bottom: 0.9em;
+    button {
+        height: 1.7rem;
+        display: flex;
+        align-items: center;
+    }
 `;
 
 const FileUpload = ({ inputRef, onUploadFile, onUploadFileButtonClick }: IFileUploadProps) => {

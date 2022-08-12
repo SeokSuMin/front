@@ -67,6 +67,7 @@ const GlobalStyle = createGlobalStyle`
         width:auto;
         min-height: 100%;
     }
+    // left drawer
     .ant-drawer{
         display: flex;
         align-items: center;
@@ -79,15 +80,28 @@ const GlobalStyle = createGlobalStyle`
         border-radius: 0px 0.625em 0.625em 0px;
     }
     .ant-drawer .ant-drawer-content-wrapper {
-        height: 40% !important;
+        height: 60% !important;
         width: 9.375rem !important;
     }
+
+    // navbar
     .ant-dropdown-menu-item {
         padding: 0px;
         div {
             padding: 5px 10px;
         }
+    }
+    .ant-select-selector {
+        height: 1.7rem !important;
+    }
+    // select font size
+    .ant-select-item-option-content {
+        font-size: 0.750rem;
+    }
+    .ant-select-single .ant-select-selector {
 
+        font-size: 0.75rem;
+        align-items: center;
     }
 `;
 

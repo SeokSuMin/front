@@ -18,12 +18,12 @@ const ToggleBox = styled.div`
     justify-content: flex-end;
     align-items: center;
     & > div {
-        padding-left: 10px;
+        padding-left: 0.625em;
     }
     svg {
-        width: 20px;
-        height: 30px;
-        margin-right: 5px;
+        width: 1.125em;
+        height: 1.563em;
+        margin-right: 0.313em;
         cursor: pointer;
         /* fill: green; */
     }
@@ -45,7 +45,7 @@ const TopMenu = ({ viewType, changeListView }: ITopMenuProps) => {
                 <TwoSquareToggle className={viewType === 2 ? 'active' : ''} onClick={() => changeListView(2)} />
                 <FourSquareToggle className={viewType === 1 ? 'active' : ''} onClick={() => changeListView(1)} />
                 <div>
-                    <Select defaultValue="all" style={{ width: 100 }}>
+                    <Select defaultValue="all" style={{ width: 80 }}>
                         <Option value="all">전체</Option>
                         <Option value="10">10개씩</Option>
                         <Option value="20">20개씩</Option>

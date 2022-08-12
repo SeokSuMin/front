@@ -16,12 +16,13 @@ const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), {
 const Wrapper = styled.div`
     width: 100%;
     margin-left: 0.63em;
+    margin-top: 3.74em;
 `;
 
 const WriteBox = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: 1.56rem;
+    /* margin-top: 1.56rem; */
 `;
 
 const ContentBox = styled.div`
@@ -53,6 +54,7 @@ const SendBox = styled.div`
 const Write = () => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const titleInputRef = useRef<InputRef | null>(null);
+    const menuInputRef = useRef<InputRef | null>(null);
     const categoriInputRef = useRef<InputRef | null>(null);
     const quillRef = useRef(null);
     const [files, setFiles] = useState<File[] | null>([]);
@@ -136,7 +138,7 @@ const Write = () => {
     return (
         <Wrapper>
             <WriteBox>
-                <WriteInput {...{ titleInputRef, categoriInputRef }} />
+                <WriteInput {...{ titleInputRef, menuInputRef, categoriInputRef }} />
                 <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
                 <FileLists {...{ files, deleteFile }} />
                 <ContentBox>
