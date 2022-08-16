@@ -8,6 +8,7 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import { motion, useScroll } from 'framer-motion';
 import axios from 'axios';
 import { checkUserlogin } from '../../thunk/userThunk';
+import { getCategoriMenu } from '../../thunk/blogThunk';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -66,6 +67,8 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         }
         // 로그인 사용자 체크
         await dispatch(checkUserlogin());
+        await dispatch(getCategoriMenu());
+
         return {
             props: {},
         };

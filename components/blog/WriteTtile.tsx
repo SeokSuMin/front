@@ -45,30 +45,36 @@ interface IWriteInputProps {
     titleInputRef: React.MutableRefObject<InputRef>;
     categoriInputRef: React.MutableRefObject<InputRef>;
     menuInputRef: React.MutableRefObject<InputRef>;
+    menu: string;
+    categoriMenus: {
+        menu_categori: string;
+        categoris: [
+            {
+                [key: string]: string;
+            },
+        ];
+    }[];
+    categoris: [
+        {
+            [key: string]: string;
+        },
+    ];
+    categoriId: string;
+    changeMenu: (value: string) => void;
+    changeCategori: (value: string) => void;
 }
 
-const WriteTtile = ({ titleInputRef, menuInputRef, categoriInputRef }: IWriteInputProps) => {
-    const menuData = [
-        { menu: '일상의 순간', categoris: ['여행', '음식', '운동', '게임', '영화'] },
-        { menu: '프로그래밍', categoris: ['Java', 'React Js', 'Node Js', '개발일지'] },
-    ];
-
-    const [menu, setMenu] = useState(menuData[0].menu);
-    const [categoris, setCategoris] = useState(menuData[0].categoris);
-    const [categoriId, setCategoriId] = useState(menuData[0].categoris[0]);
-
-    const changeMenu = (value: string) => {
-        setMenu(value);
-        if (value !== 'direct') {
-            setCategoris(menuData?.find((mData) => mData.menu === value).categoris);
-            setCategoriId(menuData?.find((mData) => mData.menu === value)?.categoris[0] ?? '');
-        }
-    };
-
-    const changeCategori = (value: string) => {
-        setCategoriId(value);
-    };
-
+const WriteTtile = ({
+    titleInputRef,
+    menuInputRef,
+    categoriInputRef,
+    menu,
+    categoriMenus,
+    categoris,
+    categoriId,
+    changeMenu,
+    changeCategori,
+}: IWriteInputProps) => {
     return (
         <Wrapper>
             <TitleBox>
@@ -76,11 +82,11 @@ const WriteTtile = ({ titleInputRef, menuInputRef, categoriInputRef }: IWriteInp
                 <WriteInput ref={titleInputRef} placeholder="Write Title ..." />
             </TitleBox>
             <CategoriBox>
-                <Lable>메뉴</Lable>
+                <Lable>메뉴명</Lable>
                 <Select value={menu} onChange={changeMenu}>
-                    {menuData?.map((data) => (
-                        <Option key={data.menu} value={data.menu}>
-                            {data.menu}
+                    {categoriMenus?.map((categoriMenu) => (
+                        <Option key={categoriMenu.menu_categori} value={categoriMenu.menu_categori}>
+                            {categoriMenu.menu_categori}
                         </Option>
                     ))}
                     <Option value="direct">직접입력</Option>
@@ -90,12 +96,13 @@ const WriteTtile = ({ titleInputRef, menuInputRef, categoriInputRef }: IWriteInp
             <CategoriBox>
                 <Lable>카테고리</Lable>
                 <Select style={{ minWidth: 80 }} value={categoriId} onChange={changeCategori}>
-                    {categoris?.map((categori) => (
-                        <Option key={categori}>{categori}</Option>
-                    ))}
+                    {categoris?.map((categori) => {
+                        const categoriName = Object.keys(categori)[0];
+                        return <Option key={categoriName}>{categoriName}</Option>;
+                    })}
                     <Option value="direct">직접입력</Option>
                 </Select>
-                {categoriId === 'direct' ? <WriteInput ref={menuInputRef} placeholder="카테고리" /> : null}
+                {categoriId === 'direct' ? <WriteInput ref={categoriInputRef} placeholder="카테고리" /> : null}
             </CategoriBox>
         </Wrapper>
     );

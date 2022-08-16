@@ -1,10 +1,11 @@
 import { AnyAction, CombinedState, combineReducers } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import user, { IUser } from './user';
+import blog, { IBlog } from './blog';
 
 interface IState {
-    // movie: IPopular;
     user: IUser;
+    blog: IBlog;
 }
 
 const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> => {
@@ -33,7 +34,7 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
         }
         default: {
             const reducer = combineReducers({
-                //movie,
+                blog,
                 user,
             });
             return reducer(state, action);

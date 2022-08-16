@@ -63,6 +63,7 @@ const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
                 ref={quillRef}
                 placeholder="write Text"
                 // value={contentValue}
+                defaultValue={'test value'}
                 theme="snow"
                 modules={modules}
                 formats={formats}

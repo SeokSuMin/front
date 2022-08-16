@@ -132,6 +132,7 @@ interface ILeftProfileProps {
 const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
     const router = useRouter();
     const { userId } = useAppSelector((state) => state.user);
+    const { categoriMenus } = useAppSelector((state) => state.blog);
     const moveWritePage = () => {
         router.push('/blog/write');
     };
@@ -153,47 +154,28 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                     </div>
                 ) : null}
                 <span style={{ fontWeight: 'bold' }}>전체보기 (23)</span>
-                <Categoris>
-                    <ul>
-                        <li>
-                            <span>• 일상의 순간</span>
-                        </li>
-                        <li>
-                            <span>└ 여행 (10)</span>
-                        </li>
-                        <li>
-                            <span>└ 음식 (10)</span>
-                        </li>
-                        <li>
-                            <span>└ 운동 (10)</span>
-                        </li>
-                        <li>
-                            <span>└ 게임 (5)</span>
-                        </li>
-                        <li>
-                            <span>└ 영화 (90)</span>
-                        </li>
-                    </ul>
-                </Categoris>
-                <Categoris>
-                    <ul>
-                        <li>
-                            <span>• 프로그래밍</span>
-                        </li>
-                        <li>
-                            <span>└ java (10)</span>
-                        </li>
-                        <li>
-                            <span>└ React.js (10)</span>
-                        </li>
-                        <li>
-                            <span>└ Node.js (10)</span>
-                        </li>
-                        <li>
-                            <span>└ 개발일지 (5)</span>
-                        </li>
-                    </ul>
-                </Categoris>
+                {categoriMenus?.map((categoriMenu) => {
+                    return (
+                        <Categoris key={categoriMenu.menu_categori}>
+                            <ul>
+                                <li>
+                                    <span>• {categoriMenu.menu_categori}</span>
+                                </li>
+                                {categoriMenu.categoris?.map((categori) => {
+                                    const categoriName = Object.keys(categori)[0];
+                                    const totalCount = Object.values(categori)[0];
+                                    return (
+                                        <li key={categoriName}>
+                                            <span>
+                                                └ {categoriName} ({totalCount})
+                                            </span>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </Categoris>
+                    );
+                })}
             </CategoriBox>
             <EtcBox>
                 <a href="">

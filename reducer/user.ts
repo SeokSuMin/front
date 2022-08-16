@@ -46,14 +46,12 @@ const user = createSlice({
                     ...state,
                     ...action.payload,
                     loading: true,
-                    hydration: false,
                 };
             })
             .addCase(joinMembers.fulfilled, (state, action) => {
                 return {
                     ...state,
                     loginVisible: true,
-                    hydration: true,
                 };
             })
             .addCase(login.pending, (state, action) => {
