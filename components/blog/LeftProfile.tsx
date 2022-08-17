@@ -12,7 +12,7 @@ const Wrapper = styled.div`
     min-width: 8.125rem;
     height: 100%;
     border: 0.063em solid rgb(217, 217, 217);
-    margin-top: 2.188em;
+    margin-top: 2.324em;
     border-radius: 0.63em;
     /* margin-right: 3.63em; */
     padding: 0.938em;
@@ -85,12 +85,7 @@ const Categoris = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 1.25em;
     margin-bottom: 0.938em;
-    &:last-child {
-        margin-bottom: 0px;
-        margin-top: 0px;
-    }
     ul {
         width: 100%;
         font-size: 0.75rem;
@@ -132,7 +127,10 @@ interface ILeftProfileProps {
 const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
     const router = useRouter();
     const { userId } = useAppSelector((state) => state.user);
-    const { categoriMenus } = useAppSelector((state) => state.blog);
+    const {
+        categoriMenus,
+        paging: { totalCount },
+    } = useAppSelector((state) => state.blog);
     const moveWritePage = () => {
         router.push('/blog/write');
     };
@@ -153,7 +151,7 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                         </span>
                     </div>
                 ) : null}
-                <span style={{ fontWeight: 'bold' }}>전체보기 (23)</span>
+                <span style={{ fontWeight: 'bold', marginBottom: '1.25em' }}>전체보기 ({totalCount})</span>
                 {categoriMenus?.map((categoriMenu) => {
                     return (
                         <Categoris key={categoriMenu.menu_categori}>

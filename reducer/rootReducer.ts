@@ -3,7 +3,7 @@ import { HYDRATE } from 'next-redux-wrapper';
 import user, { IUser } from './user';
 import blog, { IBlog } from './blog';
 
-interface IState {
+export interface IState {
     user: IUser;
     blog: IBlog;
 }

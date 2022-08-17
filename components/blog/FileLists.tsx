@@ -63,7 +63,6 @@ const Files = styled.div`
 `;
 
 const Progress = styled.div`
-    width: 12%;
     height: 100%;
     background-color: rgba(41, 181, 134, 1);
     position: absolute;
@@ -94,7 +93,7 @@ const FileLists = ({ deleteFile }: IFileListsProps) => {
                                 <span className="delete">
                                     <DeleteOutlined onClick={() => deleteFile(file.fileName)} />
                                 </span>
-                                <Progress></Progress>
+                                <Progress style={{ width: file.progress + '%' }}></Progress>
                             </Files>
                             {/* <div>
                                 <span className="percentText">{file.progress}%</span>

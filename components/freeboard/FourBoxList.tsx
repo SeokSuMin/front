@@ -1,13 +1,11 @@
 import { Tag } from 'antd';
+import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-
-interface IFourBoxListProps {
-    viewType: number;
-    leaving: boolean;
-    toggleLeaving: () => void;
-}
+import { fileBackUrl } from '../../config';
+import { IBoardData } from '../../reducer/blog';
+import { useAppSelector } from '../../store/hooks';
 
 const CardBox = styled(motion.div)`
     width: 100%;
@@ -63,10 +61,9 @@ const CardContent = styled(motion.div)`
 const ThumImg = styled.div`
     width: 100%;
     height: 55%;
-    /* background-image: url('https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
     img {
         width: 100%;
         height: 100%;
@@ -147,19 +144,25 @@ const fourBoxItem = {
     },
 };
 
-const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) => {
+interface IFourBoxListProps {
+    viewType: number;
+    leaving: boolean;
+    toggleLeaving: () => void;
+    boardList: IBoardData[];
+}
+
+const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxListProps) => {
     const router = useRouter();
     const moveDetailPage = () => {
         router.push(`/blog/${1}`);
     };
-
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 1 && !leaving ? (
                 <CardBox variants={fourBox} initial="hidden" animate="visible" exit="exit">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((v) => {
+                    {boardList?.map((board) => {
                         return (
-                            <Card key={v} variants={fourBoxItem}>
+                            <Card key={board.board_id} variants={fourBoxItem}>
                                 <CardContent
                                     onClick={moveDetailPage}
                                     whileHover={{
@@ -169,18 +172,25 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving }: IFourBoxListProps) =>
                                     transition={{ type: 'tween', duration: 0.2 }}
                                 >
                                     <ThumImg>
-                                        <img alt="example" src="/banner1.png" />
+                                        {board.boardFiles[0] ? (
+                                            <img
+                                                alt="example"
+                                                src={`${fileBackUrl}${board.board_id}/${board.boardFiles[0]?.name}`}
+                                            />
+                                        ) : (
+                                            <img alt="example" src="no-image.JPG" />
+                                        )}
                                     </ThumImg>
                                     <Content>
                                         <TagInfo>
-                                            <Tag color="blue">여행</Tag>
+                                            <Tag color="blue">{board.categori}</Tag>
                                         </TagInfo>
-                                        <h2>안녕하세요 반갑습니다, 잘부탁 드립니다. 잘부탁 드립니다.</h2>
+                                        <h2>{board.title}</h2>
                                         <WriteInfo>
                                             <ProfileImg />
-                                            <span>IceMan</span>
+                                            <span>{board.writer}</span>
                                             <div style={{ width: '10%', textAlign: 'center' }}>|</div>
-                                            <span>2022-07-25</span>
+                                            <span>{dayjs(board.createdAt).format('YYYY MM DD HH:mm')}</span>
                                         </WriteInfo>
                                     </Content>
                                 </CardContent>

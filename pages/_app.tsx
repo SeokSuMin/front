@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import wrapper from '../store/configStore';
 import Layout from '../components/Layout';
 import GlobalStyle from '../styles/glovbalStyle';
@@ -14,6 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     const queryClient = new QueryClient();
     return (
         <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={true} />
             <ThemeProvider theme={theme}>
                 <GlobalStyle />
                 <Layout>

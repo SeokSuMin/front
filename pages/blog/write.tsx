@@ -14,7 +14,11 @@ import axios from 'axios';
 import { checkUserlogin } from '../../thunk/userThunk';
 import { getCategoriMenu, isnertBoard } from '../../thunk/blogThunk';
 import path from 'path';
-import { addUploadFiles, deleteUploadFile } from '../../reducer/blog';
+import { addUploadFiles, deleteUploadFile, fileProgress, IBlog, IBoardData, loading } from '../../reducer/blog';
+import { v4 as uuidv4 } from 'uuid';
+import { fileBackUrl } from '../../config';
+import { constants } from 'fs';
+import Router, { useRouter } from 'next/router';
 
 dayjs().format();
 
@@ -59,11 +63,7 @@ const SendBox = styled.div`
 `;
 
 const Write = () => {
-    // onUploadProgress: (data) => {
-    //     //Set the progress value to show the progress bar
-    //     setProgress(Math.round((100 * data.loaded) / data.total));
-    //     const percentageProgress = Math.floor((loaded / total) * 100)
-    // },
+    const router = useRouter();
     const { categoriMenus } = useAppSelector((state) => state.blog);
     const dispatch = useAppDispatch();
 
@@ -73,10 +73,24 @@ const Write = () => {
     const categoriInputRef = useRef<InputRef | null>(null);
     const quillRef = useRef(null);
 
-    const [menu, setMenu] = useState(categoriMenus[0].menu_categori);
-    const [categoris, setCategoris] = useState(categoriMenus[0].categoris);
-    const [categoriId, setCategoriId] = useState(Object.keys(categoriMenus[0].categoris[0])[0]);
+    const [menu, setMenu] = useState<string>();
+    const [categoris, setCategoris] = useState<
+        [
+            {
+                [key: string]: string;
+            },
+        ]
+    >();
+    const [categoriId, setCategoriId] = useState<string>();
     const [files, setFiles] = useState<File[] | null>([]);
+
+    useEffect(() => {
+        if (categoriMenus.length) {
+            setMenu(categoriMenus[0].menu_categori);
+            setCategoris(categoriMenus[0]?.categoris);
+            setCategoriId(Object.keys(categoriMenus[0]?.categoris[0])[0]);
+        }
+    }, []);
 
     const changeMenu = (value: string) => {
         setMenu(value);
@@ -129,7 +143,6 @@ const Write = () => {
                             fileId: file.lastModified + '',
                             fileName: file.name,
                             progress: 0,
-                            imgFile: false,
                         })),
                     ),
                 );
@@ -151,8 +164,9 @@ const Write = () => {
             const $ = quillRef.current.state.value.trim()
                 ? Cheerio.load(`<div id='quillContent'>${quillRef.current.state.value}</div>`)
                 : '';
-            const boardData = {} as { [key: string]: string };
             const fileArr: File[] = [...files];
+            const uuid = uuidv4().split('-').join('');
+            const boardData = { board_id: uuid } as IBoardData;
             // 에디터 내용이 존재하면
             if ($) {
                 const allTags = Array.from($('#quillContent').find('*'));
@@ -161,14 +175,14 @@ const Write = () => {
                     allTags.map(async (tag) => {
                         if ($(tag).prop('tagName') === 'IMG') {
                             const base64Img = $(tag).prop('src');
-                            const fileName = dayjs().valueOf() + base64Img.slice(-8).replace(/\//g, '');
+                            const fileName = dayjs().valueOf() + base64Img.slice(-8).replace(/\//g, '') + '.png';
+                            const filePath = fileBackUrl + uuid + '/' + fileName;
                             const convertIamgeFile = await rlto(base64Img, fileName, { type: 'image/*' });
                             fileArr.push(convertIamgeFile);
-                            $(tag).prop('src', fileName);
+                            $(tag).prop('src', filePath);
                         }
                     }),
                 );
-
                 const content = $.html().replace('<html><head></head><body>', '').replace('</body></html>', '');
                 boardData.content = content;
             }
@@ -177,14 +191,15 @@ const Write = () => {
             const menuTitle = menu !== 'direct' ? menu : menuInputRef.current.input.value;
             const categoriTitle = categoriId !== 'direct' ? categoriId : categoriInputRef.current.input.value;
             boardData.title = title;
-            boardData.menu = menuTitle;
+            boardData.menu_categori = menuTitle;
             boardData.categori = categoriTitle;
-            const boardId = await dispatch(isnertBoard(boardData));
-            // if (fileArr.length) {
-            //     await uploadFile(fileArr, boardId);
-            // }
-        } catch (e) {
-            console.log(e);
+            boardData.uploadFiles = fileArr;
+            await dispatch(isnertBoard(boardData)).unwrap();
+            message.success('게시글을 저장했습니다.');
+            router.push('/blog');
+        } catch (err) {
+            message.error(err);
+            dispatch(loading({ loading: false }));
         }
     };
 

@@ -9,6 +9,12 @@ import { motion, useScroll } from 'framer-motion';
 import axios from 'axios';
 import { checkUserlogin } from '../../thunk/userThunk';
 import { getCategoriMenu } from '../../thunk/blogThunk';
+import Paging from '../../components/blog/Paging';
+import { useQuery } from 'react-query';
+import { message } from 'antd';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getBoardList } from '../../util';
+import { goPage } from '../../reducer/blog';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -20,15 +26,22 @@ const ContentBox = styled.div`
     position: relative;
 `;
 
-const Content = styled.div`
-    width: 100%;
-    /* border-top: 1px solid rgb(217, 217, 217); */
-    //background-color: rgb(245, 245, 245);
-`;
-
 const Home = () => {
+    const {
+        paging: { page, countList },
+    } = useAppSelector((state) => state.blog);
+    const dispath = useAppDispatch();
     const [viewType, setViewType] = useState(1);
     const [leaving, setLeaving] = useState(false);
+    const { isLoading, isError, data, error } = useQuery('boardList', () => getBoardList(page, countList), {
+        refetchOnWindowFocus: false,
+        onSuccess: (data) => {
+            dispath(goPage(data.totalCount));
+        },
+        onError: (err: Error) => {
+            message.error(err.message);
+        },
+    });
 
     const changeListView = (type: number) => {
         if (type === viewType) {
@@ -49,8 +62,9 @@ const Home = () => {
         <Wrapper>
             <ContentBox>
                 <TopMenu {...{ viewType, changeListView }} />
-                <FourBoxList {...{ viewType, leaving, toggleLeaving }} />
+                <FourBoxList {...{ viewType, leaving, toggleLeaving, boardList: data?.boardList }} />
                 <OneBoxList {...{ viewType, leaving, toggleLeaving }} />
+                <Paging />
             </ContentBox>
         </Wrapper>
     );
@@ -68,7 +82,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         // 로그인 사용자 체크
         await dispatch(checkUserlogin());
         await dispatch(getCategoriMenu());
-
+        //  await dispatch(getBoardList());
         return {
             props: {},
         };
