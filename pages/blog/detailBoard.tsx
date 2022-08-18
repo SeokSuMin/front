@@ -81,7 +81,7 @@ const PrevNextBlogBox = styled.div``;
 const CommentWriteBox = styled.div``;
 const CommentListBox = styled.div``;
 
-const Detail = () => {
+const detailBoard = () => {
     return (
         <Wrapper>
             <TopMenuBox>
@@ -107,4 +107,4 @@ const Detail = () => {
     );
 };
 
-export default Detail;
+export default detailBoard;

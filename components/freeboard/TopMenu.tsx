@@ -1,9 +1,11 @@
 import { Select } from 'antd';
-import { memo } from 'react';
+import { memo, MutableRefObject } from 'react';
 import styled from 'styled-components';
 import TwoSquareToggle from '../../public/2-squares.svg';
 import FourSquareToggle from '../../public/4-squares.svg';
 import BasicListToggle from '../../public/BasicList.svg';
+import { changeCountList, goPage } from '../../reducer/blog';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const { Option } = Select;
 
@@ -35,21 +37,29 @@ const ToggleBox = styled.div`
 interface ITopMenuProps {
     viewType: number;
     changeListView: (type: number) => void;
+    scrollRef: MutableRefObject<HTMLDivElement>;
 }
 
-const TopMenu = ({ viewType, changeListView }: ITopMenuProps) => {
+const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
+    const dispath = useAppDispatch();
+    const {
+        paging: { countList },
+    } = useAppSelector((state) => state.blog);
+    const changeCountListValue = (value: number) => {
+        dispath(changeCountList(value));
+    };
+
     return (
-        <Wrapper>
+        <Wrapper ref={scrollRef}>
             <ToggleBox>
                 {/* <BasicListToggle className={viewType === 2 ? 'active' : ''} onClick={() => changeListView(1)} /> */}
                 <TwoSquareToggle className={viewType === 2 ? 'active' : ''} onClick={() => changeListView(2)} />
                 <FourSquareToggle className={viewType === 1 ? 'active' : ''} onClick={() => changeListView(1)} />
                 <div>
-                    <Select defaultValue="all" style={{ width: 80 }}>
-                        <Option value="all">전체</Option>
-                        <Option value="10">10개씩</Option>
-                        <Option value="20">20개씩</Option>
-                        <Option value="30">30개씩</Option>
+                    <Select onChange={changeCountListValue} value={countList} style={{ width: 80 }}>
+                        <Option value={15}>15개씩</Option>
+                        <Option value={30}>30개씩</Option>
+                        <Option value={45}>45개씩</Option>
                     </Select>
                 </div>
             </ToggleBox>

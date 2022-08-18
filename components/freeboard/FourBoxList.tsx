@@ -154,7 +154,7 @@ interface IFourBoxListProps {
 const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxListProps) => {
     const router = useRouter();
     const moveDetailPage = () => {
-        router.push(`/blog/${1}`);
+        router.push('/blog/detailBoard');
     };
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>

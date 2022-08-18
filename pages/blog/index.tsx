@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import FourBoxList from '../../components/freeboard/FourBoxList';
 import OneBoxList from '../../components/freeboard/OneBoxList';
@@ -11,13 +11,24 @@ import { checkUserlogin } from '../../thunk/userThunk';
 import { getCategoriMenu } from '../../thunk/blogThunk';
 import Paging from '../../components/blog/Paging';
 import { useQuery } from 'react-query';
-import { message } from 'antd';
+import { BackTop, message, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getBoardList } from '../../util';
-import { goPage } from '../../reducer/blog';
+import { goPage, IBoardData, initTotalCount } from '../../reducer/blog';
 
 const Wrapper = styled.div`
     width: 100%;
+    .ant-spin-spinning {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .ant-spin-spinning div {
+        margin-bottom: 2.324em;
+    }
 `;
 
 const ContentBox = styled.div`
@@ -26,22 +37,42 @@ const ContentBox = styled.div`
     position: relative;
 `;
 
+const style: React.CSSProperties = {
+    height: 40,
+    width: 40,
+    lineHeight: '40px',
+    borderRadius: 4,
+    backgroundColor: '#1088e9',
+    color: '#fff',
+    textAlign: 'center',
+};
+
 const Home = () => {
+    const scrollRef = useRef<HTMLDivElement>(null);
     const {
         paging: { page, countList },
     } = useAppSelector((state) => state.blog);
     const dispath = useAppDispatch();
     const [viewType, setViewType] = useState(1);
     const [leaving, setLeaving] = useState(false);
-    const { isLoading, isError, data, error } = useQuery('boardList', () => getBoardList(page, countList), {
-        refetchOnWindowFocus: false,
-        onSuccess: (data) => {
-            dispath(goPage(data.totalCount));
+    const { isLoading, isError, data, error } = useQuery(
+        ['boardList', page, countList],
+        () => getBoardList(page, countList),
+        {
+            refetchOnWindowFocus: false,
+            onSuccess: (data) => {
+                dispath(initTotalCount(data.totalCount));
+                dispath(goPage());
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                });
+            },
+            onError: (err: Error) => {
+                message.error(err.message);
+            },
         },
-        onError: (err: Error) => {
-            message.error(err.message);
-        },
-    });
+    );
 
     const changeListView = (type: number) => {
         if (type === viewType) {
@@ -60,12 +91,19 @@ const Home = () => {
 
     return (
         <Wrapper>
-            <ContentBox>
-                <TopMenu {...{ viewType, changeListView }} />
-                <FourBoxList {...{ viewType, leaving, toggleLeaving, boardList: data?.boardList }} />
-                <OneBoxList {...{ viewType, leaving, toggleLeaving }} />
-                <Paging />
-            </ContentBox>
+            {isLoading ? (
+                <Spin tip="Loading..." />
+            ) : (
+                <ContentBox>
+                    <TopMenu {...{ viewType, changeListView, scrollRef }} />
+                    <FourBoxList {...{ viewType, leaving, toggleLeaving, boardList: data?.boardList }} />
+                    <OneBoxList {...{ viewType, leaving, toggleLeaving }} />
+                    <Paging />
+                    <BackTop>
+                        <div style={style}>UP</div>
+                    </BackTop>
+                </ContentBox>
+            )}
         </Wrapper>
     );
 };

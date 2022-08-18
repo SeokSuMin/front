@@ -46,7 +46,7 @@ const blog = createSlice({
         loading: false,
         categoriMenus: [],
         uploadFileInfo: [],
-        paging: { page: 1, startPage: 1, endPage: 1, countList: 10, countPage: 10, totalCount: 1 },
+        paging: { page: 1, startPage: 1, endPage: 1, countList: 15, countPage: 10, totalCount: 1 },
     } as IBlog,
     reducers: {
         loading: (state, action: PayloadAction<IBlog>) => {
@@ -69,22 +69,42 @@ const blog = createSlice({
                 uploadFileInfo: [...state.uploadFileInfo.filter((file) => file.fileId !== fileId), ...progressFile],
             };
         },
-        goPage: (state, action: PayloadAction<number>) => {
+        initTotalCount: (state, action: PayloadAction<number>) => {
             const totalCount = action.payload;
-            let totalPage = totalCount / state.paging.countList;
-            let page = state.paging.page;
+            return {
+                ...state,
+                paging: { ...state.paging, totalCount },
+            };
+        },
+        goPage: (state, action: PayloadAction<number>) => {
+            let totalPage = Math.floor(state.paging.totalCount / state.paging.countList);
+            let page = action.payload ? action.payload : state.paging.page;
             if (state.paging.totalCount % state.paging.countList > 0) {
                 totalPage++;
             }
             if (totalPage < state.paging.page) {
                 page = totalPage;
             }
-            const startPage = ((page - 1) / state.paging.countPage) * state.paging.countPage + 1;
+            const startPage = parseInt(String((page - 1) / state.paging.countPage)) * state.paging.countPage + 1;
             let endPage = startPage + state.paging.countPage - 1;
             if (endPage > totalPage) {
                 endPage = totalPage;
             }
-            return { ...state, paging: { ...state.paging, totalCount, page, totalPage, startPage, endPage } };
+            return { ...state, paging: { ...state.paging, page, totalPage, startPage, endPage } };
+        },
+        changeCountList: (state, action: PayloadAction<number>) => {
+            const countList = action.payload;
+            const page = 1;
+            return {
+                ...state,
+                paging: { ...state.paging, page, countList },
+            };
+        },
+        detailBoardInfo: (state, action: PayloadAction<IBoardData>) => {
+            return {
+                ...state,
+                paging: { ...state.paging },
+            };
         },
     },
     extraReducers: (builder) => {
@@ -133,5 +153,14 @@ const blog = createSlice({
     },
 });
 
-export const { loading, addUploadFiles, deleteUploadFile, fileProgress, goPage } = blog.actions;
+export const {
+    loading,
+    addUploadFiles,
+    deleteUploadFile,
+    fileProgress,
+    initTotalCount,
+    goPage,
+    changeCountList,
+    detailBoardInfo,
+} = blog.actions;
 export default blog.reducer;
