@@ -7,7 +7,7 @@ import WriteInput from '../../components/blog/WriteTtile';
 import FileLists from '../../components/blog/FileLists';
 import FileUpload from '../../components/blog/FileUpload';
 import * as Cheerio from 'cheerio';
-import { rlto, uploadFile } from '../../util';
+import { rlto } from '../../util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
@@ -42,8 +42,7 @@ const ContentBox = styled.div`
     display: flex;
     flex-direction: column;
     .ql-editor {
-        min-height: 25rem;
-        max-height: 35rem;
+        height: 27rem;
     }
     .ql-editor {
         overflow-y: auto;
@@ -167,6 +166,8 @@ const Write = () => {
             const fileArr: File[] = [...files];
             const uuid = uuidv4().split('-').join('');
             const boardData = { board_id: uuid } as IBoardData;
+            // console.log('$$$', quillRef.current.state.value);
+
             // 에디터 내용이 존재하면
             if ($) {
                 const allTags = Array.from($('#quillContent').find('*'));

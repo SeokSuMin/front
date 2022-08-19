@@ -153,8 +153,9 @@ interface IFourBoxListProps {
 
 const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxListProps) => {
     const router = useRouter();
-    const moveDetailPage = () => {
-        router.push('/blog/detailBoard');
+
+    const moveDetailPage = (boardId: string) => {
+        router.push(`/blog/${boardId}`);
     };
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
@@ -164,7 +165,7 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxLi
                         return (
                             <Card key={board.board_id} variants={fourBoxItem}>
                                 <CardContent
-                                    onClick={moveDetailPage}
+                                    onClick={() => moveDetailPage(board.board_id)}
                                     whileHover={{
                                         scale: 1.03,
                                         boxShadow: '0.313em 0.313em 0.313em rgb(230, 230, 230)',

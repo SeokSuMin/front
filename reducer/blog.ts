@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getCategoriMenu, isnertBoard } from '../thunk/blogThunk';
+import { getCategoriMenu, getDetailBoard, isnertBoard } from '../thunk/blogThunk';
 
 interface IPaging {
     page: number;
@@ -33,7 +33,7 @@ export interface IBoardData {
 
 export interface IBlog {
     categoriMenus?: { menu_categori: string; categoris: [{ [key: string]: string }] }[];
-    // boardList?: IBoardData[];
+    detailBoard?: IBoardData;
     uploadFileInfo?: { fileId: string; fileName: string; progress?: number }[];
     paging?: IPaging;
     loading?: boolean;
@@ -100,26 +100,13 @@ const blog = createSlice({
                 paging: { ...state.paging, page, countList },
             };
         },
-        detailBoardInfo: (state, action: PayloadAction<IBoardData>) => {
-            return {
-                ...state,
-                paging: { ...state.paging },
-            };
-        },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getCategoriMenu.pending, (state, action) => {
-                return {
-                    ...state,
-                    loading: true,
-                };
-            })
             .addCase(getCategoriMenu.fulfilled, (state, action) => {
                 return {
                     ...state,
                     categoriMenus: action.payload.categoriMenus,
-                    loading: false,
                     hydration: true,
                 };
             })
@@ -149,18 +136,16 @@ const blog = createSlice({
                     ...state,
                     loading: false,
                 };
+            })
+            .addCase(getDetailBoard.fulfilled, (state, action: PayloadAction<IBoardData>) => {
+                return {
+                    ...state,
+                    detailBoard: action.payload,
+                };
             });
     },
 });
 
-export const {
-    loading,
-    addUploadFiles,
-    deleteUploadFile,
-    fileProgress,
-    initTotalCount,
-    goPage,
-    changeCountList,
-    detailBoardInfo,
-} = blog.actions;
+export const { loading, addUploadFiles, deleteUploadFile, fileProgress, initTotalCount, goPage, changeCountList } =
+    blog.actions;
 export default blog.reducer;

@@ -3,6 +3,15 @@ import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize';
 import { Button } from 'antd';
+
+//Text direction
+Quill.register(Quill.import('attributors/style/direction'), true);
+//Alignment
+Quill.register(Quill.import('attributors/style/align'), true);
+//FontSize
+Quill.register(Quill.import('attributors/style/size'), true);
+Quill.register(Quill.import('attributors/style/font'), true);
+Quill.register(Quill.import('attributors/style/color'), true);
 Quill.register('modules/ImageResize', ImageResize);
 
 // 사용하고 싶은 옵션, 나열 되었으면 하는 순서대로 나열
@@ -67,7 +76,7 @@ const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
                 theme="snow"
                 modules={modules}
                 formats={formats}
-                // onChange={(content) => setContentValue(content)}
+                // onChange={(content, delta, source, editor) => onChange(editor.getHTML())}
             ></ReactQuill>
         </>
     );

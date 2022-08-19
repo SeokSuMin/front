@@ -19,14 +19,17 @@ export const getCategoriMenu = createAsyncThunk(
     },
 );
 
-// export const getBoardList = createAsyncThunk('GET_BOARD_LIST', async (_, { getState, requestId, rejectWithValue }) => {
-//     try {
-//         const response = await axios.get(`/blog/`);
-//         return response.data;
-//     } catch (err) {
-//         return rejectWithValue(err.response.data);
-//     }
-// });
+export const getDetailBoard = createAsyncThunk(
+    'GET_DETAIL_BOARD',
+    async (board_id: string, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.get(`/blog/${board_id}`);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    },
+);
 
 export const isnertBoard = createAsyncThunk(
     'INSERT_BOARD',
