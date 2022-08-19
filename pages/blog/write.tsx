@@ -73,36 +73,34 @@ const Write = () => {
     const quillRef = useRef(null);
 
     const [menu, setMenu] = useState<string>();
-    const [categoris, setCategoris] = useState<
-        [
-            {
-                [key: string]: string;
-            },
-        ]
-    >();
-    const [categoriId, setCategoriId] = useState<string>();
+    // const [categoris, setCategoris] = useState<
+    //     [
+    //         {
+    //             [key: string]: number;
+    //         },
+    //     ]
+    // >();
+    const [categoriId, setCategoriId] = useState<number>();
     const [files, setFiles] = useState<File[] | null>([]);
 
     useEffect(() => {
         if (categoriMenus.length) {
-            setMenu(categoriMenus[0].menu_categori);
-            setCategoris(categoriMenus[0]?.categoris);
-            setCategoriId(Object.keys(categoriMenus[0]?.categoris[0])[0]);
+            setMenu(categoriMenus[0].menu_name);
+            // setCategoris(categoriMenus[0]?.categoris);
+            setCategoriId(categoriMenus[0]?.categoris[0].categori_id);
         }
     }, []);
 
     const changeMenu = (value: string) => {
         setMenu(value);
-        if (value !== 'direct') {
-            setCategoris(categoriMenus?.find((cData) => cData.menu_categori === value).categoris);
-            const c = categoriMenus?.find((cData) => cData.menu_categori === value)?.categoris[0];
-            if (c) {
-                setCategoriId(Object.keys(c)[0]);
-            }
+        // setCategoris(categoriMenus?.find((cData) => cData.menu_name === value).categoris);
+        const c = categoriMenus?.find((cData) => cData.menu_name === value)?.categoris[0];
+        if (c) {
+            setCategoriId(c.categori_id);
         }
     };
 
-    const changeCategori = (value: string) => {
+    const changeCategori = (value: number) => {
         setCategoriId(value);
     };
 
@@ -160,6 +158,12 @@ const Write = () => {
 
     const submit = async () => {
         try {
+            const title = titleInputRef.current.input.value;
+            if (!title.trim()) {
+                message.warn('제목은 필수 입니다.');
+                titleInputRef.current.input.focus();
+                return;
+            }
             const $ = quillRef.current.state.value.trim()
                 ? Cheerio.load(`<div id='quillContent'>${quillRef.current.state.value}</div>`)
                 : '';
@@ -188,12 +192,8 @@ const Write = () => {
                 boardData.content = content;
             }
 
-            const title = titleInputRef.current.input.value;
-            const menuTitle = menu !== 'direct' ? menu : menuInputRef.current.input.value;
-            const categoriTitle = categoriId !== 'direct' ? categoriId : categoriInputRef.current.input.value;
             boardData.title = title;
-            boardData.menu_categori = menuTitle;
-            boardData.categori = categoriTitle;
+            boardData.categori_id = categoriId;
             boardData.uploadFiles = fileArr;
             await dispatch(isnertBoard(boardData)).unwrap();
             message.success('게시글을 저장했습니다.');
@@ -210,11 +210,11 @@ const Write = () => {
                 <WriteInput
                     {...{
                         titleInputRef,
-                        menuInputRef,
-                        categoriInputRef,
+                        // menuInputRef,
+                        // categoriInputRef,
                         menu,
                         categoriMenus,
-                        categoris,
+                        // categoris,
                         categoriId,
                         changeMenu,
                         changeCategori,

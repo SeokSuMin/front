@@ -90,6 +90,7 @@ const Boundary = styled.div`
 `;
 const ContentBox = styled.div`
     padding-top: 1.25em;
+    height: 100%;
     overflow-x: auto;
 `;
 const Content = styled.div``;
@@ -140,12 +141,12 @@ const DetailBoard = () => {
                     <WriterInfoBox>
                         <span>{detailBoard?.writer} [블로그 관리자]</span>
                         <span>·</span>
-                        <span>{dayjs(detailBoard?.createdAt).format('YYYY-MM-DD')}</span>
+                        <span>{dayjs(detailBoard?.createdAt).format('YYYY-MM-DD HH:mm')}</span>
                         <span className="comment">
                             <CommentOutlined /> 댓글 (6)
                         </span>
                     </WriterInfoBox>
-                    <Tag>{detailBoard?.categori}</Tag>
+                    <Tag>{detailBoard?.categoris.categori_name}</Tag>
                 </TitleBox>
                 <Boundary />
                 <ContentBox>

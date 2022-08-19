@@ -135,6 +135,10 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
         router.push('/blog/write');
     };
 
+    const moveCategoriBoards = (categoriId: number) => {
+        console.log('categoriId', categoriId);
+    };
+
     return (
         <Wrapper>
             <ProfileImgeBox>
@@ -154,16 +158,16 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                 <span style={{ fontWeight: 'bold', marginBottom: '1.25em' }}>전체보기 ({totalCount})</span>
                 {categoriMenus?.map((categoriMenu) => {
                     return (
-                        <Categoris key={categoriMenu.menu_categori}>
+                        <Categoris key={categoriMenu.menu_name}>
                             <ul>
                                 <li>
-                                    <span>• {categoriMenu.menu_categori}</span>
+                                    <span>• {categoriMenu.menu_name}</span>
                                 </li>
                                 {categoriMenu.categoris?.map((categori) => {
                                     const categoriName = Object.keys(categori)[0];
                                     const totalCount = Object.values(categori)[0];
                                     return (
-                                        <li key={categoriName}>
+                                        <li onClick={() => moveCategoriBoards(categori.categori_id)} key={categoriName}>
                                             <span>
                                                 └ {categoriName} ({totalCount})
                                             </span>

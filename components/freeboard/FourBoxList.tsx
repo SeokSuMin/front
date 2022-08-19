@@ -1,3 +1,4 @@
+import { CommentOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -110,6 +111,17 @@ const WriteInfo = styled.div`
     align-items: center;
     color: gray;
     font-size: 0.813rem;
+    .comment {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        margin-right: 0.813em;
+        cursor: pointer;
+        svg {
+            fill: black;
+            margin-right: 0.313em;
+        }
+    }
 `;
 
 const ProfileImg = styled.div`
@@ -184,7 +196,7 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxLi
                                     </ThumImg>
                                     <Content>
                                         <TagInfo>
-                                            <Tag color="blue">{board.categori}</Tag>
+                                            <Tag color="blue">{board.categoris.categori_name}</Tag>
                                         </TagInfo>
                                         <h2>{board.title}</h2>
                                         <WriteInfo>
@@ -192,6 +204,10 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxLi
                                             <span>{board.writer}</span>
                                             <div style={{ width: '10%', textAlign: 'center' }}>|</div>
                                             <span>{dayjs(board.createdAt).format('YYYY MM DD HH:mm')}</span>
+                                            <span className="comment">
+                                                <CommentOutlined />
+                                                (6)
+                                            </span>
                                         </WriteInfo>
                                     </Content>
                                 </CardContent>

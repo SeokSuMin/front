@@ -1,3 +1,4 @@
+import { BackTop } from 'antd';
 import { useScroll } from 'framer-motion';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -58,6 +59,16 @@ const Footer = styled.div<{ path: string }>`
     }
 `;
 
+const style: React.CSSProperties = {
+    height: 40,
+    width: 40,
+    lineHeight: '40px',
+    borderRadius: 4,
+    backgroundColor: '#1088e9',
+    color: '#fff',
+    textAlign: 'center',
+};
+
 const Layout = ({ children }) => {
     const router = useRouter();
     const { scrollYProgress, scrollY } = useScroll();
@@ -76,6 +87,9 @@ const Layout = ({ children }) => {
                 </a>
                 <h3>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 상단 개인 이미지 무단 복사를 금지합니다.</h3>
             </Footer>
+            <BackTop>
+                <div style={style}>UP</div>
+            </BackTop>
             {loginVisible ? <UserModalView {...{ isVisible: loginVisible, scrollY: scrollY.get() }} /> : null}
             {dashBoardVisible ? <DashBoard {...{ isVisible: dashBoardVisible, scrollY: scrollY.get() }} /> : null}
         </Wrapper>

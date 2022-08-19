@@ -37,16 +37,6 @@ const ContentBox = styled.div`
     position: relative;
 `;
 
-const style: React.CSSProperties = {
-    height: 40,
-    width: 40,
-    lineHeight: '40px',
-    borderRadius: 4,
-    backgroundColor: '#1088e9',
-    color: '#fff',
-    textAlign: 'center',
-};
-
 const Home = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
     const {
@@ -99,9 +89,6 @@ const Home = () => {
                     <FourBoxList {...{ viewType, leaving, toggleLeaving, boardList: data?.boardList }} />
                     <OneBoxList {...{ viewType, leaving, toggleLeaving }} />
                     <Paging />
-                    <BackTop>
-                        <div style={style}>UP</div>
-                    </BackTop>
                 </ContentBox>
             )}
         </Wrapper>

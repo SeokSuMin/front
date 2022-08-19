@@ -21,8 +21,8 @@ interface IBoardFile {
 
 export interface IBoardData {
     board_id?: string;
-    menu_categori?: string;
-    categori?: string;
+    categori_id?: number;
+    categoris?: { categori_name: string };
     title?: string;
     content?: string;
     writer: string;
@@ -32,7 +32,7 @@ export interface IBoardData {
 }
 
 export interface IBlog {
-    categoriMenus?: { menu_categori: string; categoris: [{ [key: string]: string }] }[];
+    categoriMenus?: { menu_name: string; categoris: [{ [key: string]: number }] }[];
     detailBoard?: IBoardData;
     uploadFileInfo?: { fileId: string; fileName: string; progress?: number }[];
     paging?: IPaging;
