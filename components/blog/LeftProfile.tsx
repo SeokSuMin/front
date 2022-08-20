@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import PencilToggle from '../../public/pencil-solid.svg';
 import GitHub from '../../public/github.svg';
 import { EditOutlined } from '@ant-design/icons';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { changeCurrentCategoriId } from '../../reducer/blog';
 
 const Wrapper = styled.div`
     width: 20%;
@@ -105,6 +106,10 @@ const Categoris = styled.div`
     li:not(:first-of-type) {
         margin-bottom: 0.5em;
     }
+    .active {
+        font-weight: bold;
+        text-decoration: underline;
+    }
 `;
 
 const EtcBox = styled.div`
@@ -129,14 +134,18 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
     const { userId } = useAppSelector((state) => state.user);
     const {
         categoriMenus,
+        currentCategoriId,
         paging: { totalCount },
     } = useAppSelector((state) => state.blog);
+
+    const dispatch = useAppDispatch();
+
     const moveWritePage = () => {
         router.push('/blog/write');
     };
 
     const moveCategoriBoards = (categoriId: number) => {
-        console.log('categoriId', categoriId);
+        dispatch(changeCurrentCategoriId(categoriId));
     };
 
     return (
@@ -155,7 +164,16 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                         </span>
                     </div>
                 ) : null}
-                <span style={{ fontWeight: 'bold', marginBottom: '1.25em' }}>전체보기 ({totalCount})</span>
+                <span
+                    style={{
+                        textDecoration: currentCategoriId === 0 ? 'underline' : '',
+                        fontWeight: currentCategoriId === 0 ? 'bold' : '',
+                        marginBottom: '1.25em',
+                    }}
+                    onClick={() => moveCategoriBoards(0)}
+                >
+                    전체보기 ({totalCount})
+                </span>
                 {categoriMenus?.map((categoriMenu) => {
                     return (
                         <Categoris key={categoriMenu.menu_name}>
@@ -167,7 +185,11 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                                     const categoriName = Object.keys(categori)[0];
                                     const totalCount = Object.values(categori)[0];
                                     return (
-                                        <li onClick={() => moveCategoriBoards(categori.categori_id)} key={categoriName}>
+                                        <li
+                                            className={currentCategoriId == categori.categori_id ? 'active' : ''}
+                                            onClick={() => moveCategoriBoards(categori.categori_id)}
+                                            key={categoriName}
+                                        >
                                             <span>
                                                 └ {categoriName} ({totalCount})
                                             </span>

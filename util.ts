@@ -14,11 +14,11 @@ const rlto = async (url: string, filename: string, mimeType: { type: string }) =
         });
 };
 
-const getBoardList = async (page: number, countList: number) => {
+const getBoardList = async (page: number, countList: number, currentCategoriId: number) => {
     try {
         const offset = (page - 1) * countList;
         const limit = countList;
-        const response = await axios.get(`/blog/${offset}/${limit}`);
+        const response = await axios.get(`/blog/${offset}/${limit}/${currentCategoriId}`);
         return response.data;
     } catch (err) {
         throw Error(err);

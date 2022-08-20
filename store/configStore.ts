@@ -6,8 +6,8 @@ import { createWrapper } from 'next-redux-wrapper';
 const makeStore = () => {
     return configureStore({
         reducer,
-        // middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
-        middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+        middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+        //middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
         devTools: process.env.NEXT_PUBLIC_NODE_ENV !== 'production',
     });
 };

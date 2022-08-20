@@ -36,6 +36,7 @@ export interface IBlog {
     detailBoard?: IBoardData;
     uploadFileInfo?: { fileId: string; fileName: string; progress?: number }[];
     paging?: IPaging;
+    currentCategoriId?: number;
     loading?: boolean;
     hydration?: boolean;
 }
@@ -43,10 +44,12 @@ export interface IBlog {
 const blog = createSlice({
     name: 'blog',
     initialState: {
-        loading: false,
         categoriMenus: [],
         uploadFileInfo: [],
+        currentCategoriId: 0,
+        loading: false,
         paging: { page: 1, startPage: 1, endPage: 1, countList: 15, countPage: 10, totalCount: 1 },
+        hydration: false,
     } as IBlog,
     reducers: {
         loading: (state, action: PayloadAction<IBlog>) => {
@@ -62,23 +65,32 @@ const blog = createSlice({
         fileProgress: (state, action) => {
             const fileId = action.payload.fileId;
             const progress = action.payload.progress;
-            const files = state.uploadFileInfo.find((file) => file.fileId === fileId);
-            const progressFile = [{ ...files, progress }];
+            const uploadFileInfo = state.uploadFileInfo.map((file) => {
+                if (file.fileId !== fileId) {
+                    return file;
+                } else {
+                    return { ...file, progress };
+                }
+            });
             return {
                 ...state,
-                uploadFileInfo: [...state.uploadFileInfo.filter((file) => file.fileId !== fileId), ...progressFile],
+                uploadFileInfo: uploadFileInfo,
             };
         },
         initTotalCount: (state, action: PayloadAction<number>) => {
             const totalCount = action.payload;
             return {
                 ...state,
+                uploadFileInfo: [],
                 paging: { ...state.paging, totalCount },
             };
         },
         goPage: (state, action: PayloadAction<number>) => {
             let totalPage = Math.floor(state.paging.totalCount / state.paging.countList);
             let page = action.payload ? action.payload : state.paging.page;
+            if (page < 1) {
+                page = 1;
+            }
             if (state.paging.totalCount % state.paging.countList > 0) {
                 totalPage++;
             }
@@ -100,13 +112,25 @@ const blog = createSlice({
                 paging: { ...state.paging, page, countList },
             };
         },
+        changeCurrentCategoriId: (state, action: PayloadAction<number>) => {
+            const categoriId = action.payload;
+            const page = 1;
+            return {
+                ...state,
+                currentCategoriId: categoriId,
+                paging: { ...state.paging, page },
+            };
+        },
     },
     extraReducers: (builder) => {
         builder
             .addCase(getCategoriMenu.fulfilled, (state, action) => {
+                const totalCount = action.payload.totalCount;
                 return {
                     ...state,
                     categoriMenus: action.payload.categoriMenus,
+                    uploadFileInfo: [],
+                    paging: { ...state.paging, totalCount },
                     hydration: true,
                 };
             })
@@ -146,6 +170,14 @@ const blog = createSlice({
     },
 });
 
-export const { loading, addUploadFiles, deleteUploadFile, fileProgress, initTotalCount, goPage, changeCountList } =
-    blog.actions;
+export const {
+    loading,
+    addUploadFiles,
+    deleteUploadFile,
+    fileProgress,
+    goPage,
+    changeCountList,
+    changeCurrentCategoriId,
+    initTotalCount,
+} = blog.actions;
 export default blog.reducer;

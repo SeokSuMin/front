@@ -23,8 +23,8 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
                     newPayload[name] = state[name];
                 }
             });
-            // console.log('state', state);
-            // console.log('action.payload', action.payload);
+            // console.log('하이드레이션 state', state);
+            // console.log('하이드레이션 action.payload', action.payload);
             // console.log('newPayload', newPayload);
             return {
                 ...state,

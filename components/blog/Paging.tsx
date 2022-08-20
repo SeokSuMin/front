@@ -50,13 +50,13 @@ const Paging = () => {
             <PagingBox>
                 <PagingList>
                     {paging.startPage > 1 ? (
-                        <PagingItem>
-                            <div>처음</div>
+                        <PagingItem onClick={() => movePageFunc(paging.page, 1)}>
+                            <div>&lt;&lt;</div>
                         </PagingItem>
                     ) : null}
                     {paging.page > 1 ? (
-                        <PagingItem>
-                            <div>이전</div>
+                        <PagingItem onClick={() => movePageFunc(paging.page, paging.endPage - 10)}>
+                            <div>&lt;</div>
                         </PagingItem>
                     ) : null}
                     {[...Array(paging.endPage + 1).keys()]
@@ -69,13 +69,13 @@ const Paging = () => {
                             );
                         })}
                     {paging.page < paging.totalPage ? (
-                        <PagingItem>
-                            <div>다음</div>
+                        <PagingItem onClick={() => movePageFunc(paging.page, paging.startPage + 10)}>
+                            <div>&gt;</div>
                         </PagingItem>
                     ) : null}
                     {paging.endPage < paging.totalPage ? (
-                        <PagingItem>
-                            <div>마지막</div>
+                        <PagingItem onClick={() => movePageFunc(paging.page, paging.totalPage)}>
+                            <div>&gt;&gt;</div>
                         </PagingItem>
                     ) : null}
                 </PagingList>

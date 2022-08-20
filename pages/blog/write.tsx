@@ -68,22 +68,18 @@ const Write = () => {
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const titleInputRef = useRef<InputRef | null>(null);
-    const menuInputRef = useRef<InputRef | null>(null);
-    const categoriInputRef = useRef<InputRef | null>(null);
     const quillRef = useRef(null);
 
     const [menu, setMenu] = useState<string>();
-    // const [categoris, setCategoris] = useState<
-    //     [
-    //         {
-    //             [key: string]: number;
-    //         },
-    //     ]
-    // >();
     const [categoriId, setCategoriId] = useState<number>();
     const [files, setFiles] = useState<File[] | null>([]);
 
+    const initPage = async () => {
+        await dispatch(getCategoriMenu());
+    };
+
     useEffect(() => {
+        initPage();
         if (categoriMenus.length) {
             setMenu(categoriMenus[0].menu_name);
             // setCategoris(categoriMenus[0]?.categoris);
@@ -246,7 +242,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         }
         // 로그인 사용자 체크
         await dispatch(checkUserlogin());
-        await dispatch(getCategoriMenu());
+        // await dispatch(getCategoriMenu());
 
         return {
             props: {},

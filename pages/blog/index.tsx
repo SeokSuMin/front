@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import FourBoxList from '../../components/freeboard/FourBoxList';
 import OneBoxList from '../../components/freeboard/OneBoxList';
@@ -14,7 +14,8 @@ import { useQuery } from 'react-query';
 import { BackTop, message, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getBoardList } from '../../util';
-import { goPage, IBoardData, initTotalCount } from '../../reducer/blog';
+import { goPage, initTotalCount } from '../../reducer/blog';
+import { useRouter } from 'next/router';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -38,21 +39,23 @@ const ContentBox = styled.div`
 `;
 
 const Home = () => {
+    const router = useRouter();
     const scrollRef = useRef<HTMLDivElement>(null);
     const {
+        currentCategoriId,
         paging: { page, countList },
     } = useAppSelector((state) => state.blog);
-    const dispath = useAppDispatch();
+    const dispatch = useAppDispatch();
     const [viewType, setViewType] = useState(1);
     const [leaving, setLeaving] = useState(false);
     const { isLoading, isError, data, error } = useQuery(
-        ['boardList', page, countList],
-        () => getBoardList(page, countList),
+        ['boardList', page, countList, currentCategoriId],
+        () => getBoardList(page, countList, currentCategoriId),
         {
             refetchOnWindowFocus: false,
             onSuccess: (data) => {
-                dispath(initTotalCount(data.totalCount));
-                dispath(goPage());
+                dispatch(initTotalCount(data.totalCount));
+                dispatch(goPage());
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth',
@@ -78,6 +81,14 @@ const Home = () => {
     const toggleLeaving = () => {
         setLeaving((prev) => !prev);
     };
+
+    const initPage = async () => {
+        await dispatch(getCategoriMenu());
+    };
+
+    useEffect(() => {
+        initPage();
+    }, []);
 
     return (
         <Wrapper>
@@ -106,7 +117,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         }
         // 로그인 사용자 체크
         await dispatch(checkUserlogin());
-        await dispatch(getCategoriMenu());
+        // await dispatch(getCategoriMenu());
         //  await dispatch(getBoardList());
         return {
             props: {},

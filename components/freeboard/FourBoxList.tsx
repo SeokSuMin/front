@@ -3,6 +3,7 @@ import { Tag } from 'antd';
 import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/router';
+import path from 'path';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import { IBoardData } from '../../reducer/blog';
@@ -185,10 +186,13 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxLi
                                     transition={{ type: 'tween', duration: 0.2 }}
                                 >
                                     <ThumImg>
-                                        {board.boardFiles[0] ? (
+                                        {board.boardFiles?.find((file) => path.extname(file.name) === '.png') ? (
                                             <img
                                                 alt="example"
-                                                src={`${fileBackUrl}${board.board_id}/${board.boardFiles[0]?.name}`}
+                                                src={`${fileBackUrl}${board.board_id}/${
+                                                    board.boardFiles.find((file) => path.extname(file.name) === '.png')
+                                                        .name
+                                                }`}
                                             />
                                         ) : (
                                             <img alt="example" src="no-image.JPG" />

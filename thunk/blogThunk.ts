@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import { BackUrl } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
 import { fileProgress, IBlog, IBoardData } from '../reducer/blog';
+import path from 'path';
 
 axios.defaults.baseURL = BackUrl;
 axios.defaults.withCredentials = true;
@@ -50,7 +51,10 @@ export const isnertBoard = createAsyncThunk(
                         //onUploadProgress업로드, onDownloadProgress다운로드 실시간 현황
                         const { loaded, total } = progress;
                         const percentageProgress = Math.floor((loaded / total) * 100);
-                        dispatch(fileProgress({ fileId: String(file.lastModified), progress: percentageProgress }));
+                        const extName = path.extname(file.name);
+                        if (extName !== '.png') {
+                            dispatch(fileProgress({ fileId: String(file.lastModified), progress: percentageProgress }));
+                        }
                     },
                 });
             }

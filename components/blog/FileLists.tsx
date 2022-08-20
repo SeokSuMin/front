@@ -1,6 +1,7 @@
 import { DeleteOutlined, PaperClipOutlined } from '@ant-design/icons';
 import React from 'react';
 import styled from 'styled-components';
+import { fileProgress } from '../../reducer/blog';
 import { useAppSelector } from '../../store/hooks';
 
 const Lable = styled.label`
@@ -29,10 +30,7 @@ const FileBox = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    div {
-        margin-bottom: 5px;
-    }
-    div span.percentText {
+    span.percentText {
         font-size: 0.75rem;
         margin-left: 0.417em;
         font-weight: bold;
@@ -45,7 +43,6 @@ const Files = styled.div`
     background-color: transparent;
     z-index: 1;
     border-radius: 0.188rem;
-    margin-bottom: 0.357em;
     font-size: 0.813rem;
     display: flex;
     align-items: center;
@@ -76,13 +73,12 @@ interface IFileListsProps {
 }
 
 const FileLists = ({ deleteFile }: IFileListsProps) => {
-    const { uploadFiles } = useAppSelector((state) => state.blog);
-
+    const { uploadFileInfo } = useAppSelector((state) => state.blog);
     return (
         <FileListBox>
             <Lable></Lable>
             <FileList>
-                {uploadFiles?.map((file) => {
+                {uploadFileInfo?.map((file) => {
                     return (
                         <FileBox key={file.fileId}>
                             <Files>
@@ -95,9 +91,7 @@ const FileLists = ({ deleteFile }: IFileListsProps) => {
                                 </span>
                                 <Progress style={{ width: file.progress + '%' }}></Progress>
                             </Files>
-                            {/* <div>
-                                <span className="percentText">{file.progress}%</span>
-                            </div> */}
+                            {file.progress > 0 ? <span className="percentText">{file.progress}%</span> : null}
                         </FileBox>
                     );
                 })}

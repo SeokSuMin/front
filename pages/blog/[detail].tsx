@@ -1,13 +1,17 @@
-import { CommentOutlined } from '@ant-design/icons';
+import { CommentOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import styled from 'styled-components';
 import { getCategoriMenu, getDetailBoard } from '../../thunk/blogThunk';
 import { checkUserlogin } from '../../thunk/userThunk';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import dayjs from 'dayjs';
 import parse from 'html-react-parser';
+import { fileBackUrl } from '../../config';
+import path from 'path';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -41,23 +45,13 @@ const BoardBox = styled.div`
     border: 1px solid rgb(217, 217, 217);
     border-radius: 0.63em;
     padding: 1.563em 0.938em;
-    /* overflow-x: auto; */
 `;
 
 const TitleBox = styled.div`
     h1 {
-        font-size: 2.813rem;
+        font-size: 2.5rem;
         line-height: 3.5rem;
         font-weight: bold;
-    }
-    .ant-tag {
-        border-radius: 0.313em;
-        color: gray;
-        background-color: rgb(245, 245, 245);
-        border: none;
-        font-size: 0.938rem;
-        padding: 5px;
-        margin-top: 1.25em;
     }
 `;
 const WriterInfoBox = styled.div`
@@ -83,17 +77,45 @@ const WriterInfoBox = styled.div`
         }
     }
 `;
+
+const TagBox = styled.div`
+    width: 100%;
+    margin-top: 1.25em;
+    .ant-tag {
+        border-radius: 0.313em;
+        color: gray;
+        background-color: rgb(245, 245, 245);
+        border: none;
+        font-size: 0.938rem;
+        padding: 5px;
+    }
+`;
+
+const FileList = styled.div`
+    margin-top: 1.25em;
+    font-size: 0.875rem;
+    line-height: 1.4rem;
+`;
+
+const Files = styled.div`
+    border-radius: 0.188rem;
+    margin-bottom: 0.357em;
+    font-size: 0.813rem;
+    span {
+        cursor: pointer;
+        margin-right: 0.2em;
+    }
+`;
+
 const Boundary = styled.div`
     width: 100%;
     border-bottom: 1px solid rgb(217, 217, 217);
     padding: 0.625em 0px;
 `;
-const ContentBox = styled.div`
+const Content = styled.div`
+    width: 100%;
     padding-top: 1.25em;
-    height: 100%;
-    overflow-x: auto;
 `;
-const Content = styled.div``;
 
 const CommunicationBox = styled.div``;
 const PrevNextBlogBox = styled.div``;
@@ -124,9 +146,24 @@ const DetailBoard = () => {
                 margin-top: 5px;
                 padding: 5px 10px;
             }
+            #quillContent {
+                overflow-y: hidden;
+                overflow-x: auto;
+            }
         </style>
     `;
+    const router = useRouter();
     const { detailBoard } = useAppSelector((state) => state.blog);
+    const dispatch = useAppDispatch();
+
+    const initPage = async () => {
+        await dispatch(getCategoriMenu());
+        await dispatch(getDetailBoard(router.query.detail as string));
+    };
+
+    useEffect(() => {
+        initPage();
+    }, []);
 
     return (
         <Wrapper>
@@ -146,12 +183,34 @@ const DetailBoard = () => {
                             <CommentOutlined /> 댓글 (6)
                         </span>
                     </WriterInfoBox>
-                    <Tag>{detailBoard?.categoris.categori_name}</Tag>
+                    <TagBox>
+                        <Tag>{detailBoard?.categoris.categori_name}</Tag>
+                    </TagBox>
+                    <FileList>
+                        {detailBoard?.boardFiles.map((file) => {
+                            const extName = path.extname(file.name);
+                            if (extName !== '.png') {
+                                return (
+                                    <Files key={file.file_id}>
+                                        <a
+                                            href={`${fileBackUrl}${file.board_id}/${file.name}`}
+                                            target="_self"
+                                            download
+                                            rel="noreferrer"
+                                        >
+                                            <span>
+                                                <PaperClipOutlined />
+                                                {file.name}
+                                            </span>
+                                        </a>
+                                    </Files>
+                                );
+                            }
+                        })}
+                    </FileList>
                 </TitleBox>
                 <Boundary />
-                <ContentBox>
-                    <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
-                </ContentBox>
+                <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
             </BoardBox>
         </Wrapper>
     );
@@ -169,8 +228,8 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         }
         // 로그인 사용자 체크
         await dispatch(checkUserlogin());
-        await dispatch(getCategoriMenu());
-        await dispatch(getDetailBoard(boardId));
+        // await dispatch(getCategoriMenu());
+        // await dispatch(getDetailBoard(boardId));
 
         return {
             props: {},
