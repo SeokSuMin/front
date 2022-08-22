@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getCategoriMenu, getDetailBoard, isnertBoard } from '../thunk/blogThunk';
+import { getCategoriMenu, getDetailBoard, isnertBoard, isnertComment } from '../thunk/blogThunk';
 
 interface IPaging {
     page: number;
@@ -19,20 +19,38 @@ interface IBoardFile {
     updatedAt: string;
 }
 
+export interface IBoardComment {
+    comment_id: number;
+    board_id?: string;
+    parent_id: number | null;
+    content: string;
+    parent_user_id: string;
+    user_id: string;
+    strategy_type?: string;
+    img_path?: string;
+    child_comment?: IBoardComment[];
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 export interface IBoardData {
     board_id?: string;
     categori_id?: number;
-    categoris?: { categori_name: string };
+    categoris: { categori_name: string };
     title?: string;
     content?: string;
     writer: string;
     uploadFiles?: File[];
-    boardFiles?: IBoardFile[];
+    board_files?: IBoardFile[];
+    comments?: IBoardComment[];
+    prevBoardId?: string | null;
+    nextBoardId?: string | null;
     createdAt: string;
 }
 
 export interface IBlog {
     categoriMenus?: { menu_name: string; categoris: [{ [key: string]: number }] }[];
+    categoriTotal?: number;
     detailBoard?: IBoardData;
     uploadFileInfo?: { fileId: string; fileName: string; progress?: number }[];
     paging?: IPaging;
@@ -130,8 +148,8 @@ const blog = createSlice({
                     ...state,
                     categoriMenus: action.payload.categoriMenus,
                     uploadFileInfo: [],
-                    paging: { ...state.paging, totalCount },
-                    hydration: true,
+                    categoriTotal: totalCount,
+                    hydration: true, // 페이지 번호 유지를 위한 true
                 };
             })
             // .addCase(getBoardList.pending, (state, action) => {
@@ -161,10 +179,44 @@ const blog = createSlice({
                     loading: false,
                 };
             })
-            .addCase(getDetailBoard.fulfilled, (state, action: PayloadAction<IBoardData>) => {
+            .addCase(getDetailBoard.fulfilled, (state, action) => {
+                const prevNextIds = action.payload.prevNextBoardIds[0];
+                const detailBoard = {
+                    ...action.payload.boardInfo,
+                    prevBoardId: prevNextIds.prev,
+                    nextBoardId: prevNextIds.next,
+                };
                 return {
                     ...state,
-                    detailBoard: action.payload,
+                    detailBoard,
+                };
+            })
+            .addCase(isnertComment.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(isnertComment.fulfilled, (state, action) => {
+                // const detailBoard = {
+                //     ...state.detailBoard,
+                // };
+                // if (state.detailBoard.comments.length) {
+                //     const commentId = action.payload.comment_id;
+                //     const newComments = state.detailBoard.comments.map((comment) => {
+                //         if (comment.comment_id !== commentId) {
+                //             return comment;
+                //         } else {
+                //             return { ...action.payload };
+                //         }
+                //     });
+                //     detailBoard.comments = newComments;
+                // } else {
+                //     detailBoard.comments = action.payload;
+                // }
+                return {
+                    ...state,
+                    loading: false,
                 };
             });
     },

@@ -186,11 +186,11 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxLi
                                     transition={{ type: 'tween', duration: 0.2 }}
                                 >
                                     <ThumImg>
-                                        {board.boardFiles?.find((file) => path.extname(file.name) === '.png') ? (
+                                        {board.board_files?.find((file) => path.extname(file.name) === '.png') ? (
                                             <img
                                                 alt="example"
                                                 src={`${fileBackUrl}${board.board_id}/${
-                                                    board.boardFiles.find((file) => path.extname(file.name) === '.png')
+                                                    board.board_files.find((file) => path.extname(file.name) === '.png')
                                                         .name
                                                 }`}
                                             />
@@ -208,10 +208,11 @@ const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxLi
                                             <span>{board.writer}</span>
                                             <div style={{ width: '10%', textAlign: 'center' }}>|</div>
                                             <span>{dayjs(board.createdAt).format('YYYY MM DD HH:mm')}</span>
-                                            <span className="comment">
-                                                <CommentOutlined />
-                                                (6)
-                                            </span>
+                                            {board.comments.length ? (
+                                                <span className="comment">
+                                                    <CommentOutlined />({board.comments.length})
+                                                </span>
+                                            ) : null}
                                         </WriteInfo>
                                     </Content>
                                 </CardContent>

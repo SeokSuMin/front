@@ -1,7 +1,7 @@
 import { CommentOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Tag } from 'antd';
+import { message, Tag } from 'antd';
 import styled from 'styled-components';
-import { getCategoriMenu, getDetailBoard } from '../../thunk/blogThunk';
+import { getCategoriMenu, getDetailBoard, isnertComment } from '../../thunk/blogThunk';
 import { checkUserlogin } from '../../thunk/userThunk';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
@@ -12,6 +12,8 @@ import { fileBackUrl } from '../../config';
 import path from 'path';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Comments from '../../components/blog/Comments';
+import { IBoardComment } from '../../reducer/blog';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -41,7 +43,8 @@ const TopMenuBox = styled.div`
 
 const BoardBox = styled.div`
     width: 98%;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
     border: 1px solid rgb(217, 217, 217);
     border-radius: 0.63em;
     padding: 1.563em 0.938em;
@@ -117,11 +120,6 @@ const Content = styled.div`
     padding-top: 1.25em;
 `;
 
-const CommunicationBox = styled.div``;
-const PrevNextBlogBox = styled.div``;
-const CommentWriteBox = styled.div``;
-const CommentListBox = styled.div``;
-
 const DetailBoard = () => {
     const quillInlineStyle = `
         <style>
@@ -154,7 +152,36 @@ const DetailBoard = () => {
     `;
     const router = useRouter();
     const { detailBoard } = useAppSelector((state) => state.blog);
+    const { userId } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
+
+    const moveDetailBoard = async (boardId: string) => {
+        router.push(`/blog/${boardId}`);
+    };
+
+    const submit = async (
+        comment_id: number,
+        content: string,
+        modify_flag: boolean,
+        parent_id: number | null,
+        parent_user_id: string | null,
+    ) => {
+        try {
+            const insertData = {
+                comment_id,
+                board_id: detailBoard.board_id,
+                content,
+                modify_flag,
+                parent_id,
+                parent_user_id,
+                user_id: userId,
+            } as IBoardComment;
+
+            await dispatch(isnertComment(insertData)).unwrap();
+        } catch (err) {
+            message.error(err);
+        }
+    };
 
     const initPage = async () => {
         await dispatch(getCategoriMenu());
@@ -163,14 +190,18 @@ const DetailBoard = () => {
 
     useEffect(() => {
         initPage();
-    }, []);
+    }, [router.query.detail]);
 
     return (
         <Wrapper>
             <TopMenuBox>
-                <button>이전글</button>
-                <button>다음글</button>
-                <button>목록</button>
+                {detailBoard?.prevBoardId ? (
+                    <button onClick={() => moveDetailBoard(detailBoard.prevBoardId)}>이전글</button>
+                ) : null}
+                {detailBoard?.nextBoardId ? (
+                    <button onClick={() => moveDetailBoard(detailBoard.nextBoardId)}>다음글</button>
+                ) : null}
+                <button onClick={() => router.push('/blog')}>목록</button>
             </TopMenuBox>
             <BoardBox>
                 <TitleBox>
@@ -179,15 +210,17 @@ const DetailBoard = () => {
                         <span>{detailBoard?.writer} [블로그 관리자]</span>
                         <span>·</span>
                         <span>{dayjs(detailBoard?.createdAt).format('YYYY-MM-DD HH:mm')}</span>
-                        <span className="comment">
-                            <CommentOutlined /> 댓글 (6)
-                        </span>
+                        {detailBoard?.comments?.length ? (
+                            <span className="comment">
+                                <CommentOutlined /> 댓글 ({detailBoard.comments.length})
+                            </span>
+                        ) : null}
                     </WriterInfoBox>
                     <TagBox>
                         <Tag>{detailBoard?.categoris.categori_name}</Tag>
                     </TagBox>
                     <FileList>
-                        {detailBoard?.boardFiles.map((file) => {
+                        {detailBoard?.board_files.map((file) => {
                             const extName = path.extname(file.name);
                             if (extName !== '.png') {
                                 return (
@@ -212,6 +245,7 @@ const DetailBoard = () => {
                 <Boundary />
                 <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
             </BoardBox>
+            <Comments submit={submit} />
         </Wrapper>
     );
 };
@@ -226,6 +260,9 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         if (req && cookie) {
             axios.defaults.headers.common['Cookie'] = cookie;
         }
+
+        console.log('stateInfo!', getState().blog);
+
         // 로그인 사용자 체크
         await dispatch(checkUserlogin());
         // await dispatch(getCategoriMenu());

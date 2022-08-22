@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosResponse } from 'axios';
 import { BackUrl } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
-import { fileProgress, IBlog, IBoardData } from '../reducer/blog';
+import { fileProgress, IBlog, IBoardComment, IBoardData } from '../reducer/blog';
 import path from 'path';
 
 axios.defaults.baseURL = BackUrl;
@@ -24,7 +24,10 @@ export const getDetailBoard = createAsyncThunk(
     'GET_DETAIL_BOARD',
     async (board_id: string, { getState, requestId, rejectWithValue }) => {
         try {
-            const response = await axios.get(`/blog/${board_id}`);
+            const {
+                blog: { currentCategoriId },
+            } = getState() as { blog: IBlog };
+            const response = await axios.get(`/blog/${board_id}/${currentCategoriId}`);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -67,6 +70,18 @@ export const isnertBoard = createAsyncThunk(
             delete boardData.uploadFiles;
             await axios.post(`/blog/insert`, { boardData, fileNames });
             return true;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    },
+);
+
+export const isnertComment = createAsyncThunk(
+    'INSERT_COMMENT',
+    async (commentData: IBoardComment, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.post(`/blog/insert/comment`, commentData);
+            return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
         }

@@ -132,11 +132,7 @@ interface ILeftProfileProps {
 const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
     const router = useRouter();
     const { userId } = useAppSelector((state) => state.user);
-    const {
-        categoriMenus,
-        currentCategoriId,
-        paging: { totalCount },
-    } = useAppSelector((state) => state.blog);
+    const { categoriMenus, currentCategoriId, categoriTotal } = useAppSelector((state) => state.blog);
 
     const dispatch = useAppDispatch();
 
@@ -144,8 +140,14 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
         router.push('/blog/write');
     };
 
-    const moveCategoriBoards = (categoriId: number) => {
-        dispatch(changeCurrentCategoriId(categoriId));
+    const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
+        console.log(currentCategoriId, newCategoriId);
+        if (currentCategoriId !== newCategoriId) {
+            dispatch(changeCurrentCategoriId(newCategoriId));
+            if (router.pathname !== '/blog') {
+                router.push('/blog');
+            }
+        }
     };
 
     return (
@@ -170,9 +172,9 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                         fontWeight: currentCategoriId === 0 ? 'bold' : '',
                         marginBottom: '1.25em',
                     }}
-                    onClick={() => moveCategoriBoards(0)}
+                    onClick={() => moveCategoriBoards(currentCategoriId, 0)}
                 >
-                    전체보기 ({totalCount})
+                    전체보기 ({categoriTotal})
                 </span>
                 {categoriMenus?.map((categoriMenu) => {
                     return (
@@ -187,7 +189,7 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                                     return (
                                         <li
                                             className={currentCategoriId == categori.categori_id ? 'active' : ''}
-                                            onClick={() => moveCategoriBoards(categori.categori_id)}
+                                            onClick={() => moveCategoriBoards(currentCategoriId, categori.categori_id)}
                                             key={categoriName}
                                         >
                                             <span>

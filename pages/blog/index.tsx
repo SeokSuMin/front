@@ -54,6 +54,7 @@ const Home = () => {
         {
             refetchOnWindowFocus: false,
             onSuccess: (data) => {
+                // console.log('data', data);
                 dispatch(initTotalCount(data.totalCount));
                 dispatch(goPage());
                 window.scrollTo({
@@ -118,7 +119,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         // 로그인 사용자 체크
         await dispatch(checkUserlogin());
         // await dispatch(getCategoriMenu());
-        //  await dispatch(getBoardList());
+        // await dispatch(getBoardList());
         return {
             props: {},
         };
