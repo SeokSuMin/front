@@ -198,24 +198,14 @@ const blog = createSlice({
                 };
             })
             .addCase(isnertComment.fulfilled, (state, action) => {
-                // const detailBoard = {
-                //     ...state.detailBoard,
-                // };
-                // if (state.detailBoard.comments.length) {
-                //     const commentId = action.payload.comment_id;
-                //     const newComments = state.detailBoard.comments.map((comment) => {
-                //         if (comment.comment_id !== commentId) {
-                //             return comment;
-                //         } else {
-                //             return { ...action.payload };
-                //         }
-                //     });
-                //     detailBoard.comments = newComments;
-                // } else {
-                //     detailBoard.comments = action.payload;
-                // }
+                const comments = action.payload;
+                const detailBoard = {
+                    ...state.detailBoard,
+                    comments,
+                };
                 return {
                     ...state,
+                    detailBoard,
                     loading: false,
                 };
             });
