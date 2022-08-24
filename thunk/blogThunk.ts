@@ -76,12 +76,24 @@ export const isnertBoard = createAsyncThunk(
     },
 );
 
-export const isnertComment = createAsyncThunk(
+export const insertComment = createAsyncThunk(
     'INSERT_COMMENT',
     async (commentData: IBoardComment, { getState, requestId, rejectWithValue }) => {
         try {
-            const response = await axios.post(`/blog/insert/comment`, commentData);
+            const response = await axios.post(`/blog/comment/insert`, commentData);
             return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    },
+);
+
+export const deleteComment = createAsyncThunk(
+    'DELETE_COMMENT',
+    async (commentIds: { commentId: number; parentId: number }, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.delete(`/blog/comment/${commentIds.commentId}`);
+            return commentIds;
         } catch (err) {
             return rejectWithValue(err.response.data);
         }

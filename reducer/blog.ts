@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getCategoriMenu, getDetailBoard, isnertBoard, isnertComment } from '../thunk/blogThunk';
+import { getCategoriMenu, getDetailBoard, isnertBoard, insertComment, deleteComment } from '../thunk/blogThunk';
 
 interface IPaging {
     page: number;
@@ -29,6 +29,7 @@ export interface IBoardComment {
     strategy_type?: string;
     img_path?: string;
     child_comment?: IBoardComment[];
+    modify_flag?: boolean;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -191,18 +192,57 @@ const blog = createSlice({
                     detailBoard,
                 };
             })
-            .addCase(isnertComment.pending, (state, action) => {
+            .addCase(insertComment.pending, (state, action) => {
                 return {
                     ...state,
                     loading: true,
                 };
             })
-            .addCase(isnertComment.fulfilled, (state, action) => {
+            .addCase(insertComment.fulfilled, (state, action) => {
                 const comments = action.payload.comments;
                 const detailBoard = {
                     ...state.detailBoard,
                     comments,
                 };
+                return {
+                    ...state,
+                    detailBoard,
+                    loading: false,
+                };
+            })
+            .addCase(deleteComment.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(deleteComment.fulfilled, (state, action) => {
+                const commentId = +action.payload.commentId;
+                const parentId = +action.payload.parentId;
+                const detailBoard = {
+                    ...state.detailBoard,
+                };
+                if (parentId) {
+                    const comments = state.detailBoard.comments.map((comment) => {
+                        if (comment.comment_id === parentId) {
+                            const newChildComments = comment.child_comment.filter(
+                                (childComment) => childComment.comment_id !== commentId,
+                            );
+                            return {
+                                ...comment,
+                                child_comment: newChildComments,
+                            };
+                        } else {
+                            return {
+                                ...comment,
+                            };
+                        }
+                    });
+                    detailBoard.comments = comments;
+                } else {
+                    const comments = state.detailBoard.comments.filter((comment) => comment.comment_id !== commentId);
+                    detailBoard.comments = comments;
+                }
                 return {
                     ...state,
                     detailBoard,

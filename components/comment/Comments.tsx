@@ -1,16 +1,22 @@
 import styled from 'styled-components';
 import TextArea from 'antd/lib/input/TextArea';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import React, { useEffect, useState } from 'react';
 import { fileBackUrl } from '../../config';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { getDifferenceTime } from '../../util';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import CommentContent from './CommentContent';
 import WriteReply from './WriteReply';
+import Modify from './Modify';
+import { deleteComment, insertComment } from '../../thunk/blogThunk';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { IBoardComment } from '../../reducer/blog';
+import TopWriteComment from './TopWriteComment';
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
+
+const { confirm } = Modal;
 
 const Wrapper = styled.div`
     width: 98%;
@@ -18,42 +24,6 @@ const Wrapper = styled.div`
 
 const LeftAreaBox = styled.div`
     width: 3.012em;
-`;
-
-const CommentWriteBox = styled.div`
-    width: 100%;
-    margin-top: 50px;
-`;
-
-const CommentWriteTitle = styled.div`
-    width: 100%;
-    margin-bottom: 1.25em;
-    span {
-        font-size: 1rem;
-        font-weight: bold;
-    }
-`;
-
-const CommentWriteArea = styled.div`
-    width: 100%;
-`;
-
-const CommentSubmitBox = styled.div`
-    width: 100%;
-    margin-top: 1.25em;
-    text-align: right;
-    button {
-        border: none;
-        background-color: rgb(18, 184, 134);
-        color: white;
-        padding: 0.5em 0.813em;
-        border-radius: 0.313rem;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: rgb(32, 201, 151);
-    }
 `;
 
 const CommentListBox = styled.div`
@@ -107,54 +77,44 @@ const ChildCommentList = styled.div`
     }
 `;
 
-interface ICommentsProps {
-    submit: (
-        comment_id: number,
-        content: string,
-        modify_flag: boolean,
-        parent_id: number | null,
-        parent_user_id: string | null,
-    ) => void;
-}
+const ProfileImg = styled.div<{ path: string }>`
+    width: 2.5rem;
+    height: 2.5rem;
+    // ${(props) => props.path}
+    // http://localhost:3006/shark/1661161148886rkJggg==.png
+    background-image: url(${(props) => props.path});
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    margin-right: 0.55em;
+`;
 
-const Comments = ({ submit }: ICommentsProps) => {
+const Comments = () => {
+    const { userId } = useAppSelector((state) => state.user);
     const { detailBoard } = useAppSelector((state) => state.blog);
-    const [content, setContent] = useState('');
-    const [mainComments, setMainComments] = useState<{
+    const dispatch = useAppDispatch();
+    const [allComments, setAllComments] = useState<{
         [key: string]: { replyToggles: boolean; childToggles: boolean; content: string; modify_flag: boolean };
     }>({});
-    const [childComments, setChildComments] = useState<{
-        [key: string]: { replyToggles: boolean; content: string; modify_flag: boolean };
-    }>({});
 
-    const changeMainComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setContent(e.currentTarget.value);
-    };
-
-    const replyToggle = (type: string, commentId: number) => {
-        if (type === 'main') {
-            setMainComments((prev) => {
-                const findComment = prev[`${commentId}`];
-                const newToggle = { ...findComment, content: '', replyToggles: !findComment.replyToggles };
-                return {
-                    ...prev,
-                    [`${commentId}`]: newToggle,
-                };
-            });
-        } else {
-            setChildComments((prev) => {
-                const findComment = prev[`${commentId}`];
-                const newToggle = { ...findComment, content: '', replyToggles: !findComment.replyToggles };
-                return {
-                    ...prev,
-                    [`${commentId}`]: newToggle,
-                };
-            });
+    const replyToggle = (commentId: number) => {
+        if (!userId) {
+            message.error('로그인한 사용자만 가능합니다.');
+            return;
         }
+        setAllComments((prev) => {
+            const findComment = prev[`${commentId}`];
+            const newToggle = { ...findComment, content: '', replyToggles: !findComment.replyToggles };
+            return {
+                ...prev,
+                [`${commentId}`]: newToggle,
+            };
+        });
     };
 
     const toggleReplyList = (commentId: number) => {
-        setMainComments((prev) => {
+        setAllComments((prev) => {
             const findComment = prev[`${commentId}`];
             const newToggle = { ...findComment, childToggles: !findComment.childToggles };
             return {
@@ -164,141 +124,191 @@ const Comments = ({ submit }: ICommentsProps) => {
         });
     };
 
-    const modifyToggle = (type: string, commentId: number) => {
-        if (type === 'main') {
-            setMainComments((prev) => {
-                const findComment = prev[`${commentId}`];
-                const newToggle = { ...findComment, content: '', modify_flag: !findComment.modify_flag };
-                return {
-                    ...prev,
-                    [`${commentId}`]: newToggle,
-                };
-            });
-        } else {
-            setChildComments((prev) => {
-                const findComment = prev[`${commentId}`];
-                const newToggle = { ...findComment, content: '', modify_flag: !findComment.modify_flag };
-                return {
-                    ...prev,
-                    [`${commentId}`]: newToggle,
-                };
-            });
-        }
+    const modifyToggle = (commentId: number, content: string) => {
+        setAllComments((prev) => {
+            const findComment = prev[`${commentId}`];
+            const newToggle = { ...findComment, content, modify_flag: !findComment.modify_flag };
+            return {
+                ...prev,
+                [`${commentId}`]: newToggle,
+            };
+        });
     };
 
-    const changeComment = (e: React.ChangeEvent<HTMLTextAreaElement>, type: string, commentId: number) => {
-        if (type === 'main') {
-            setMainComments((prev) => {
-                const findComment = prev[`${commentId}`];
-                const newContent = { ...findComment, content: e.currentTarget.value };
-                return {
-                    ...prev,
-                    [`${commentId}`]: newContent,
-                };
-            });
-        } else {
-            setChildComments((prev) => {
-                const findComment = prev[`${commentId}`];
-                const newToggle = { ...findComment, content: e.currentTarget.value };
-                return {
-                    ...prev,
-                    [`${commentId}`]: newToggle,
-                };
-            });
-        }
+    const changeComment = (e: React.ChangeEvent<HTMLTextAreaElement>, commentId: number) => {
+        setAllComments((prev) => {
+            const findComment = prev[`${commentId}`];
+            const newContent = { ...findComment, content: e.currentTarget.value };
+            return {
+                ...prev,
+                [`${commentId}`]: newContent,
+            };
+        });
     };
 
-    const submitComment = (
-        type: string,
+    const deletefirm = (commentId: number, parentId: number) => {
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            title: '댓글 삭제',
+            content: <p>댓글을 삭제하면 해당 댓글과, 답글이 모두 삭제됩니다.</p>,
+            okText: '삭제',
+            cancelText: '취소',
+            async onOk() {
+                try {
+                    await dispatch(deleteComment({ commentId, parentId })).unwrap();
+                    message.success('삭제되었습니다.');
+                } catch (err) {
+                    message.success(err);
+                }
+            },
+            onCancel() {
+                // Modal.destroyAll();
+            },
+        });
+    };
+
+    const submitComment = async (
         comment_id: number | null,
         modify_flag: boolean,
         parent_id: number | null,
         parent_user_id: string | null,
+        content?: string,
     ) => {
+        const insertData = {
+            comment_id: null,
+            board_id: detailBoard.board_id,
+            content: '',
+            modify_flag,
+            parent_id,
+            parent_user_id,
+            user_id: userId,
+        } as IBoardComment;
+
         if (!comment_id) {
-            submit(comment_id, content, modify_flag, parent_id, parent_user_id);
-        } else {
-            const content =
-                type === 'main' ? mainComments[`${comment_id}`].content : childComments[`${comment_id}`].content;
             if (!content.trim()) {
                 message.error('내용은 필수입니다.');
                 return;
             }
+            insertData.content = content;
+        } else {
+            const allContent = allComments[`${comment_id}`].content;
+            if (!allContent.trim()) {
+                message.error('내용은 필수입니다.');
+                return;
+            }
             const checkModifyId = modify_flag ? comment_id : null;
-            submit(checkModifyId, content, modify_flag, parent_id, parent_user_id);
+            insertData.content = allContent;
+            insertData.comment_id = checkModifyId;
         }
+        await dispatch(insertComment(insertData)).unwrap();
+        if (modify_flag) {
+            allComments[`${comment_id}`].modify_flag = false;
+        } else if (parent_id) {
+            allComments[`${comment_id}`].replyToggles = false;
+        }
+        message.success(modify_flag ? '수정되었습니다.' : '댓글이 작성되었습니다.');
     };
 
+    // 댓글 수 만큼 각 댓글에 고유 state 처리 작업 진행
     useEffect(() => {
         if (detailBoard?.comments) {
             for (const comment of detailBoard.comments) {
-                setMainComments((prev) => {
+                setAllComments((prev) => {
                     const mainComment = { replyToggles: false, content: '', childToggles: false, modify_flag: false };
-                    return {
-                        ...prev,
-                        [`${comment.comment_id}`]: mainComment,
-                    };
+                    if (prev[`${comment.comment_id}`] && userId) {
+                        return {
+                            ...prev,
+                        };
+                    } else {
+                        return {
+                            ...prev,
+                            [`${comment.comment_id}`]: mainComment,
+                        };
+                    }
                 });
                 if (comment?.child_comment) {
                     for (const childComment of comment.child_comment) {
-                        setChildComments((prev) => {
-                            const cComment = { replyToggles: false, content: '', modify_flag: false };
-                            return {
-                                ...prev,
-                                [`${childComment.comment_id}`]: cComment,
+                        setAllComments((prev) => {
+                            const cComment = {
+                                replyToggles: false,
+                                content: '',
+                                childToggles: false,
+                                modify_flag: false,
                             };
+                            if (prev[`${childComment.comment_id}`] && userId) {
+                                return {
+                                    ...prev,
+                                };
+                            } else {
+                                return {
+                                    ...prev,
+                                    [`${childComment.comment_id}`]: cComment,
+                                };
+                            }
                         });
                     }
                 }
             }
         }
-    }, [detailBoard?.comments]);
+    }, [detailBoard?.comments, userId]);
 
     return (
         <Wrapper>
-            <CommentWriteBox>
-                <CommentWriteTitle>
-                    <span>{detailBoard?.comments ? detailBoard.comments.length : 0}개의 댓글</span>
-                </CommentWriteTitle>
-                <CommentWriteArea>
-                    <TextArea
-                        placeholder="댓글을 작성하세요"
-                        autoSize={{ minRows: 4, maxRows: 4 }}
-                        value={content}
-                        onChange={changeMainComment}
-                    />
-                </CommentWriteArea>
-                <CommentSubmitBox>
-                    <button onClick={() => submitComment('main', null, false, null, null)}>댓글 작성</button>
-                </CommentSubmitBox>
-            </CommentWriteBox>
+            <TopWriteComment {...{ submitComment }} />
             <CommentListBox>
                 <CommentList>
                     {detailBoard?.comments?.map((comment) => {
                         return (
                             <React.Fragment key={comment.comment_id}>
-                                <CommentContent
-                                    {...{ type: 'main', comment, replyToggle, modifyToggle, allComments: mainComments }}
-                                />
-                                {mainComments[`${comment.comment_id}`]?.replyToggles ? (
+                                <div style={{ display: 'flex', marginTop: '4.375em' }}>
+                                    <ProfileImg
+                                        path={
+                                            comment.strategy_type === 'local'
+                                                ? fileBackUrl + comment.img_path
+                                                : comment.img_path
+                                        }
+                                    ></ProfileImg>
+                                    {allComments[`${comment.comment_id}`]?.modify_flag ? (
+                                        <Modify
+                                            {...{
+                                                parentId: null,
+                                                comment,
+                                                allComments,
+                                                changeComment,
+                                                modifyToggle,
+                                                submitComment,
+                                            }}
+                                        />
+                                    ) : (
+                                        <CommentContent
+                                            {...{
+                                                comment,
+                                                allComments,
+                                                replyToggle,
+                                                modifyToggle,
+                                                deletefirm,
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                {allComments[`${comment.comment_id}`]?.replyToggles ? (
                                     <WriteReply
                                         {...{
-                                            type: 'main',
                                             comment,
-                                            allComments: mainComments,
+                                            allComments,
                                             changeComment,
                                             submitComment,
                                             replyToggle,
                                         }}
                                     />
                                 ) : null}
-                                {comment?.child_comment ? (
+                                {comment?.child_comment?.length ? (
                                     <ReplyCountBox>
                                         <LeftAreaBox />
                                         <span onClick={() => toggleReplyList(comment.comment_id)}>
                                             <div
                                                 className={
-                                                    mainComments[`${comment.comment_id}`]?.childToggles
+                                                    allComments[`${comment.comment_id}`]?.childToggles
                                                         ? 'toggle'
                                                         : 'unToggle'
                                                 }
@@ -309,29 +319,50 @@ const Comments = ({ submit }: ICommentsProps) => {
                                         </span>
                                     </ReplyCountBox>
                                 ) : null}
-                                {mainComments[`${comment.comment_id}`]?.childToggles ? (
+                                {allComments[`${comment.comment_id}`]?.childToggles ? (
                                     <ChildCommentListBox>
                                         <LeftAreaBox />
                                         <ChildCommentList>
                                             {comment?.child_comment?.map((childComment) => {
                                                 return (
                                                     <React.Fragment key={childComment.comment_id}>
-                                                        <CommentContent
-                                                            {...{
-                                                                type: 'child',
-                                                                comment: childComment,
-                                                                replyToggle,
-                                                                modifyToggle,
-                                                                allComments: childComments,
-                                                            }}
-                                                        />
-                                                        {childComments[`${childComment.comment_id}`]?.replyToggles ? (
+                                                        <div style={{ display: 'flex', marginTop: '4.375em' }}>
+                                                            <ProfileImg
+                                                                path={
+                                                                    childComment.strategy_type === 'local'
+                                                                        ? fileBackUrl + childComment.img_path
+                                                                        : childComment.img_path
+                                                                }
+                                                            ></ProfileImg>
+                                                            {allComments[`${childComment.comment_id}`]?.modify_flag ? (
+                                                                <Modify
+                                                                    {...{
+                                                                        parentId: comment.comment_id,
+                                                                        comment: childComment,
+                                                                        allComments,
+                                                                        changeComment,
+                                                                        modifyToggle,
+                                                                        submitComment,
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <CommentContent
+                                                                    {...{
+                                                                        comment: childComment,
+                                                                        replyToggle,
+                                                                        modifyToggle,
+                                                                        allComments,
+                                                                        deletefirm,
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                        {allComments[`${childComment.comment_id}`]?.replyToggles ? (
                                                             <WriteReply
                                                                 {...{
-                                                                    type: 'child',
                                                                     parentId: comment.comment_id,
                                                                     comment: childComment,
-                                                                    allComments: childComments,
+                                                                    allComments,
                                                                     changeComment,
                                                                     submitComment,
                                                                     replyToggle,

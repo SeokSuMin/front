@@ -1,7 +1,7 @@
 import { CommentOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { message, Tag } from 'antd';
 import styled from 'styled-components';
-import { getCategoriMenu, getDetailBoard, isnertComment } from '../../thunk/blogThunk';
+import { getCategoriMenu, getDetailBoard, insertComment } from '../../thunk/blogThunk';
 import { checkUserlogin } from '../../thunk/userThunk';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
@@ -152,35 +152,10 @@ const DetailBoard = () => {
     `;
     const router = useRouter();
     const { detailBoard } = useAppSelector((state) => state.blog);
-    const { userId } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
         router.push(`/blog/${boardId}`);
-    };
-
-    const submit = async (
-        comment_id: number,
-        content: string,
-        modify_flag: boolean,
-        parent_id: number | null,
-        parent_user_id: string | null,
-    ) => {
-        try {
-            const insertData = {
-                comment_id,
-                board_id: detailBoard.board_id,
-                content,
-                modify_flag,
-                parent_id,
-                parent_user_id,
-                user_id: userId,
-            } as IBoardComment;
-
-            await dispatch(isnertComment(insertData)).unwrap();
-        } catch (err) {
-            message.error(err);
-        }
     };
 
     const initPage = async () => {
@@ -245,7 +220,7 @@ const DetailBoard = () => {
                 <Boundary />
                 <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
             </BoardBox>
-            <Comments submit={submit} />
+            <Comments />
         </Wrapper>
     );
 };
