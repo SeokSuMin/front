@@ -12,7 +12,7 @@ import { fileBackUrl } from '../../config';
 import path from 'path';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Comments from '../../components/blog/Comments';
+import Comments from '../../components/comment/Comments';
 import { IBoardComment } from '../../reducer/blog';
 
 const Wrapper = styled.div`

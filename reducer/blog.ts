@@ -198,7 +198,7 @@ const blog = createSlice({
                 };
             })
             .addCase(isnertComment.fulfilled, (state, action) => {
-                const comments = action.payload;
+                const comments = action.payload.comments;
                 const detailBoard = {
                     ...state.detailBoard,
                     comments,
