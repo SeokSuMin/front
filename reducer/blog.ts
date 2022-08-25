@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getCategoriMenu, getDetailBoard, isnertBoard, insertComment, deleteComment } from '../thunk/blogThunk';
+import {
+    getCategoriMenu,
+    getDetailBoard,
+    isnertBoard,
+    insertComment,
+    deleteComment,
+    deleteBoard,
+} from '../thunk/blogThunk';
 
 interface IPaging {
     page: number;
@@ -50,12 +57,13 @@ export interface IBoardData {
 }
 
 export interface IBlog {
-    categoriMenus?: { menu_name: string; categoris: [{ [key: string]: number }] }[];
+    categoriMenus?: { menu_name: string; sort: number; categoris: [{ [key: string]: number }] }[];
     categoriTotal?: number;
     detailBoard?: IBoardData;
     uploadFileInfo?: { fileId: string; fileName: string; progress?: number }[];
     paging?: IPaging;
     currentCategoriId?: number;
+    viewType?: number;
     loading?: boolean;
     hydration?: boolean;
 }
@@ -68,6 +76,7 @@ const blog = createSlice({
         currentCategoriId: 0,
         loading: false,
         paging: { page: 1, startPage: 1, endPage: 1, countList: 15, countPage: 10, totalCount: 1 },
+        viewType: 1,
         hydration: false,
     } as IBlog,
     reducers: {
@@ -140,6 +149,24 @@ const blog = createSlice({
                 paging: { ...state.paging, page },
             };
         },
+        deleteBoardFiles: (state, action: PayloadAction<number>) => {
+            const fildId = action.payload;
+            const detailBoard = {
+                ...state.detailBoard,
+                board_files: state.detailBoard.board_files.filter((file) => file.file_id !== fildId),
+            };
+            return {
+                ...state,
+                detailBoard,
+            };
+        },
+        changeBoardViewType: (state, action: PayloadAction<number>) => {
+            const viewType = action.payload;
+            return {
+                ...state,
+                viewType,
+            };
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -149,6 +176,7 @@ const blog = createSlice({
                     ...state,
                     categoriMenus: action.payload.categoriMenus,
                     uploadFileInfo: [],
+                    detailBoard: null,
                     categoriTotal: totalCount,
                     hydration: true, // 페이지 번호 유지를 위한 true
                 };
@@ -180,16 +208,23 @@ const blog = createSlice({
                     loading: false,
                 };
             })
+            .addCase(getDetailBoard.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
             .addCase(getDetailBoard.fulfilled, (state, action) => {
                 const prevNextIds = action.payload.prevNextBoardIds[0];
                 const detailBoard = {
                     ...action.payload.boardInfo,
-                    prevBoardId: prevNextIds.prev,
-                    nextBoardId: prevNextIds.next,
+                    prevBoardId: prevNextIds ? prevNextIds.prev : null,
+                    nextBoardId: prevNextIds ? prevNextIds.next : null,
                 };
                 return {
                     ...state,
                     detailBoard,
+                    loading: false,
                 };
             })
             .addCase(insertComment.pending, (state, action) => {
@@ -248,6 +283,19 @@ const blog = createSlice({
                     detailBoard,
                     loading: false,
                 };
+            })
+            .addCase(deleteBoard.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(deleteBoard.fulfilled, (state, action) => {
+                return {
+                    ...state,
+                    detailBoard: null,
+                    loading: false,
+                };
             });
     },
 });
@@ -261,5 +309,7 @@ export const {
     changeCountList,
     changeCurrentCategoriId,
     initTotalCount,
+    deleteBoardFiles,
+    changeBoardViewType,
 } = blog.actions;
 export default blog.reducer;

@@ -85,14 +85,20 @@ const CommentContent = ({ comment, replyToggle, modifyToggle, allComments, delet
                         <span>{comment.modify_flag ? ' (수정 됨)' : ''}</span>
                     </WriterInfo>
                     <Content>
-                        <div>
-                            {comment.parent_user_id ? <Tag color="#2db7f5">{comment.parent_user_id}</Tag> : null}
-                            {comment.content.split('\n').map((line, i) => (
-                                <span key={i}>
-                                    {line}
-                                    <br />
-                                </span>
-                            ))}
+                        <div style={{ lineHeight: '1.250em' }}>
+                            {comment.parent_user_id ? (
+                                <span style={{ color: 'rgb(6, 95, 212)' }}>@{comment.parent_user_id}&nbsp;&nbsp;</span>
+                            ) : null}
+                            {comment.content.split('\n').map((line, i) => {
+                                if (line.trim()) {
+                                    return (
+                                        <span key={i}>
+                                            {line}
+                                            <br />
+                                        </span>
+                                    );
+                                }
+                            })}
                         </div>
                     </Content>
                     <ReplyOption>

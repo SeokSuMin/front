@@ -1,20 +1,20 @@
-import { List } from 'antd';
+import { MessageOutlined } from '@ant-design/icons';
+import { Avatar, List } from 'antd';
+import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/router';
+import path from 'path';
+import styled from 'styled-components';
+import { fileBackUrl } from '../../config';
+import { IBoardData } from '../../reducer/blog';
+import { useAppSelector } from '../../store/hooks';
 
-interface IOneBoxListProps {
-    viewType: number;
-    leaving: boolean;
-    toggleLeaving: () => void;
-}
-
-interface IColumn {
-    key: number;
-    no: number;
-    title: string;
-    writer: string;
-    date: string;
-    searchCount: number;
-}
+const Content = styled.div`
+    margin-top: 2em;
+    margin-left: 3.2em;
+    font-size: 0.938rem;
+    font-weight: bold;
+`;
 
 const oneBox = {
     hidden: { opacity: 0, x: -50 },
@@ -37,19 +37,19 @@ const oneBoxItem = {
     },
 };
 
-// 임시
-const data: IColumn[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((v) => {
-    return {
-        key: v,
-        no: v,
-        title: v + 'John Brown shark  Brown shark',
-        writer: 'shark',
-        date: '2022-07-21',
-        searchCount: v + 1,
-    };
-});
+interface IOneBoxListProps {
+    leaving: boolean;
+    toggleLeaving: () => void;
+    boardList: IBoardData[];
+}
 
-const OneBoxList = ({ viewType, leaving, toggleLeaving }: IOneBoxListProps) => {
+const OneBoxList = ({ leaving, toggleLeaving, boardList }: IOneBoxListProps) => {
+    const router = useRouter();
+    const { viewType } = useAppSelector((state) => state.blog);
+    const moveDetailPage = (boardId: string) => {
+        router.push(`/blog/${boardId}`);
+    };
+
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 2 && !leaving ? (
@@ -57,7 +57,7 @@ const OneBoxList = ({ viewType, leaving, toggleLeaving }: IOneBoxListProps) => {
                     <List
                         size="small"
                         itemLayout="vertical"
-                        dataSource={data}
+                        dataSource={boardList}
                         renderItem={(item) => (
                             <motion.div
                                 variants={oneBoxItem}
@@ -66,17 +66,46 @@ const OneBoxList = ({ viewType, leaving, toggleLeaving }: IOneBoxListProps) => {
                                 <List.Item
                                     key={item.title}
                                     extra={
-                                        <img
-                                            style={{ width: '150px', height: '100px' }}
-                                            alt="logo"
-                                            src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                                        />
+                                        <span
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => moveDetailPage(item.board_id)}
+                                        >
+                                            {item.board_files?.find((file) => path.extname(file.name) === '.png') ? (
+                                                <img
+                                                    style={{ width: '8.5rem', height: '8.5rem' }}
+                                                    alt="example"
+                                                    src={`${fileBackUrl}${item.board_id}/${
+                                                        item.board_files.find(
+                                                            (file) => path.extname(file.name) === '.png',
+                                                        ).name
+                                                    }`}
+                                                />
+                                            ) : (
+                                                <img
+                                                    style={{ width: '8.5rem', height: '8.5rem' }}
+                                                    alt="example"
+                                                    src="no-image.JPG"
+                                                />
+                                            )}
+                                        </span>
                                     }
                                     style={{ padding: 0 }}
                                 >
                                     <List.Item.Meta
-                                        title={<a onClick={() => openDetailInfo(item.key)}>{item.title}</a>}
+                                        avatar={<Avatar src={'/profile.png'} />}
+                                        title={<span>{item.writer}</span>}
+                                        description={
+                                            <>
+                                                <span>{dayjs(item.createdAt).format('YYYY MM DD HH:mm')}</span>
+                                                <span style={{ marginLeft: '1em' }}>
+                                                    <MessageOutlined /> (6)
+                                                </span>
+                                            </>
+                                        }
                                     />
+                                    <Content>
+                                        <a onClick={() => moveDetailPage(item.board_id)}>{item.title}</a>
+                                    </Content>
                                 </List.Item>
                             </motion.div>
                         )}

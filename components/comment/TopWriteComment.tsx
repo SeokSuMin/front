@@ -54,7 +54,8 @@ interface ITopWriteCommentProps {
 }
 
 const TopWriteComment = ({ submitComment }: ITopWriteCommentProps) => {
-    const { detailBoard } = useAppSelector((state) => state.blog);
+    const { detailBoard, loading } = useAppSelector((state) => state.blog);
+    const { userId } = useAppSelector((state) => state.user);
     const [content, setContent] = useState('');
     const changeMainComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.currentTarget.value);
@@ -72,14 +73,17 @@ const TopWriteComment = ({ submitComment }: ITopWriteCommentProps) => {
                 </CommentWriteTitle>
                 <CommentWriteArea>
                     <TextArea
-                        placeholder="댓글을 작성하세요"
+                        disabled={!userId}
+                        placeholder={userId ? '댓글을 작성하세요' : '로그인후 작성하실 수 있습니다.'}
                         autoSize={{ minRows: 4, maxRows: 4 }}
                         value={content}
                         onChange={changeMainComment}
                     />
                 </CommentWriteArea>
                 <CommentSubmitBox>
-                    <button onClick={submit}>댓글 작성</button>
+                    <button disabled={!userId || loading} onClick={submit}>
+                        댓글 작성
+                    </button>
                 </CommentSubmitBox>
             </CommentWriteBox>
         </Wrapper>

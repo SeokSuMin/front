@@ -1,6 +1,7 @@
 import TextArea from 'antd/lib/input/TextArea';
 import styled from 'styled-components';
 import { IBoardComment } from '../../reducer/blog';
+import { useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -65,6 +66,7 @@ const WriteReply = ({
     submitComment,
     replyToggle,
 }: IWriteReplyProps) => {
+    const { loading } = useAppSelector((state) => state.blog);
     return (
         <Wrapper>
             <Reply>
@@ -79,6 +81,7 @@ const WriteReply = ({
                 </ReplyContent>
                 <ReplyButtonBox>
                     <button
+                        disabled={loading}
                         onClick={() =>
                             submitComment(
                                 comment.comment_id,

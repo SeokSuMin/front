@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputRef, message } from 'antd';
+import { Button, Form, Input, InputRef, message, Modal, Spin } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -14,11 +14,20 @@ import axios from 'axios';
 import { checkUserlogin } from '../../thunk/userThunk';
 import { getCategoriMenu, isnertBoard } from '../../thunk/blogThunk';
 import path from 'path';
-import { addUploadFiles, deleteUploadFile, fileProgress, IBlog, IBoardData, loading } from '../../reducer/blog';
+import {
+    addUploadFiles,
+    deleteBoardFiles,
+    deleteUploadFile,
+    fileProgress,
+    IBlog,
+    IBoardData,
+    loading,
+} from '../../reducer/blog';
 import { v4 as uuidv4 } from 'uuid';
 import { fileBackUrl } from '../../config';
 import { constants } from 'fs';
 import Router, { useRouter } from 'next/router';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 dayjs().format();
 
@@ -28,6 +37,27 @@ const Wrapper = styled.div`
     width: 100%;
     margin-left: 0.63em;
     margin-top: 3.74em;
+    position: relative;
+    z-index: 0;
+`;
+
+const SpinWrapper = styled.div`
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    position: absolute;
+    .ant-spin-spinning {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .ant-spin-text {
+        margin-top: 0.313em;
+    }
 `;
 
 const WriteBox = styled.div`
@@ -63,7 +93,7 @@ const SendBox = styled.div`
 
 const Write = () => {
     const router = useRouter();
-    const { categoriMenus } = useAppSelector((state) => state.blog);
+    const { categoriMenus, detailBoard, loading: writeLoading } = useAppSelector((state) => state.blog);
     const dispatch = useAppDispatch();
 
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -73,19 +103,7 @@ const Write = () => {
     const [menu, setMenu] = useState<string>();
     const [categoriId, setCategoriId] = useState<number>();
     const [files, setFiles] = useState<File[] | null>([]);
-
-    const initPage = async () => {
-        await dispatch(getCategoriMenu());
-    };
-
-    useEffect(() => {
-        initPage();
-        if (categoriMenus.length) {
-            setMenu(categoriMenus[0].menu_name);
-            // setCategoris(categoriMenus[0]?.categoris);
-            setCategoriId(categoriMenus[0]?.categoris[0].categori_id);
-        }
-    }, []);
+    const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
 
     const changeMenu = (value: string) => {
         setMenu(value);
@@ -145,11 +163,19 @@ const Write = () => {
         [files],
     );
 
-    const deleteFile = (fileName: string) => {
-        setFiles((prevFiles) => {
-            return prevFiles.filter((file) => file.name !== fileName);
-        });
-        dispatch(deleteUploadFile(fileName));
+    const deleteFile = (type: string, fileName: string | number) => {
+        if (type === 'new') {
+            setFiles((prevFiles) => {
+                return prevFiles.filter((file) => file.name !== (fileName as string));
+            });
+            dispatch(deleteUploadFile(fileName));
+        } else {
+            const fileId = fileName as number;
+            dispatch(deleteBoardFiles(fileId));
+            setDeleteFileIds((prev) => {
+                return [...prev, fileId];
+            });
+        }
     };
 
     const submit = async () => {
@@ -164,7 +190,7 @@ const Write = () => {
                 ? Cheerio.load(`<div id='quillContent'>${quillRef.current.state.value}</div>`)
                 : '';
             const fileArr: File[] = [...files];
-            const uuid = uuidv4().split('-').join('');
+            const uuid = router?.query?.mode === 'modify' ? detailBoard.board_id : uuidv4().split('-').join('');
             const boardData = { board_id: uuid } as IBoardData;
             // console.log('$$$', quillRef.current.state.value);
 
@@ -176,11 +202,19 @@ const Write = () => {
                     allTags.map(async (tag) => {
                         if ($(tag).prop('tagName') === 'IMG') {
                             const base64Img = $(tag).prop('src');
-                            const fileName = dayjs().valueOf() + base64Img.slice(-8).replace(/\//g, '') + '.png';
-                            const filePath = fileBackUrl + uuid + '/' + fileName;
-                            const convertIamgeFile = await rlto(base64Img, fileName, { type: 'image/*' });
-                            fileArr.push(convertIamgeFile);
-                            $(tag).prop('src', filePath);
+                            // 기존 파일이 아닌것만 파일추가 작업 진행
+                            if (!base64Img.includes(fileBackUrl)) {
+                                const fileName =
+                                    dayjs().valueOf() +
+                                    base64Img
+                                        .slice(-8)
+                                        .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, '') +
+                                    '.png';
+                                const filePath = fileBackUrl + uuid + '/' + fileName;
+                                const convertIamgeFile = await rlto(base64Img, fileName, { type: 'image/*' });
+                                fileArr.push(convertIamgeFile);
+                                $(tag).prop('src', filePath);
+                            }
                         }
                     }),
                 );
@@ -191,42 +225,72 @@ const Write = () => {
             boardData.title = title;
             boardData.categori_id = categoriId;
             boardData.uploadFiles = fileArr;
-            await dispatch(isnertBoard(boardData)).unwrap();
+            await dispatch(isnertBoard({ boardData, deleteFileIds })).unwrap();
             message.success('게시글을 저장했습니다.');
             router.push('/blog');
         } catch (err) {
             message.error(err);
-            dispatch(loading({ loading: false }));
+            // dispatch(loading({ loading: false }));
         }
     };
 
+    const initPage = async () => {
+        const result = await dispatch(getCategoriMenu());
+        const resultCategoris = result.payload as IBlog;
+        if (router?.query?.mode === 'modify') {
+            for (const c of resultCategoris.categoriMenus) {
+                const findC = c.categoris.find((childC) => childC.categori_id === detailBoard.categori_id);
+                if (findC) {
+                    setMenu(Object.values(c)[0] as string);
+                    setCategoriId(findC.categori_id);
+                    break;
+                }
+            }
+        } else {
+            setMenu(resultCategoris?.categoriMenus[0]?.menu_name);
+            setCategoriId(resultCategoris?.categoriMenus[0]?.categoris[0].categori_id);
+        }
+    };
+
+    useEffect(() => {
+        initPage();
+    }, [router.query.mode]);
+
     return (
         <Wrapper>
-            <WriteBox>
-                <WriteInput
-                    {...{
-                        titleInputRef,
-                        // menuInputRef,
-                        // categoriInputRef,
-                        menu,
-                        categoriMenus,
-                        // categoris,
-                        categoriId,
-                        changeMenu,
-                        changeCategori,
-                    }}
-                />
-                <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
-                <FileLists {...{ deleteFile }} />
-                <ContentBox>
-                    <QuillEditor {...{ quillRef }} />
-                </ContentBox>
-            </WriteBox>
-            <SendBox>
-                <Button onClick={submit} type="primary">
-                    작성완료
-                </Button>
-            </SendBox>
+            {writeLoading ? (
+                <SpinWrapper>
+                    <Spin tip="작성을 완료하는중..." />
+                </SpinWrapper>
+            ) : (
+                <>
+                    <WriteBox>
+                        <WriteInput
+                            {...{
+                                titleInputRef,
+                                // menuInputRef,
+                                // categoriInputRef,
+                                menu,
+                                categoriMenus,
+                                // categoris,
+                                categoriId,
+                                changeMenu,
+                                changeCategori,
+                            }}
+                        />
+                        <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
+                        <FileLists {...{ deleteFile }} />
+                        <ContentBox>
+                            <QuillEditor {...{ quillRef }} />
+                        </ContentBox>
+                    </WriteBox>
+                    <SendBox>
+                        <Button onClick={submit} type="primary">
+                            작성완료
+                        </Button>
+                    </SendBox>
+                </>
+            )}
         </Wrapper>
     );
 };

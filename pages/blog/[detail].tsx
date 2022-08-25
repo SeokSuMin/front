@@ -1,7 +1,7 @@
-import { CommentOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { message, Tag } from 'antd';
+import { CommentOutlined, ExclamationCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { message, Modal, Spin, Tag } from 'antd';
 import styled from 'styled-components';
-import { getCategoriMenu, getDetailBoard, insertComment } from '../../thunk/blogThunk';
+import { deleteBoard, getCategoriMenu, getDetailBoard, insertComment } from '../../thunk/blogThunk';
 import { checkUserlogin } from '../../thunk/userThunk';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
@@ -10,10 +10,12 @@ import dayjs from 'dayjs';
 import parse from 'html-react-parser';
 import { fileBackUrl } from '../../config';
 import path from 'path';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Comments from '../../components/comment/Comments';
 import { IBoardComment } from '../../reducer/blog';
+
+const { confirm } = Modal;
 
 const Wrapper = styled.div`
     width: 100%;
@@ -21,12 +23,24 @@ const Wrapper = styled.div`
     flex-direction: column;
     align-items: flex-end;
     overflow: hidden;
+    .ant-spin-spinning {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .ant-spin-spinning div {
+        margin-bottom: 2.324em;
+    }
 `;
 
 const TopMenuBox = styled.div`
     width: 98%;
+    display: flex;
+    justify-content: space-between;
     padding-bottom: 0.625em;
-    text-align: right;
     button {
         margin-left: 0.357em;
         border: none;
@@ -40,6 +54,9 @@ const TopMenuBox = styled.div`
         background-color: rgb(210, 210, 210);
     }
 `;
+
+const MoveBoardButtonBox = styled.div``;
+const ModifyBoardButtonBox = styled.div``;
 
 const BoardBox = styled.div`
     width: 98%;
@@ -150,12 +167,36 @@ const DetailBoard = () => {
             }
         </style>
     `;
+    const commentDivRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const { detailBoard } = useAppSelector((state) => state.blog);
+    const { detailBoard, loading } = useAppSelector((state) => state.blog);
+    const { userId } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
         router.push(`/blog/${boardId}`);
+    };
+
+    const deletefirm = (boardId: string) => {
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            title: '게시글 삭제',
+            content: <p>해당 게시글 및 파일이 모두 삭제됩니다.</p>,
+            okText: '삭제',
+            cancelText: '취소',
+            async onOk() {
+                try {
+                    await dispatch(deleteBoard(boardId)).unwrap();
+                    message.success('삭제되었습니다.');
+                    router.push('/blog');
+                } catch (err) {
+                    message.error(err);
+                }
+            },
+            onCancel() {
+                // Modal.destroyAll();
+            },
+        });
     };
 
     const initPage = async () => {
@@ -169,58 +210,89 @@ const DetailBoard = () => {
 
     return (
         <Wrapper>
-            <TopMenuBox>
-                {detailBoard?.prevBoardId ? (
-                    <button onClick={() => moveDetailBoard(detailBoard.prevBoardId)}>이전글</button>
-                ) : null}
-                {detailBoard?.nextBoardId ? (
-                    <button onClick={() => moveDetailBoard(detailBoard.nextBoardId)}>다음글</button>
-                ) : null}
-                <button onClick={() => router.push('/blog')}>목록</button>
-            </TopMenuBox>
-            <BoardBox>
-                <TitleBox>
-                    <h1>{detailBoard?.title}</h1>
-                    <WriterInfoBox>
-                        <span>{detailBoard?.writer} [블로그 관리자]</span>
-                        <span>·</span>
-                        <span>{dayjs(detailBoard?.createdAt).format('YYYY-MM-DD HH:mm')}</span>
-                        {detailBoard?.comments?.length ? (
-                            <span className="comment">
-                                <CommentOutlined /> 댓글 ({detailBoard.comments.length})
-                            </span>
-                        ) : null}
-                    </WriterInfoBox>
-                    <TagBox>
-                        <Tag>{detailBoard?.categoris.categori_name}</Tag>
-                    </TagBox>
-                    <FileList>
-                        {detailBoard?.board_files.map((file) => {
-                            const extName = path.extname(file.name);
-                            if (extName !== '.png') {
-                                return (
-                                    <Files key={file.file_id}>
-                                        <a
-                                            href={`${fileBackUrl}${file.board_id}/${file.name}`}
-                                            target="_self"
-                                            download
-                                            rel="noreferrer"
-                                        >
-                                            <span>
-                                                <PaperClipOutlined />
-                                                {file.name}
-                                            </span>
-                                        </a>
-                                    </Files>
-                                );
-                            }
-                        })}
-                    </FileList>
-                </TitleBox>
-                <Boundary />
-                <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
-            </BoardBox>
-            <Comments />
+            {loading ? (
+                <Spin tip="Loading..." />
+            ) : (
+                <>
+                    <TopMenuBox>
+                        <ModifyBoardButtonBox>
+                            {userId === 'iceMan' ? (
+                                <>
+                                    <button
+                                        onClick={() =>
+                                            router.push(
+                                                {
+                                                    pathname: '/blog/write',
+                                                    query: { mode: 'modify' },
+                                                },
+                                                '/blog/write',
+                                            )
+                                        }
+                                    >
+                                        수정
+                                    </button>
+                                    <button onClick={() => deletefirm(detailBoard.board_id)}>삭제</button>
+                                </>
+                            ) : null}
+                        </ModifyBoardButtonBox>
+                        <MoveBoardButtonBox>
+                            {detailBoard?.prevBoardId ? (
+                                <button onClick={() => moveDetailBoard(detailBoard.prevBoardId)}>이전글</button>
+                            ) : null}
+                            {detailBoard?.nextBoardId ? (
+                                <button onClick={() => moveDetailBoard(detailBoard.nextBoardId)}>다음글</button>
+                            ) : null}
+                            <button onClick={() => router.push('/blog')}>목록</button>
+                        </MoveBoardButtonBox>
+                    </TopMenuBox>
+                    <BoardBox>
+                        <TitleBox>
+                            <h1>{detailBoard?.title}</h1>
+                            <WriterInfoBox>
+                                <span>{detailBoard?.writer} [블로그 관리자]</span>
+                                <span>·</span>
+                                <span>{dayjs(detailBoard?.createdAt).format('YYYY-MM-DD HH:mm')}</span>
+                                {detailBoard?.comments?.length ? (
+                                    <span
+                                        onClick={() => commentDivRef.current.scrollIntoView({ behavior: 'smooth' })}
+                                        className="comment"
+                                    >
+                                        <CommentOutlined /> 댓글 ({detailBoard.comments.length})
+                                    </span>
+                                ) : null}
+                            </WriterInfoBox>
+                            <TagBox>
+                                <Tag>{detailBoard?.categoris.categori_name}</Tag>
+                            </TagBox>
+                            <FileList>
+                                {detailBoard?.board_files?.map((file) => {
+                                    const extName = path.extname(file.name);
+                                    if (extName !== '.png') {
+                                        return (
+                                            <Files key={file.file_id}>
+                                                <a
+                                                    href={`${fileBackUrl}${file.board_id}/${file.name}`}
+                                                    target="_self"
+                                                    download
+                                                    rel="noreferrer"
+                                                >
+                                                    <span>
+                                                        <PaperClipOutlined />
+                                                        {file.name}
+                                                    </span>
+                                                </a>
+                                            </Files>
+                                        );
+                                    }
+                                })}
+                            </FileList>
+                        </TitleBox>
+                        <Boundary />
+                        <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
+                    </BoardBox>
+                    <Comments divRef={commentDivRef} />
+                </>
+            )}
         </Wrapper>
     );
 };

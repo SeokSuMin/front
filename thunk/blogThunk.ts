@@ -37,11 +37,14 @@ export const getDetailBoard = createAsyncThunk(
 
 export const isnertBoard = createAsyncThunk(
     'INSERT_BOARD',
-    async (boardData: IBoardData, { dispatch, getState, requestId, rejectWithValue }) => {
+    async (
+        insertData: { boardData: IBoardData; deleteFileIds: number[] },
+        { dispatch, getState, requestId, rejectWithValue },
+    ) => {
         try {
-            for (const file of boardData.uploadFiles) {
+            for (const file of insertData.boardData.uploadFiles) {
                 const formData = new FormData();
-                formData.append('boardId', boardData.board_id);
+                formData.append('boardId', insertData.boardData.board_id);
                 formData.append('file', file);
                 await axios({
                     headers: {
@@ -61,14 +64,18 @@ export const isnertBoard = createAsyncThunk(
                     },
                 });
             }
-            const fileNames = boardData.uploadFiles.map((file) => {
+            const fileNames = insertData.boardData.uploadFiles.map((file) => {
                 return {
-                    board_id: boardData.board_id,
+                    board_id: insertData.boardData.board_id,
                     name: file.name,
                 };
             });
-            delete boardData.uploadFiles;
-            await axios.post(`/blog/insert`, { boardData, fileNames });
+            delete insertData.boardData.uploadFiles;
+            await axios.post(`/blog/board/insert`, {
+                boardData: insertData.boardData,
+                fileNames,
+                deleteFileIds: insertData.deleteFileIds,
+            });
             return true;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -82,6 +89,18 @@ export const insertComment = createAsyncThunk(
         try {
             const response = await axios.post(`/blog/comment/insert`, commentData);
             return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    },
+);
+
+export const deleteBoard = createAsyncThunk(
+    'DELETE_BOARD',
+    async (boardId: string, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.delete(`/blog/board/${boardId}`);
+            return true;
         } catch (err) {
             return rejectWithValue(err.response.data);
         }

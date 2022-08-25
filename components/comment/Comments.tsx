@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 import TextArea from 'antd/lib/input/TextArea';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import React, { useEffect, useState } from 'react';
+import React, { MutableRefObject, useEffect, useState } from 'react';
 import { fileBackUrl } from '../../config';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { message, Modal } from 'antd';
+import { Avatar, message, Modal } from 'antd';
 import CommentContent from './CommentContent';
 import WriteReply from './WriteReply';
 import Modify from './Modify';
 import { deleteComment, insertComment } from '../../thunk/blogThunk';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { IBoardComment } from '../../reducer/blog';
 import TopWriteComment from './TopWriteComment';
 dayjs.extend(relativeTime);
@@ -32,6 +32,15 @@ const CommentListBox = styled.div`
 
 const CommentList = styled.div`
     width: 100%;
+    .ant-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-right: 0.131em;
+        svg {
+            width: 1em;
+            height: 1em;
+        }
+    }
 `;
 
 const Boundary = styled.div`
@@ -90,7 +99,11 @@ const ProfileImg = styled.div<{ path: string }>`
     margin-right: 0.55em;
 `;
 
-const Comments = () => {
+interface ICommentsProps {
+    divRef: MutableRefObject<HTMLDivElement>;
+}
+
+const Comments = ({ divRef }: ICommentsProps) => {
     const { userId } = useAppSelector((state) => state.user);
     const { detailBoard } = useAppSelector((state) => state.blog);
     const dispatch = useAppDispatch();
@@ -215,6 +228,7 @@ const Comments = () => {
             for (const comment of detailBoard.comments) {
                 setAllComments((prev) => {
                     const mainComment = { replyToggles: false, content: '', childToggles: false, modify_flag: false };
+                    // 사용자가 로그아웃하면 state를 다시 리셋한다.
                     if (prev[`${comment.comment_id}`] && userId) {
                         return {
                             ...prev,
@@ -253,7 +267,7 @@ const Comments = () => {
     }, [detailBoard?.comments, userId]);
 
     return (
-        <Wrapper>
+        <Wrapper ref={divRef}>
             <TopWriteComment {...{ submitComment }} />
             <CommentListBox>
                 <CommentList>
@@ -261,13 +275,18 @@ const Comments = () => {
                         return (
                             <React.Fragment key={comment.comment_id}>
                                 <div style={{ display: 'flex', marginTop: '4.375em' }}>
-                                    <ProfileImg
-                                        path={
-                                            comment.strategy_type === 'local'
-                                                ? fileBackUrl + comment.img_path
-                                                : comment.img_path
-                                        }
-                                    ></ProfileImg>
+                                    {comment.img_path ? (
+                                        <ProfileImg
+                                            path={
+                                                comment.strategy_type === 'local'
+                                                    ? fileBackUrl + comment.img_path
+                                                    : comment.img_path
+                                            }
+                                        ></ProfileImg>
+                                    ) : (
+                                        <Avatar size="large" icon={<UserOutlined />} />
+                                    )}
+
                                     {allComments[`${comment.comment_id}`]?.modify_flag ? (
                                         <Modify
                                             {...{
@@ -319,6 +338,7 @@ const Comments = () => {
                                         </span>
                                     </ReplyCountBox>
                                 ) : null}
+                                {/* 대댓글이 있는경우만 디스플레이 */}
                                 {allComments[`${comment.comment_id}`]?.childToggles ? (
                                     <ChildCommentListBox>
                                         <LeftAreaBox />

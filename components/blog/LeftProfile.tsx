@@ -1,9 +1,10 @@
-import { Tag } from 'antd';
+import { Dropdown, Menu, Tag } from 'antd';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
 import PencilToggle from '../../public/pencil-solid.svg';
 import GitHub from '../../public/github.svg';
+import EllipsisDot from '../../public/ellipsis-dot.svg';
 import { EditOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { changeCurrentCategoriId } from '../../reducer/blog';
@@ -69,6 +70,11 @@ const CategoriBox = styled.div`
         width: 100%;
         text-align: right;
         margin-bottom: 1.25em;
+        svg {
+            width: 1rem;
+            height: 1rem;
+            fill: gray;
+        }
     }
     span {
         font-size: 0.75rem;
@@ -137,11 +143,16 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
     const dispatch = useAppDispatch();
 
     const moveWritePage = () => {
-        router.push('/blog/write');
+        router.push(
+            {
+                pathname: '/blog/write',
+                query: { mode: 'write' },
+            },
+            '/blog/write',
+        );
     };
 
     const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
-        console.log(currentCategoriId, newCategoriId);
         if (currentCategoriId !== newCategoriId) {
             dispatch(changeCurrentCategoriId(newCategoriId));
             if (router.pathname !== '/blog') {
@@ -149,6 +160,21 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
             }
         }
     };
+
+    const menu = (
+        <Menu
+            items={[
+                {
+                    key: '1',
+                    label: <div onClick={moveWritePage}>글쓰기</div>,
+                },
+                {
+                    key: '2',
+                    label: <div onClick={() => router.push('/blog/menuManager')}>메뉴관리</div>,
+                },
+            ]}
+        />
+    );
 
     return (
         <Wrapper>
@@ -158,11 +184,12 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
                 <p>아이스맨 같은 개발자가 되고 싶은 사람입니다.</p>
             </ProfileImgeBox>
             <CategoriBox>
-                {userId === 'shark' ? (
+                {userId === 'iceMan' ? (
                     <div className="writeBox">
-                        <span onClick={moveWritePage}>
-                            <EditOutlined />
-                            글쓰기
+                        <span>
+                            <Dropdown overlay={menu} placement="bottomRight" arrow>
+                                <EllipsisDot />
+                            </Dropdown>
                         </span>
                     </div>
                 ) : null}

@@ -158,15 +158,14 @@ const fourBoxItem = {
 };
 
 interface IFourBoxListProps {
-    viewType: number;
     leaving: boolean;
     toggleLeaving: () => void;
     boardList: IBoardData[];
 }
 
-const FourBoxList = ({ viewType, leaving, toggleLeaving, boardList }: IFourBoxListProps) => {
+const FourBoxList = ({ leaving, toggleLeaving, boardList }: IFourBoxListProps) => {
     const router = useRouter();
-
+    const { viewType } = useAppSelector((state) => state.blog);
     const moveDetailPage = (boardId: string) => {
         router.push(`/blog/${boardId}`);
     };

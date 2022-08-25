@@ -1,7 +1,9 @@
 import { Input, InputRef, Select } from 'antd';
 import { m } from 'framer-motion';
-import { memo, useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useAppSelector } from '../../store/hooks';
 
 const { Option } = Select;
 
@@ -76,11 +78,23 @@ const WriteTtile = ({
     changeMenu,
     changeCategori,
 }: IWriteInputProps) => {
+    const router = useRouter();
+    const { detailBoard } = useAppSelector((state) => state.blog);
+    const [title, setTitile] = useState<string>('');
+
+    const changeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTitile(e.currentTarget.value);
+    };
+
+    useEffect(() => {
+        setTitile(router?.query?.mode === 'modify' ? detailBoard.title : '');
+    }, [router.query.mode]);
+
     return (
         <Wrapper>
             <TitleBox>
                 <Lable>제목</Lable>
-                <WriteInput ref={titleInputRef} placeholder="Write Title ..." />
+                <WriteInput value={title} onChange={changeTitle} ref={titleInputRef} placeholder="Write Title ..." />
             </TitleBox>
             <CategoriBox>
                 <Lable>메뉴명</Lable>

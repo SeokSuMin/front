@@ -11,10 +11,10 @@ import { checkUserlogin } from '../../thunk/userThunk';
 import { getCategoriMenu } from '../../thunk/blogThunk';
 import Paging from '../../components/blog/Paging';
 import { useQuery } from 'react-query';
-import { BackTop, message, Spin } from 'antd';
+import { BackTop, Empty, message, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getBoardList } from '../../util';
-import { goPage, initTotalCount } from '../../reducer/blog';
+import { changeBoardViewType, goPage, initTotalCount } from '../../reducer/blog';
 import { useRouter } from 'next/router';
 
 const Wrapper = styled.div`
@@ -44,9 +44,9 @@ const Home = () => {
     const {
         currentCategoriId,
         paging: { page, countList },
+        viewType,
     } = useAppSelector((state) => state.blog);
     const dispatch = useAppDispatch();
-    const [viewType, setViewType] = useState(1);
     const [leaving, setLeaving] = useState(false);
     const { isLoading, isError, data, error } = useQuery(
         ['boardList', page, countList, currentCategoriId],
@@ -55,12 +55,14 @@ const Home = () => {
             refetchOnWindowFocus: false,
             onSuccess: (data) => {
                 // console.log('data', data);
-                dispatch(initTotalCount(data.totalCount));
-                dispatch(goPage());
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth',
-                });
+                if (data.boardList.length) {
+                    dispatch(initTotalCount(data.totalCount));
+                    dispatch(goPage());
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth',
+                    });
+                }
             },
             onError: (err: Error) => {
                 message.error(err.message);
@@ -75,7 +77,7 @@ const Home = () => {
         if (leaving) {
             return;
         }
-        setViewType(type);
+        dispatch(changeBoardViewType(type));
         setLeaving(true);
     };
 
@@ -95,13 +97,15 @@ const Home = () => {
         <Wrapper>
             {isLoading ? (
                 <Spin tip="Loading..." />
-            ) : (
+            ) : data.boardList?.length ? (
                 <ContentBox>
                     <TopMenu {...{ viewType, changeListView, scrollRef }} />
-                    <FourBoxList {...{ viewType, leaving, toggleLeaving, boardList: data?.boardList }} />
-                    <OneBoxList {...{ viewType, leaving, toggleLeaving }} />
+                    <FourBoxList {...{ leaving, toggleLeaving, boardList: data?.boardList }} />
+                    <OneBoxList {...{ leaving, toggleLeaving, boardList: data?.boardList }} />
                     <Paging />
                 </ContentBox>
+            ) : (
+                <Empty description={<span>게시글이 없습니다.</span>} style={{ marginTop: 100 }} />
             )}
         </Wrapper>
     );

@@ -1,8 +1,10 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize';
 import { Button } from 'antd';
+import { useAppSelector } from '../../store/hooks';
+import { useRouter } from 'next/router';
 
 //Text direction
 Quill.register(Quill.import('attributors/style/direction'), true);
@@ -66,17 +68,28 @@ interface IQuillEditorProps {
 }
 
 const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
+    const router = useRouter();
+    const { detailBoard } = useAppSelector((state) => state.blog);
+    const [content, setContent] = useState<string>('');
+    useEffect(() => {
+        setContent(router?.query?.mode === 'modify' ? detailBoard.content : '');
+    }, [router.query.mode]);
+
+    const changeContent = (value: string) => {
+        // Quill오류인지 자음 모음이 분리됨, ref로 처리함.
+        // setContent(value);
+    };
     return (
         <>
             <ReactQuill
                 ref={quillRef}
                 placeholder="write Text"
-                // value={contentValue}
-                defaultValue={'test value'}
+                value={content}
+                // defaultValue={content}
                 theme="snow"
                 modules={modules}
                 formats={formats}
-                // onChange={(content, delta, source, editor) => onChange(editor.getHTML())}
+                onChange={(content, delta, source, editor) => changeContent(editor.getHTML())}
             ></ReactQuill>
         </>
     );

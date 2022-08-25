@@ -1,7 +1,8 @@
 import { DeleteOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
+import path from 'path';
 import React from 'react';
 import styled from 'styled-components';
-import { fileProgress } from '../../reducer/blog';
 import { useAppSelector } from '../../store/hooks';
 
 const Lable = styled.label`
@@ -69,15 +70,40 @@ const Progress = styled.div`
 `;
 
 interface IFileListsProps {
-    deleteFile: (fileName: string) => void;
+    deleteFile: (type: string, fileName: string | number) => void;
 }
 
 const FileLists = ({ deleteFile }: IFileListsProps) => {
-    const { uploadFileInfo } = useAppSelector((state) => state.blog);
+    const router = useRouter();
+    const { uploadFileInfo, detailBoard } = useAppSelector((state) => state.blog);
     return (
         <FileListBox>
             <Lable></Lable>
             <FileList>
+                {/* 게시글 수정에만 나타남 */}
+                {router?.query?.mode === 'modify'
+                    ? detailBoard?.board_files?.map((file) => {
+                          const extName = path.extname(file.name);
+                          if (extName !== '.png') {
+                              return (
+                                  <FileBox key={file.file_id}>
+                                      <Files>
+                                          <span>
+                                              <PaperClipOutlined />
+                                              {file.name}
+                                          </span>
+                                          <span className="delete">
+                                              <DeleteOutlined onClick={() => deleteFile('board', file.file_id)} />
+                                          </span>
+                                          <Progress style={{ width: '100%' }}></Progress>
+                                      </Files>
+                                      <span className="percentText">업로드된 파일</span>
+                                  </FileBox>
+                              );
+                          }
+                      })
+                    : null}
+                {/* 실제 파일 업로드 정보 */}
                 {uploadFileInfo?.map((file) => {
                     return (
                         <FileBox key={file.fileId}>
@@ -87,7 +113,7 @@ const FileLists = ({ deleteFile }: IFileListsProps) => {
                                     {file.fileName}
                                 </span>
                                 <span className="delete">
-                                    <DeleteOutlined onClick={() => deleteFile(file.fileName)} />
+                                    <DeleteOutlined onClick={() => deleteFile('new', file.fileName)} />
                                 </span>
                                 <Progress style={{ width: file.progress + '%' }}></Progress>
                             </Files>
