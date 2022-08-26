@@ -4,8 +4,6 @@ import FourBoxList from '../../components/freeboard/FourBoxList';
 import OneBoxList from '../../components/freeboard/OneBoxList';
 import TopMenu from '../../components/freeboard/TopMenu';
 import wrapper from '../../store/configStore';
-import { CaretRightOutlined } from '@ant-design/icons';
-import { motion, useScroll } from 'framer-motion';
 import axios from 'axios';
 import { checkUserlogin } from '../../thunk/userThunk';
 import { getCategoriMenu } from '../../thunk/blogThunk';

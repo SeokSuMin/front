@@ -72,13 +72,14 @@ const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
     const { detailBoard } = useAppSelector((state) => state.blog);
     const [content, setContent] = useState<string>('');
     useEffect(() => {
-        setContent(router?.query?.mode === 'modify' ? detailBoard.content : '');
+        setContent(router?.query?.mode === 'modify' ? detailBoard?.content : '');
     }, [router.query.mode]);
 
     const changeContent = (value: string) => {
         // Quill오류인지 자음 모음이 분리됨, ref로 처리함.
         // setContent(value);
     };
+
     return (
         <>
             <ReactQuill

@@ -118,3 +118,21 @@ export const deleteComment = createAsyncThunk(
         }
     },
 );
+
+export const updateCategoris = createAsyncThunk(
+    'UPDATE_CATEGORIS',
+    async (
+        categoriData: {
+            updateData: { menu_name: string; sort: number; categori_id?: number | null }[];
+            deleteMenuIds: string[];
+        },
+        { getState, requestId, rejectWithValue },
+    ) => {
+        try {
+            const response = await axios.patch(`/blog/categori/update`, categoriData);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    },
+);

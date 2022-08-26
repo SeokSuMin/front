@@ -5,7 +5,7 @@ import React, { MutableRefObject, useEffect, useState } from 'react';
 import { fileBackUrl } from '../../config';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Avatar, message, Modal } from 'antd';
+import { Avatar, message, Modal, Spin } from 'antd';
 import CommentContent from './CommentContent';
 import WriteReply from './WriteReply';
 import Modify from './Modify';
@@ -20,6 +20,26 @@ const { confirm } = Modal;
 
 const Wrapper = styled.div`
     width: 98%;
+    position: relative;
+`;
+
+const SpinWrapper = styled.div`
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    position: absolute;
+    .ant-spin-spinning {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .ant-spin-text {
+        margin-top: 0.313em;
+    }
 `;
 
 const LeftAreaBox = styled.div`
@@ -106,6 +126,7 @@ interface ICommentsProps {
 const Comments = ({ divRef }: ICommentsProps) => {
     const { userId } = useAppSelector((state) => state.user);
     const { detailBoard } = useAppSelector((state) => state.blog);
+    const [commentLoading, setCommentLoading] = useState(false);
     const dispatch = useAppDispatch();
     const [allComments, setAllComments] = useState<{
         [key: string]: { replyToggles: boolean; childToggles: boolean; content: string; modify_flag: boolean };
@@ -168,10 +189,13 @@ const Comments = ({ divRef }: ICommentsProps) => {
             cancelText: '취소',
             async onOk() {
                 try {
+                    setCommentLoading(true);
                     await dispatch(deleteComment({ commentId, parentId })).unwrap();
                     message.success('삭제되었습니다.');
                 } catch (err) {
                     message.success(err);
+                } finally {
+                    setCommentLoading(false);
                 }
             },
             onCancel() {
@@ -213,12 +237,14 @@ const Comments = ({ divRef }: ICommentsProps) => {
             insertData.content = allContent;
             insertData.comment_id = checkModifyId;
         }
+        setCommentLoading(true);
         await dispatch(insertComment(insertData)).unwrap();
         if (modify_flag) {
             allComments[`${comment_id}`].modify_flag = false;
         } else if (parent_id) {
             allComments[`${comment_id}`].replyToggles = false;
         }
+        setCommentLoading(false);
         message.success(modify_flag ? '수정되었습니다.' : '댓글이 작성되었습니다.');
     };
 
@@ -268,6 +294,11 @@ const Comments = ({ divRef }: ICommentsProps) => {
 
     return (
         <Wrapper ref={divRef}>
+            {commentLoading && (
+                <SpinWrapper>
+                    <Spin tip="Loading..." />
+                </SpinWrapper>
+            )}
             <TopWriteComment {...{ submitComment }} />
             <CommentListBox>
                 <CommentList>

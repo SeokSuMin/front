@@ -13,7 +13,7 @@ import path from 'path';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Comments from '../../components/comment/Comments';
-import { IBoardComment } from '../../reducer/blog';
+import { IBoardComment, initDetailBoard } from '../../reducer/blog';
 
 const { confirm } = Modal;
 
@@ -33,6 +33,25 @@ const Wrapper = styled.div`
     }
     .ant-spin-spinning div {
         margin-bottom: 2.324em;
+    }
+`;
+
+const SpinWrapper = styled.div`
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    position: absolute;
+    .ant-spin-spinning {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .ant-spin-text {
+        margin-top: 0.313em;
     }
 `;
 
@@ -211,7 +230,9 @@ const DetailBoard = () => {
     return (
         <Wrapper>
             {loading ? (
-                <Spin tip="Loading..." />
+                <SpinWrapper>
+                    <Spin tip="Loading..." />
+                </SpinWrapper>
             ) : (
                 <>
                     <TopMenuBox>

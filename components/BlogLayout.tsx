@@ -5,7 +5,7 @@ import LeftProfile from './blog/LeftProfile';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Drawer, Tag } from 'antd';
 import { useEffect, useState } from 'react';
-import CategorisDrawer from './CategorisDrawer';
+import CategorisDrawer from './blog/CategorisDrawer';
 import { useRouter } from 'next/router';
 
 const Wrapper = styled.div`
@@ -78,32 +78,6 @@ interface ICategoris {
 const BlogLayout = ({ children }) => {
     const router = useRouter();
     const [visible, setVisible] = useState(false);
-    const [categoris, setCategoris] = useState<ICategoris[]>([
-        { name: '전체', isActive: true },
-        { name: '여행', isActive: false },
-        { name: '공부', isActive: false },
-        { name: '유머', isActive: false },
-        { name: '육아지식', isActive: false },
-        { name: '요리', isActive: false },
-        { name: '맛집탐방', isActive: false },
-        { name: '게임', isActive: false },
-        { name: '기타', isActive: false },
-    ]);
-    const openCategori = (name: string, isActive: boolean) => {
-        if (isActive) {
-            return;
-        }
-        setCategoris((prevCategoris) =>
-            prevCategoris.map((categori) => {
-                if (categori.name === name) {
-                    return { name: categori.name, isActive: true };
-                } else {
-                    return { name: categori.name, isActive: false };
-                }
-            }),
-        );
-        setVisible(false);
-    };
     const DrawerVisible = () => {
         setVisible(true);
     };
@@ -139,8 +113,8 @@ const BlogLayout = ({ children }) => {
                         <CaretRightOutlined />
                     </LeftSideToggle>
                 </LeftSideToggleBox>
-                <CategorisDrawer {...{ visible, closeDrawer, categoris, openCategori }} />
-                <LeftProfile {...{ categoris, openCategori }} />
+                <CategorisDrawer {...{ visible, closeDrawer }} />
+                <LeftProfile />
                 {children}
             </BodyBox>
         </Wrapper>

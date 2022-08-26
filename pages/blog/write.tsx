@@ -180,6 +180,7 @@ const Write = () => {
 
     const submit = async () => {
         try {
+            console.log('들어옴');
             const title = titleInputRef.current.input.value;
             if (!title.trim()) {
                 message.warn('제목은 필수 입니다.');
@@ -260,7 +261,7 @@ const Write = () => {
         <Wrapper>
             {writeLoading ? (
                 <SpinWrapper>
-                    <Spin tip="작성을 완료하는중..." />
+                    <Spin tip="완료하는중..." />
                 </SpinWrapper>
             ) : (
                 <>
@@ -285,7 +286,7 @@ const Write = () => {
                         </ContentBox>
                     </WriteBox>
                     <SendBox>
-                        <Button onClick={submit} type="primary">
+                        <Button disabled={writeLoading} onClick={submit} type="primary">
                             작성완료
                         </Button>
                     </SendBox>

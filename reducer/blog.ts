@@ -6,6 +6,7 @@ import {
     insertComment,
     deleteComment,
     deleteBoard,
+    updateCategoris,
 } from '../thunk/blogThunk';
 
 interface IPaging {
@@ -170,14 +171,20 @@ const blog = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(getCategoriMenu.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
             .addCase(getCategoriMenu.fulfilled, (state, action) => {
                 const totalCount = action.payload.totalCount;
                 return {
                     ...state,
                     categoriMenus: action.payload.categoriMenus,
                     uploadFileInfo: [],
-                    detailBoard: null,
                     categoriTotal: totalCount,
+                    loading: false,
                     hydration: true, // 페이지 번호 유지를 위한 true
                 };
             })
@@ -230,7 +237,6 @@ const blog = createSlice({
             .addCase(insertComment.pending, (state, action) => {
                 return {
                     ...state,
-                    loading: true,
                 };
             })
             .addCase(insertComment.fulfilled, (state, action) => {
@@ -242,7 +248,6 @@ const blog = createSlice({
                 return {
                     ...state,
                     detailBoard,
-                    loading: false,
                 };
             })
             .addCase(deleteComment.pending, (state, action) => {
@@ -294,6 +299,21 @@ const blog = createSlice({
                 return {
                     ...state,
                     detailBoard: null,
+                    loading: false,
+                };
+            })
+            .addCase(updateCategoris.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(updateCategoris.fulfilled, (state, action) => {
+                const totalCount = action.payload.totalCount;
+                return {
+                    ...state,
+                    categoriMenus: action.payload.categoriMenus,
+                    categoriTotal: totalCount,
                     loading: false,
                 };
             });

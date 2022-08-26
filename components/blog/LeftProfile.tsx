@@ -18,7 +18,7 @@ const Wrapper = styled.div`
     border-radius: 0.63em;
     /* margin-right: 3.63em; */
     padding: 0.938em;
-    position: sticky;
+    //position: sticky;
     top: 3.9em;
     @media screen and (max-width: 36rem) {
         display: none;
@@ -130,12 +130,7 @@ const EtcBox = styled.div`
     }
 `;
 
-interface ILeftProfileProps {
-    categoris: { name: string; isActive: boolean }[];
-    openCategori: (name: string, isActive: boolean) => void;
-}
-
-const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
+const LeftProfile = () => {
     const router = useRouter();
     const { userId } = useAppSelector((state) => state.user);
     const { categoriMenus, currentCategoriId, categoriTotal } = useAppSelector((state) => state.blog);
@@ -153,7 +148,7 @@ const LeftProfile = ({ categoris, openCategori }: ILeftProfileProps) => {
     };
 
     const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
-        if (currentCategoriId !== newCategoriId) {
+        if (router.pathname !== '/blog' || currentCategoriId !== newCategoriId) {
             dispatch(changeCurrentCategoriId(newCategoriId));
             if (router.pathname !== '/blog') {
                 router.push('/blog');

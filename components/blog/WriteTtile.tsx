@@ -87,7 +87,7 @@ const WriteTtile = ({
     };
 
     useEffect(() => {
-        setTitile(router?.query?.mode === 'modify' ? detailBoard.title : '');
+        setTitile(router?.query?.mode === 'modify' ? detailBoard?.title : '');
     }, [router.query.mode]);
 
     return (
