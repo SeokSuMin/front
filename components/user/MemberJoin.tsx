@@ -241,6 +241,10 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                         <input
                             {...register('userId', {
                                 required: '아이디는 필수 입니다.',
+                                pattern: {
+                                    value: /^[A-Za-z]{1}[A-Za-z0-9]{3,19}$/,
+                                    message: '4~20자, 대 소문자로 작성되어야 합니다',
+                                },
                             })}
                             type="text"
                             placeholder="아이디"

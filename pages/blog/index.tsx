@@ -12,7 +12,7 @@ import { useQuery } from 'react-query';
 import { BackTop, Empty, message, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getBoardList } from '../../util';
-import { changeBoardViewType, goPage, initTotalCount } from '../../reducer/blog';
+import { changeBoardViewType, changeCurrentCategoriId, goPage, initTotalCount } from '../../reducer/blog';
 import { useRouter } from 'next/router';
 
 const Wrapper = styled.div`
@@ -38,14 +38,16 @@ const ContentBox = styled.div`
 
 const Home = () => {
     const router = useRouter();
+    // const page = router?.query?.page ? +router.query.page : 1;
     const scrollRef = useRef<HTMLDivElement>(null);
     const {
         currentCategoriId,
-        paging: { page, countList },
+        paging: { countList, page },
         viewType,
     } = useAppSelector((state) => state.blog);
     const dispatch = useAppDispatch();
     const [leaving, setLeaving] = useState(false);
+
     const { isLoading, isError, data, error } = useQuery(
         ['boardList', page, countList, currentCategoriId],
         () => getBoardList(page, countList, currentCategoriId),
@@ -84,12 +86,27 @@ const Home = () => {
     };
 
     const initPage = async () => {
-        await dispatch(getCategoriMenu());
+        try {
+            // const numberRegExp = /[0-9]/;
+            let pageNumber = router?.query?.page ? router?.query?.page : 1;
+            let categoriNumber = router?.query?.categori ? router?.query?.categori : 0;
+            if (isNaN(pageNumber as number)) {
+                pageNumber = 1;
+            }
+            if (isNaN(categoriNumber as number)) {
+                categoriNumber = 0;
+            }
+            dispatch(goPage(+pageNumber));
+            dispatch(changeCurrentCategoriId(+categoriNumber));
+            await dispatch(getCategoriMenu());
+        } catch (err) {
+            message.error(err);
+        }
     };
 
     useEffect(() => {
         initPage();
-    }, []);
+    }, [router?.query?.categori, router?.query?.page]);
 
     return (
         <Wrapper>

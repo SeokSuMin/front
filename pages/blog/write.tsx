@@ -98,11 +98,11 @@ const Write = () => {
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const titleInputRef = useRef<InputRef | null>(null);
-    const quillRef = useRef(null);
+    const quillRef = useRef<any>(null);
 
     const [menu, setMenu] = useState<string>();
     const [categoriId, setCategoriId] = useState<number>();
-    const [files, setFiles] = useState<File[] | null>([]);
+    const [files, setFiles] = useState<File[]>([]);
     const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
 
     const changeMenu = (value: string) => {
@@ -127,10 +127,10 @@ const Write = () => {
 
     const onUploadFile = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (!e.target.files) {
+            if (e.target.files?.length === 0) {
                 return;
             }
-            const tempFiles = [...e.target.files];
+            const tempFiles = [...(e.target.files as FileList)];
 
             for (const file of tempFiles) {
                 const extName = path.extname(file.name);
@@ -141,7 +141,7 @@ const Write = () => {
             }
 
             const insertFiles = tempFiles.filter((newFile) => {
-                if (!files.some((prevFile) => prevFile.name === newFile.name)) {
+                if (!files?.some((prevFile) => prevFile.name === newFile.name)) {
                     return true;
                 }
             });
@@ -180,20 +180,29 @@ const Write = () => {
 
     const submit = async () => {
         try {
-            console.log('들어옴');
-            const title = titleInputRef.current.input.value;
-            if (!title.trim()) {
+            const title = titleInputRef?.current?.input?.value;
+            if (!title?.trim()) {
                 message.warn('제목은 필수 입니다.');
-                titleInputRef.current.input.focus();
+                titleInputRef?.current?.input?.focus();
                 return;
             }
-            const $ = quillRef.current.state.value.trim()
-                ? Cheerio.load(`<div id='quillContent'>${quillRef.current.state.value}</div>`)
+            const $ = quillRef?.current?.state?.value.trim()
+                ? Cheerio.load(`<div id='quillContent'>${quillRef?.current?.state?.value}</div>`)
                 : '';
             const fileArr: File[] = [...files];
-            const uuid = router?.query?.mode === 'modify' ? detailBoard.board_id : uuidv4().split('-').join('');
+            const allFileDeleteIds: number[] = [];
+            const uuid = router?.query?.mode === 'modify' ? detailBoard?.board_id : uuidv4().split('-').join('');
+
+            // 삭제된 이미지 파일 체크를 위한 이미지 이름 배열
+            let prevBoardFileNames: string[] =
+                router?.query?.mode === 'modify'
+                    ? detailBoard?.board_files
+                        ? detailBoard?.board_files
+                              .map((file) => file.name)
+                              .filter((file) => path.extname(file) === '.png')
+                        : []
+                    : [];
             const boardData = { board_id: uuid } as IBoardData;
-            // console.log('$$$', quillRef.current.state.value);
 
             // 에디터 내용이 존재하면
             if ($) {
@@ -202,7 +211,7 @@ const Write = () => {
                 await Promise.all(
                     allTags.map(async (tag) => {
                         if ($(tag).prop('tagName') === 'IMG') {
-                            const base64Img = $(tag).prop('src');
+                            const base64Img = $(tag).prop('src') as string;
                             // 기존 파일이 아닌것만 파일추가 작업 진행
                             if (!base64Img.includes(fileBackUrl)) {
                                 const fileName =
@@ -215,10 +224,20 @@ const Write = () => {
                                 const convertIamgeFile = await rlto(base64Img, fileName, { type: 'image/*' });
                                 fileArr.push(convertIamgeFile);
                                 $(tag).prop('src', filePath);
+                                // 기존 추가된 이미지에서 없으면 삭제진행
+                            } else if (
+                                prevBoardFileNames.length &&
+                                prevBoardFileNames.find((name) => base64Img.includes(name))
+                            ) {
+                                prevBoardFileNames = prevBoardFileNames.filter((name) => !base64Img.includes(name));
                             }
                         }
                     }),
                 );
+                for (const removeName of prevBoardFileNames) {
+                    const removeId = detailBoard?.board_files?.find((file) => file.name === removeName)?.file_id;
+                    allFileDeleteIds.push(removeId as number);
+                }
                 const content = $.html().replace('<html><head></head><body>', '').replace('</body></html>', '');
                 boardData.content = content;
             }
@@ -226,11 +245,18 @@ const Write = () => {
             boardData.title = title;
             boardData.categori_id = categoriId;
             boardData.uploadFiles = fileArr;
-            await dispatch(isnertBoard({ boardData, deleteFileIds })).unwrap();
+            allFileDeleteIds.push(...deleteFileIds);
+
+            await dispatch(isnertBoard({ boardData, allFileDeleteIds })).unwrap();
             message.success('게시글을 저장했습니다.');
             router.push('/blog');
         } catch (err) {
-            message.error(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                console.log(err);
+            }
             // dispatch(loading({ loading: false }));
         }
     };
@@ -240,7 +266,7 @@ const Write = () => {
         const resultCategoris = result.payload as IBlog;
         if (router?.query?.mode === 'modify') {
             for (const c of resultCategoris.categoriMenus) {
-                const findC = c.categoris.find((childC) => childC.categori_id === detailBoard.categori_id);
+                const findC = c.categoris.find((childC) => childC.categori_id === detailBoard?.categori_id);
                 if (findC) {
                     setMenu(Object.values(c)[0] as string);
                     setCategoriId(findC.categori_id);

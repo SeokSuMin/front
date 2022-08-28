@@ -143,16 +143,20 @@ const LeftProfile = () => {
                 pathname: '/blog/write',
                 query: { mode: 'write' },
             },
-            '/blog/write',
+            // '/blog/write',
         );
     };
 
     const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
         if (router.pathname !== '/blog' || currentCategoriId !== newCategoriId) {
-            dispatch(changeCurrentCategoriId(newCategoriId));
-            if (router.pathname !== '/blog') {
-                router.push('/blog');
-            }
+            // dispatch(changeCurrentCategoriId(newCategoriId));
+            // if (router.pathname !== '/blog') {
+            //     router.push('/blog');
+            // }
+            router.push({
+                pathname: '/blog',
+                query: { page: '1', categori: newCategoriId },
+            });
         }
     };
 

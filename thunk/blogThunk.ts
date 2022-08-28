@@ -38,7 +38,7 @@ export const getDetailBoard = createAsyncThunk(
 export const isnertBoard = createAsyncThunk(
     'INSERT_BOARD',
     async (
-        insertData: { boardData: IBoardData; deleteFileIds: number[] },
+        insertData: { boardData: IBoardData; allFileDeleteIds: number[] },
         { dispatch, getState, requestId, rejectWithValue },
     ) => {
         try {
@@ -74,7 +74,7 @@ export const isnertBoard = createAsyncThunk(
             await axios.post(`/blog/board/insert`, {
                 boardData: insertData.boardData,
                 fileNames,
-                deleteFileIds: insertData.deleteFileIds,
+                deleteFileIds: insertData.allFileDeleteIds,
             });
             return true;
         } catch (err) {

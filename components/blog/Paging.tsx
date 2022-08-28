@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { goPage } from '../../reducer/blog';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -35,12 +36,17 @@ const PagingItem = styled.li`
 `;
 
 const Paging = () => {
+    const router = useRouter();
     const dispath = useAppDispatch();
-    const { paging } = useAppSelector((state) => state.blog);
+    const { paging, currentCategoriId } = useAppSelector((state) => state.blog);
 
     const movePageFunc = (prevPageNum: number, newPageNum: number) => {
         if (prevPageNum !== newPageNum) {
-            dispath(goPage(newPageNum));
+            // dispath(goPage(newPageNum));
+            router.push({
+                pathname: '/blog',
+                query: { page: newPageNum, categori: currentCategoriId },
+            });
         }
         return;
     };

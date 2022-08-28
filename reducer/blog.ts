@@ -143,11 +143,11 @@ const blog = createSlice({
         },
         changeCurrentCategoriId: (state, action: PayloadAction<number>) => {
             const categoriId = action.payload;
-            const page = 1;
+            //const page = 1;
             return {
                 ...state,
                 currentCategoriId: categoriId,
-                paging: { ...state.paging, page },
+                // paging: { ...state.paging, page },
             };
         },
         deleteBoardFiles: (state, action: PayloadAction<number>) => {
@@ -212,7 +212,7 @@ const blog = createSlice({
             .addCase(isnertBoard.fulfilled, (state, action) => {
                 return {
                     ...state,
-                    loading: false,
+                    // loading: false,
                 };
             })
             .addCase(getDetailBoard.pending, (state, action) => {

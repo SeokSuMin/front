@@ -1,10 +1,11 @@
+import { Spin } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import XToggle from '../../public/x-Toggle.svg';
 import { togglLogin } from '../../reducer/user';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import IdSearch from './IdSearch';
 import Login from './Login';
 import MemberJoin from './MemberJoin';
@@ -36,6 +37,29 @@ const ModalView = styled(motion.div)`
     padding: 0.938em;
 `;
 
+const SpinWrapper = styled.div`
+    width: 100%;
+    height: 90%;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.625em;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 1;
+    position: absolute;
+    .ant-spin-spinning {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .ant-spin-text {
+        margin-top: 0.313em;
+    }
+`;
+
 const Content = styled.div`
     width: 100%;
     height: 100%;
@@ -65,6 +89,7 @@ export interface ILoginInfo {
     password1?: string;
 }
 const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
+    const { loading } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const [viewType, setViewType] = useState('login');
     const {
@@ -83,7 +108,9 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
         shouldFocusError: true,
     });
     const loginView = () => {
-        dispatch(togglLogin({ loginVisible: false }));
+        if (!loading) {
+            dispatch(togglLogin({ loginVisible: false }));
+        }
     };
     const moveTypeView = (type: string) => {
         setViewType(type);
@@ -104,6 +131,12 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
                             top: scrollY + 200,
                         }}
                     >
+                        {loading ? (
+                            <SpinWrapper>
+                                <Spin tip="Loading..." />
+                            </SpinWrapper>
+                        ) : null}
+
                         <Close>
                             <XToggle onClick={loginView}></XToggle>
                         </Close>
