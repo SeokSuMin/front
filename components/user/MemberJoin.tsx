@@ -14,7 +14,7 @@ import JoinMenu from './JoinMenu';
 import { ILoginInfo } from './UserModalView';
 import * as path from 'path';
 import { message } from 'antd';
-import { loading } from '../../reducer/user';
+import { IUser, loading } from '../../reducer/user';
 import { checkExUser, joinMembers } from '../../thunk/userThunk';
 import dayjs from 'dayjs';
 import { rlto } from '../../util';
@@ -134,13 +134,13 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
     const joinButton = useRef<HTMLButtonElement>(null);
     const state = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
     const [joinUserId, setJoinUserId] = useState('');
-    const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(null);
-    const [extName, setExtName] = useState<string>(null);
+    const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>('');
+    const [extName, setExtName] = useState<string>('');
 
     const moveLoginView = () => {
-        setProfileImgURL(null);
+        setProfileImgURL('');
         setJoinUserId('');
         setValue('userId', '');
         setValue('password', '');
@@ -152,7 +152,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
     };
 
     const clickImgFileInput = () => {
-        inputRef.current.click();
+        inputRef?.current?.click();
     };
     const changeImgInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) {
@@ -162,8 +162,10 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
         const reader = new FileReader();
 
         reader.onloadend = () => {
-            setProfileImgURL(reader.result);
-            setExtName(path.extname(imgFile.name));
+            if (reader.result) {
+                setProfileImgURL(reader.result);
+                setExtName(path.extname(imgFile.name));
+            }
         };
         reader.onerror = () => {
             message.error('프로필 이미지 로딩중 에러가 발생했습니다.');
@@ -173,7 +175,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
         e.target.value = '';
     };
     const deleteProfileImg = () => {
-        setProfileImgURL(null);
+        setProfileImgURL('');
     };
 
     const checkUserId = async (userId: string) => {
@@ -183,10 +185,15 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
             setError('userId', { message: '' });
             return true;
         } catch (err) {
-            if (err.includes('이미 사용중인')) {
-                return false;
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
             } else {
-                message.error(err);
+                if ((err as string).includes('이미 사용중인')) {
+                    return false;
+                } else {
+                    message.error(err as string);
+                }
             }
         } finally {
             dispatch(loading({ loading: false }));
@@ -203,8 +210,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                         userId: value.userId,
                         email: value.email,
                         password: value.password,
-                        profileImg: null,
-                    };
+                    } as IUser;
                     if (profileImgURL) {
                         const fileName =
                             dayjs().valueOf() + (profileImgURL as string).slice(-8).replace(/\//g, '') + `${extName}`;
@@ -224,7 +230,12 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                 setError('userId', { message: '이미 사용중인 아이디 입니다.' }, { shouldFocus: true });
             }
         } catch (err) {
-            message.error(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
         } finally {
             dispatch(loading({ loading: false }));
         }

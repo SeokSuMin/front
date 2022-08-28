@@ -67,12 +67,12 @@ const DetailSkillBox = styled.div`
 
 // InferGetServerSidePropsType<typeof getServerSideProps>
 export default function Home() {
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement | null>(null);
     const [skill, setSkill] = useState(1);
     const { scrollYProgress } = useScroll();
 
     const contactBtn = () => {
-        scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        scrollRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     const changeSkill = (e: RadioChangeEvent) => {
         setSkill(e.target.value);

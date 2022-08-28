@@ -60,7 +60,7 @@ interface IJoinMenuProps {
     errors: FieldErrorsImpl<DeepRequired<ILoginInfo>>;
     clickImgFileInput: () => void;
     profileImgURL: string | ArrayBuffer;
-    inputRef: MutableRefObject<HTMLInputElement>;
+    inputRef: MutableRefObject<HTMLInputElement | null>;
     changeImgInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
     deleteProfileImg: () => void;
 }

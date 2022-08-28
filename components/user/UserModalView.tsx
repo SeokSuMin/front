@@ -83,10 +83,10 @@ interface ILoginProps {
 }
 
 export interface ILoginInfo {
-    userId?: string;
-    email?: string;
-    password?: string;
-    password1?: string;
+    userId: string;
+    email: string;
+    password: string;
+    password1: string;
 }
 const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
     const { loading } = useAppSelector((state) => state.user);
@@ -94,6 +94,7 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
     const [viewType, setViewType] = useState('login');
     const {
         register,
+        unregister,
         handleSubmit,
         setError,
         setValue,
@@ -113,6 +114,10 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
         }
     };
     const moveTypeView = (type: string) => {
+        unregister('userId');
+        unregister('password');
+        unregister('password1');
+        unregister('email');
         setViewType(type);
     };
 

@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { login } from '../../thunk/userThunk';
 import { message } from 'antd';
-import { loading } from '../../reducer/user';
+import { IUser, loading } from '../../reducer/user';
 
 const Wrapper = styled.div`
     width: 80%;
@@ -183,11 +183,17 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
 
     const loginSubmit = async (value: ILoginInfo) => {
         try {
-            await dispatch(login(value)).unwrap();
+            const userData = value as IUser;
+            await dispatch(login(userData)).unwrap();
             loginView();
             message.success(value.userId + '님 환영합니다!');
         } catch (err) {
-            message.error(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
         } finally {
             dispatch(loading({ loading: false }));
         }
@@ -237,14 +243,14 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
                 <div className="hr-sect">
                     <span>or</span>
                 </div>
-                <button onClick={() => gitLoginRef.current.click()} className="git">
+                <button onClick={() => gitLoginRef?.current?.click()} className="git">
                     <span>
                         <GitHub />
                     </span>
                     <span>Login with GitHub</span>
                     <a ref={gitLoginRef} href={'http://localhost:3005/api/user/github/login'} hidden />
                 </button>
-                <button onClick={() => googleLoginRef.current.click()} className="google">
+                <button onClick={() => googleLoginRef?.current?.click()} className="google">
                     <span>
                         <Google />
                     </span>

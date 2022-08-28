@@ -255,9 +255,9 @@ const Write = () => {
                 console.log(err.message);
                 message.error(err.message);
             } else {
-                console.log(err);
+                message.error(err as string);
             }
-            // dispatch(loading({ loading: false }));
+            dispatch(loading({ loading: false }));
         }
     };
 

@@ -9,6 +9,7 @@ import { togglDashBoard, togglLogin } from '../../reducer/user';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import * as path from 'path';
 import dayjs from 'dayjs';
+import { IUser } from '../../reducer/user';
 import { rlto } from '../../util';
 import { changePassowrd, updateMember, logout } from '../../thunk/userThunk';
 import { UserOutlined } from '@ant-design/icons';
@@ -164,19 +165,19 @@ interface IDashBoardProps {
 }
 
 export interface IUserInfo {
-    email?: string;
-    password?: string;
-    password1?: string;
+    email: string;
+    password: string;
+    password1: string;
 }
 
 const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
     const user = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(
         user.strategyType !== 'local' ? user.imgPath : user.imgPath ? fileBackUrl + user.imgPath : '',
     );
-    const [extName, setExtName] = useState<string>(null);
+    const [extName, setExtName] = useState<string>('');
     const [viewMode, setViewMode] = useState('user');
     const {
         register,
@@ -196,7 +197,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
     };
 
     const clickImgFileInput = () => {
-        inputRef.current.click();
+        inputRef?.current?.click();
     };
     const changeImgInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) {
@@ -206,8 +207,10 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
         const reader = new FileReader();
 
         reader.onloadend = () => {
-            setProfileImgURL(reader.result);
-            setExtName(path.extname(imgFile.name));
+            if (reader.result) {
+                setProfileImgURL(reader.result);
+                setExtName(path.extname(imgFile.name));
+            }
         };
         reader.onerror = () => {
             message.error('프로필 이미지 로딩중 에러가 발생했습니다.');
@@ -240,9 +243,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                 const userInfoObj = {
                     userId: user.userId,
                     email: value.email,
-                    profileImg: null,
-                    imgPath: null,
-                };
+                } as IUser;
 
                 const prevFileName = fileBackUrl + user.imgPath;
                 if (profileImgURL !== '' && profileImgURL !== prevFileName) {
@@ -258,7 +259,6 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
 
                 await dispatch(updateMember(userInfoObj)).unwrap();
                 message.success('저장되었습니다.');
-                dispatch(togglDashBoard({ dashBoardVisible: false }));
             } else {
                 if (value.password !== value.password1) {
                     setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
@@ -266,7 +266,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                     const userInfoObj = {
                         userId: user.userId,
                         password: value.password,
-                    };
+                    } as IUser;
                     await dispatch(changePassowrd(userInfoObj)).unwrap();
                     message.success('비밀번호가 변경되어 자동 로그아웃 합니다.');
                     await dispatch(logout()).unwrap();
@@ -274,7 +274,14 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                 }
             }
         } catch (err) {
-            message.error(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
+        } finally {
+            dispatch(togglDashBoard({ dashBoardVisible: false }));
         }
     };
 

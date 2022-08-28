@@ -134,7 +134,12 @@ const NavBar = () => {
             await dispatch(logout()).unwrap();
             message.success('로그아웃 되었습니다.');
         } catch (err) {
-            message.error(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
         }
     };
 
@@ -150,7 +155,12 @@ const NavBar = () => {
                     await dispatch(deleteMember(userId));
                     message.success('탈퇴되었습니다.');
                 } catch (err) {
-                    message.success(err);
+                    if (err instanceof Error) {
+                        console.log(err.message);
+                        message.error(err.message);
+                    } else {
+                        message.error(err as string);
+                    }
                 }
             },
             onCancel() {

@@ -70,12 +70,11 @@ const LeftSideToggle = styled(motion.div)`
     align-items: center;
 `;
 
-interface ICategoris {
-    name: string;
-    isActive: boolean;
+interface IBlogLayoutProps {
+    children?: React.ReactNode;
 }
 
-const BlogLayout = ({ children }) => {
+const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
     const router = useRouter();
     const [visible, setVisible] = useState(false);
     const DrawerVisible = () => {

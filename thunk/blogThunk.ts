@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { BackUrl } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
 import { fileProgress, IBlog, IBoardComment, IBoardData } from '../reducer/blog';
@@ -15,7 +15,11 @@ export const getCategoriMenu = createAsyncThunk(
             const response = await axios.get(`/blog/categori`);
             return response.data;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -30,7 +34,11 @@ export const getDetailBoard = createAsyncThunk(
             const response = await axios.get(`/blog/${board_id}/${currentCategoriId}`);
             return response.data;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -78,7 +86,11 @@ export const isnertBoard = createAsyncThunk(
             });
             return true;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -90,7 +102,11 @@ export const insertComment = createAsyncThunk(
             const response = await axios.post(`/blog/comment/insert`, commentData);
             return response.data;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -102,7 +118,11 @@ export const deleteBoard = createAsyncThunk(
             const response = await axios.delete(`/blog/board/${boardId}`);
             return true;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -114,7 +134,11 @@ export const deleteComment = createAsyncThunk(
             const response = await axios.delete(`/blog/comment/${commentIds.commentId}`);
             return commentIds;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -132,7 +156,11 @@ export const updateCategoris = createAsyncThunk(
             const response = await axios.patch(`/blog/categori/update`, categoriData);
             return response.data;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );

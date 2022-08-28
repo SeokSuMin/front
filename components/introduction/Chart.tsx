@@ -20,7 +20,7 @@ const ChartBox = styled.div`
 `;
 
 interface ISkillChart {
-    skill: number;
+    skill: '1' | '2';
     changeSkill: (e: RadioChangeEvent) => void;
 }
 
@@ -81,7 +81,7 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                             },
                         },
                     },
-                    colors: skill === 1 ? ['#26A0FC'] : ['#26e7a6'],
+                    colors: skill === '1' ? ['#26A0FC'] : ['#26e7a6'],
                     plotOptions: {
                         bar: {
                             borderRadius: 5,

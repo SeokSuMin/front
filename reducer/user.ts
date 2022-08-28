@@ -11,40 +11,42 @@ import {
 } from '../thunk/userThunk';
 
 export interface IUser {
-    loginVisible?: boolean;
-    dashBoardVisible?: boolean;
-    userId?: string;
-    email?: string;
-    password?: string;
-    strategyType?: string;
-    profileImg?: File | null;
-    imgPath?: string;
-    loading?: boolean;
-    error?: boolean;
-    createdAt?: string;
-    hydration?: boolean;
+    loginVisible: boolean;
+    dashBoardVisible: boolean;
+    userId: string;
+    email: string;
+    password: string;
+    strategyType: string;
+    profileImg: File;
+    imgPath: string;
+    loading: boolean;
+    error: boolean;
+    createdAt: string;
+    hydration: boolean;
 }
 
 const user = createSlice({
     name: 'user',
     initialState: { loginVisible: false, dashBoardVisible: false } as IUser,
     reducers: {
-        togglLogin: (state, action: PayloadAction<IUser>) => {
-            return { ...state, ...action.payload };
+        togglLogin: (state, action) => {
+            const loginVisible = action.payload as PayloadAction<IUser>;
+            return { ...state, ...loginVisible };
         },
-        togglDashBoard: (state, action: PayloadAction<IUser>) => {
-            return { ...state, ...action.payload };
+        togglDashBoard: (state, action) => {
+            const dashBoardVisible = action.payload as PayloadAction<IUser>;
+            return { ...state, ...dashBoardVisible };
         },
-        loading: (state, action: PayloadAction<IUser>) => {
-            return { ...state, ...action.payload };
+        loading: (state, action) => {
+            const loading = action.payload as PayloadAction<IUser>;
+            return { ...state, ...loading };
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(joinMembers.pending, (state, action: PayloadAction<IUser>) => {
+            .addCase(joinMembers.pending, (state, action) => {
                 return {
                     ...state,
-                    ...action.payload,
                     loading: true,
                 };
             })
@@ -91,7 +93,7 @@ const user = createSlice({
                     ...state,
                     userId: '',
                     password: '',
-                    imgPath: null,
+                    imgPath: '',
                     loading: false,
                 };
             })
@@ -101,7 +103,7 @@ const user = createSlice({
                     loading: true,
                 };
             })
-            .addCase(searchUser.fulfilled, (state, action: PayloadAction<IUser>) => {
+            .addCase(searchUser.fulfilled, (state, action) => {
                 return {
                     ...state,
                     loading: false,
@@ -126,7 +128,7 @@ const user = createSlice({
                     loading: false,
                 };
             })
-            .addCase(deleteMember.pending, (state, action: PayloadAction<IUser>) => {
+            .addCase(deleteMember.pending, (state, action) => {
                 return {
                     ...state,
                     loading: true,
@@ -137,7 +139,7 @@ const user = createSlice({
                     ...state,
                     userId: '',
                     password: '',
-                    imgPath: null,
+                    imgPath: '',
                     loading: false,
                 };
             });

@@ -61,7 +61,7 @@ const CareerIcon = styled.svg`
 `;
 
 interface ICareer {
-    scrollRef: MutableRefObject<HTMLDivElement>;
+    scrollRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 const Career = ({ scrollRef }: ICareer) => {

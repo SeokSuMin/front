@@ -11,7 +11,7 @@ import {
     UseFormSetValue,
 } from 'react-hook-form';
 import styled from 'styled-components';
-import { loading } from '../../reducer/user';
+import { IUser, loading } from '../../reducer/user';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { changePassowrd, searchUser } from '../../thunk/userThunk';
 import { ILoginInfo } from './UserModalView';
@@ -120,10 +120,14 @@ interface IIdSearchProps {
 const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveTypeView }: IIdSearchProps) => {
     const dispatch = useAppDispatch();
     const { loading: searchLoading } = useAppSelector((state) => state.user);
-    const [user, setUser] = useState<{ userId: string; registerDate: string }>(null);
+    const [user, setUser] = useState<{ userId: string; registerDate: string } | null>(null);
 
     const search = async (email: string) => {
         try {
+            if (!email) {
+                message.error('이메일 정보는 필수입니다.');
+                return;
+            }
             const fineUser = await dispatch(searchUser(email)).unwrap();
             setUser((prev) => {
                 return {
@@ -134,7 +138,12 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
         } catch (err) {
             dispatch(loading({ loading: false }));
             setUser((prev) => null);
-            message.warn(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
         } finally {
             setValue('password', '');
             setValue('password1', '');
@@ -148,7 +157,7 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
             if (value.password !== value.password1) {
                 setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
             } else {
-                dispatch(changePassowrd({ userId: user.userId, password: value.password }));
+                dispatch(changePassowrd({ userId: user?.userId, password: value.password } as IUser));
                 message.success('비밀번호가 변경 되었습니다.');
                 setValue('password', '');
                 setValue('password1', '');

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { BackUrl } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
 import { IUser } from '../reducer/user';
@@ -14,7 +14,11 @@ export const checkExUser = createAsyncThunk(
             const response = await axios.post('/user/check', { userId });
             return response.data;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -27,8 +31,9 @@ export const joinMembers = createAsyncThunk(
             formData.append('userId', memberInfo.userId);
             formData.append('email', memberInfo.email);
             formData.append('password', memberInfo.password);
-            formData.append('file', memberInfo.profileImg);
-
+            if (memberInfo.profileImg) {
+                formData.append('file', memberInfo.profileImg);
+            }
             await axios({
                 method: 'post',
                 url: '/user/profileUpload',
@@ -36,7 +41,11 @@ export const joinMembers = createAsyncThunk(
             });
             return true;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -46,7 +55,11 @@ export const login = createAsyncThunk('LOGIN', async (userInfo: IUser, { getStat
         const response = await axios.post('/user/login', userInfo);
         return response.data;
     } catch (err) {
-        return rejectWithValue(err.response.data);
+        if (err instanceof AxiosError) {
+            return rejectWithValue(err.response?.data);
+        } else {
+            return rejectWithValue(err);
+        }
     }
 });
 
@@ -63,7 +76,11 @@ export const logout = createAsyncThunk('LOGOUT', async (_, { getState, requestId
         const response = await axios.post('/user/logout', {});
         return response.data;
     } catch (err) {
-        return rejectWithValue(err.response.data);
+        if (err instanceof AxiosError) {
+            return rejectWithValue(err.response?.data);
+        } else {
+            return rejectWithValue(err);
+        }
     }
 });
 
@@ -74,7 +91,11 @@ export const searchUser = createAsyncThunk(
             const response = await axios.get(`/user/${email}`);
             return response.data;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -86,7 +107,11 @@ export const changePassowrd = createAsyncThunk(
             await axios.post('/user/change/password', userInfo);
             return true;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -103,7 +128,11 @@ export const updateMember = createAsyncThunk(
             const response = await axios.patch('/user/update', formData);
             return response.data;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );
@@ -115,7 +144,11 @@ export const deleteMember = createAsyncThunk(
             await axios.delete(`/user/${userId}`);
             return true;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
     },
 );

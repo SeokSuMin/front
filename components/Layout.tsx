@@ -1,6 +1,7 @@
 import { BackTop } from 'antd';
 import { useScroll } from 'framer-motion';
 import { useRouter } from 'next/router';
+import React from 'react';
 import styled from 'styled-components';
 import { useAppSelector } from '../store/hooks';
 import Progress from './animation/Progress';
@@ -68,8 +69,11 @@ const style: React.CSSProperties = {
     color: '#fff',
     textAlign: 'center',
 };
+interface ILayoutProps {
+    children?: React.ReactNode;
+}
 
-const Layout = ({ children }) => {
+const Layout: React.FC<ILayoutProps> = ({ children }) => {
     const router = useRouter();
     const { scrollYProgress, scrollY } = useScroll();
     const { loginVisible, dashBoardVisible } = useAppSelector((state) => state.user);
