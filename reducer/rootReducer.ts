@@ -5,7 +5,7 @@ import blog, { IBlog } from './blog';
 
 export interface IState {
     user: IUser;
-    // blog: IBlog;
+    blog: IBlog;
 }
 
 const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> => {
@@ -30,12 +30,12 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
             return {
                 ...state,
                 ...action.payload,
-                ...newPayload, // 뒤로가기 또는 다른 페이지에서 서버사이드 렌더링 해도 스토어 유지
+                // ...newPayload, // 뒤로가기 또는 다른 페이지에서 서버사이드 렌더링 해도 스토어 유지
             };
         }
         default: {
             const reducer = combineReducers({
-                // blog,
+                blog,
                 user,
             });
             return reducer(state, action);

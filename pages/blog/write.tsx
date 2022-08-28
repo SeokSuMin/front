@@ -149,13 +149,13 @@ const Write = () => {
 
             if (insertFiles.length) {
                 dispatch(
-                    addUploadFiles(
-                        insertFiles.map((file) => ({
+                    addUploadFiles({
+                        uploadFileInfo: insertFiles.map((file) => ({
                             fileId: file.lastModified + '',
                             fileName: file.name,
                             progress: 0,
                         })),
-                    ),
+                    }),
                 );
             }
             e.target.value = '';

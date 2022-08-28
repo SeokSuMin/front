@@ -174,8 +174,8 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const user = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
-    const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(
-        user.strategyType !== 'local' ? user.imgPath : user.imgPath ? fileBackUrl + user.imgPath : '',
+    const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer | undefined>(
+        user?.strategyType !== 'local' ? user?.imgPath : user?.imgPath ? fileBackUrl + user?.imgPath : '',
     );
     const [extName, setExtName] = useState<string>('');
     const [viewMode, setViewMode] = useState('user');
@@ -229,7 +229,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
             setError('password1', { message: '' });
         } else {
             setViewMode('user');
-            setValue('email', user.email);
+            setValue('email', user.email as string);
         }
     };
 
@@ -261,6 +261,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                 message.success('저장되었습니다.');
             } else {
                 if (value.password !== value.password1) {
+                    console.log('비밀번호 다름');
                     setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
                 } else {
                     const userInfoObj = {
@@ -270,7 +271,6 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                     await dispatch(changePassowrd(userInfoObj)).unwrap();
                     message.success('비밀번호가 변경되어 자동 로그아웃 합니다.');
                     await dispatch(logout()).unwrap();
-                    dispatch(togglLogin({ loginVisible: true }));
                 }
             }
         } catch (err) {
@@ -280,10 +280,16 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
             } else {
                 message.error(err as string);
             }
-        } finally {
-            dispatch(togglDashBoard({ dashBoardVisible: false }));
         }
     };
+
+    useEffect(() => {
+        if (user?.strategyType) {
+            setProfileImgURL(
+                user?.strategyType !== 'local' ? user?.imgPath : user?.imgPath ? fileBackUrl + user?.imgPath : '',
+            );
+        }
+    }, []);
 
     return (
         <AnimatePresence initial={false}>
@@ -335,8 +341,8 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                                             <label>ID</label>
                                             <span>
                                                 {user.strategyType === 'local'
-                                                    ? user.userId
-                                                    : user.userId.split('_')[1]}
+                                                    ? user?.userId
+                                                    : user?.userId?.split('_')[1]}
                                             </span>
                                         </div>
                                         <div>

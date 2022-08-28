@@ -83,7 +83,7 @@ interface ILoginProps {
 }
 
 export interface ILoginInfo {
-    userId: string;
+    userId?: string;
     email: string;
     password: string;
     password1: string;
@@ -98,6 +98,7 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
         handleSubmit,
         setError,
         setValue,
+        clearErrors,
         formState: { errors },
     } = useForm<ILoginInfo>({
         defaultValues: {
@@ -152,7 +153,16 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
                                 />
                             ) : null}
                             {viewType === 'join' ? (
-                                <MemberJoin {...{ register, handleSubmit, errors, setValue, setError, moveTypeView }} />
+                                <MemberJoin
+                                    {...{
+                                        register,
+                                        handleSubmit,
+                                        errors,
+                                        setValue,
+                                        setError,
+                                        moveTypeView,
+                                    }}
+                                />
                             ) : null}
                             {viewType === 'search' ? (
                                 <IdSearch {...{ register, handleSubmit, errors, setValue, setError, moveTypeView }} />

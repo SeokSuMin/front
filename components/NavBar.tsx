@@ -152,7 +152,7 @@ const NavBar = () => {
             cancelText: '취소',
             async onOk() {
                 try {
-                    await dispatch(deleteMember(userId));
+                    await dispatch(deleteMember(userId as string));
                     message.success('탈퇴되었습니다.');
                 } catch (err) {
                     if (err instanceof Error) {

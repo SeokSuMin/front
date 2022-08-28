@@ -1,14 +1,14 @@
-import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
+import { Action, AnyAction, CombinedState, configureStore, Reducer, ThunkAction } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
-import reducer from '../reducer/rootReducer';
+import reducer, { IState } from '../reducer/rootReducer';
 import { createWrapper } from 'next-redux-wrapper';
 
 const makeStore = () => {
     return configureStore({
-        reducer,
+        reducer: reducer as Reducer<CombinedState<IState>, AnyAction>,
         //middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
         middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
-        devTools: process.env.NEXT_PUBLIC_NODE_ENV !== 'production',
+        devTools: process.env.NODE_ENV === 'development',
     });
 };
 

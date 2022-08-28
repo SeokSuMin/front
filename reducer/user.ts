@@ -11,35 +11,32 @@ import {
 } from '../thunk/userThunk';
 
 export interface IUser {
-    loginVisible: boolean;
-    dashBoardVisible: boolean;
-    userId: string;
-    email: string;
-    password: string;
-    strategyType: string;
-    profileImg: File;
-    imgPath: string;
-    loading: boolean;
-    error: boolean;
-    createdAt: string;
-    hydration: boolean;
+    loginVisible?: boolean;
+    dashBoardVisible?: boolean;
+    userId?: string;
+    email?: string;
+    password?: string;
+    strategyType?: string;
+    profileImg?: File;
+    imgPath?: string;
+    loading?: boolean;
+    error?: boolean;
+    createdAt?: string;
+    hydration?: boolean;
 }
 
 const user = createSlice({
     name: 'user',
     initialState: { loginVisible: false, dashBoardVisible: false } as IUser,
     reducers: {
-        togglLogin: (state, action) => {
-            const loginVisible = action.payload as PayloadAction<IUser>;
-            return { ...state, ...loginVisible };
+        togglLogin: (state, action: PayloadAction<IUser>) => {
+            return { ...state, ...action.payload };
         },
-        togglDashBoard: (state, action) => {
-            const dashBoardVisible = action.payload as PayloadAction<IUser>;
-            return { ...state, ...dashBoardVisible };
+        togglDashBoard: (state, action: PayloadAction<IUser>) => {
+            return { ...state, ...action.payload };
         },
-        loading: (state, action) => {
-            const loading = action.payload as PayloadAction<IUser>;
-            return { ...state, ...loading };
+        loading: (state, action: PayloadAction<IUser>) => {
+            return { ...state, ...action.payload };
         },
     },
     extraReducers: (builder) => {
@@ -113,6 +110,14 @@ const user = createSlice({
                 return {
                     ...state,
                     loading: true,
+                };
+            })
+            .addCase(changePassowrd.fulfilled, (state, action) => {
+                return {
+                    ...state,
+                    dashBoardVisible: false,
+                    loginVisible: true,
+                    loading: false,
                 };
             })
             .addCase(updateMember.pending, (state, action) => {

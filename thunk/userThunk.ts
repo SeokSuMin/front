@@ -28,9 +28,9 @@ export const joinMembers = createAsyncThunk(
     async (memberInfo: IUser, { getState, requestId, rejectWithValue }) => {
         try {
             const formData = new FormData();
-            formData.append('userId', memberInfo.userId);
-            formData.append('email', memberInfo.email);
-            formData.append('password', memberInfo.password);
+            formData.append('userId', memberInfo.userId as string);
+            formData.append('email', memberInfo.email as string);
+            formData.append('password', memberInfo.password as string);
             if (memberInfo.profileImg) {
                 formData.append('file', memberInfo.profileImg);
             }
@@ -121,10 +121,12 @@ export const updateMember = createAsyncThunk(
     async (memberInfo: IUser, { getState, requestId, rejectWithValue }) => {
         try {
             const formData = new FormData();
-            formData.append('userId', memberInfo.userId);
-            formData.append('email', memberInfo.email);
-            formData.append('imgPath', memberInfo.imgPath);
-            formData.append('file', memberInfo.profileImg);
+            formData.append('userId', memberInfo.userId as string);
+            formData.append('email', memberInfo.email as string);
+            formData.append('imgPath', memberInfo.imgPath as string);
+            if (memberInfo.profileImg) {
+                formData.append('file', memberInfo.profileImg);
+            }
             const response = await axios.patch('/user/update', formData);
             return response.data;
         } catch (err) {

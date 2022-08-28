@@ -3,10 +3,12 @@ import { useRef, useState } from 'react';
 import {
     DeepRequired,
     FieldErrorsImpl,
+    UseFormClearErrors,
     UseFormHandleSubmit,
     UseFormRegister,
     UseFormSetError,
     UseFormSetValue,
+    UseFormUnregister,
 } from 'react-hook-form';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -202,7 +204,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
 
     const joinSubmit = async (value: ILoginInfo) => {
         try {
-            if (joinUserId !== value.userId && (await checkUserId(value.userId))) {
+            if (joinUserId !== value.userId && (await checkUserId(value.userId as string))) {
                 if (value.password !== value.password1) {
                     setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
                 } else {
@@ -226,7 +228,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                     }
                 }
             } else {
-                setJoinUserId(value.userId);
+                setJoinUserId(value.userId as string);
                 setError('userId', { message: '이미 사용중인 아이디 입니다.' }, { shouldFocus: true });
             }
         } catch (err) {
