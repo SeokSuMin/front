@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import XToggle from '../../public/x-Toggle.svg';
-import { togglDashBoard, togglLogin } from '../../reducer/user';
+import { togglDashBoard } from '../../reducer/userToggle';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import * as path from 'path';
 import dayjs from 'dayjs';
@@ -193,7 +193,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
         },
     });
     const dashBoardView = () => {
-        dispatch(togglDashBoard({ dashBoardVisible: false }));
+        dispatch(togglDashBoard({ dashBoardVisible: false, loginVisible: false }));
     };
 
     const clickImgFileInput = () => {

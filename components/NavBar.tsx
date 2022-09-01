@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { fileBackUrl } from '../config';
-import { togglDashBoard, togglLogin } from '../reducer/user';
+import { togglDashBoard, togglLogin } from '../reducer/userToggle';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteMember, logout } from '../thunk/userThunk';
 
@@ -124,10 +124,10 @@ const NavBar = () => {
     const dispatch = useAppDispatch();
 
     const loginView = () => {
-        dispatch(togglLogin({ loginVisible: true }));
+        dispatch(togglLogin({ loginVisible: true, dashBoardVisible: false }));
     };
     const dashBoardView = () => {
-        dispatch(togglDashBoard({ dashBoardVisible: true }));
+        dispatch(togglDashBoard({ dashBoardVisible: true, loginVisible: false }));
     };
     const userLogout = async () => {
         try {

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import XToggle from '../../public/x-Toggle.svg';
-import { togglLogin } from '../../reducer/user';
+import { togglLogin } from '../../reducer/userToggle';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import IdSearch from './IdSearch';
 import Login from './Login';
@@ -83,13 +83,13 @@ interface ILoginProps {
 }
 
 export interface ILoginInfo {
-    userId?: string;
+    userId: string;
     email: string;
     password: string;
     password1: string;
 }
 const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
-    const { loading } = useAppSelector((state) => state.user);
+    const { loading: loginLoading } = useAppSelector((state) => state.login);
     const dispatch = useAppDispatch();
     const [viewType, setViewType] = useState('login');
     const {
@@ -110,8 +110,8 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
         shouldFocusError: true,
     });
     const loginView = () => {
-        if (!loading) {
-            dispatch(togglLogin({ loginVisible: false }));
+        if (!loginLoading) {
+            dispatch(togglLogin({ loginVisible: false, dashBoardVisible: false }));
         }
     };
     const moveTypeView = (type: string) => {
@@ -137,7 +137,7 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
                             top: scrollY + 200,
                         }}
                     >
-                        {loading ? (
+                        {loginLoading ? (
                             <SpinWrapper>
                                 <Spin tip="Loading..." />
                             </SpinWrapper>

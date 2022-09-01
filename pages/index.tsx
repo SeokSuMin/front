@@ -10,7 +10,7 @@ import Intro from '../components/introduction/Intro';
 import Career from '../components/introduction/Career';
 import Progress from '../components/animation/Progress';
 import Plan from '../components/introduction/Plan';
-import { checkUserlogin, login } from '../thunk/userThunk';
+import { checkUserlogin } from '../thunk/userThunk';
 import axios from 'axios';
 
 const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
@@ -68,7 +68,7 @@ const DetailSkillBox = styled.div`
 // InferGetServerSidePropsType<typeof getServerSideProps>
 export default function Home() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const [skill, setSkill] = useState(1);
+    const [skill, setSkill] = useState<'1' | '2'>('1');
     const { scrollYProgress } = useScroll();
 
     const contactBtn = () => {

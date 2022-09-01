@@ -2,7 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { BackUrl } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
-import { IUser } from '../reducer/user';
+import { ILogin } from '../reducer/user/login';
+import { IUser } from '../reducer/user/user';
 
 axios.defaults.baseURL = BackUrl;
 axios.defaults.withCredentials = true;
@@ -50,18 +51,21 @@ export const joinMembers = createAsyncThunk(
     },
 );
 
-export const login = createAsyncThunk('LOGIN', async (userInfo: IUser, { getState, requestId, rejectWithValue }) => {
-    try {
-        const response = await axios.post('/user/login', userInfo);
-        return response.data;
-    } catch (err) {
-        if (err instanceof AxiosError) {
-            return rejectWithValue(err.response?.data);
-        } else {
-            return rejectWithValue(err);
+export const loginThunk = createAsyncThunk(
+    'LOGIN',
+    async (userInfo: ILogin, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.post('/user/login', userInfo);
+            return response.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
         }
-    }
-});
+    },
+);
 
 export const checkUserlogin = createAsyncThunk(
     'CHECK_USER_LOGIN',

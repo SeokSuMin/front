@@ -76,7 +76,7 @@ interface ILayoutProps {
 const Layout: React.FC<ILayoutProps> = ({ children }) => {
     const router = useRouter();
     const { scrollYProgress, scrollY } = useScroll();
-    const { loginVisible, dashBoardVisible } = useAppSelector((state) => state.user);
+    const { loginVisible, dashBoardVisible } = useAppSelector((state) => state.userToggle);
     return (
         <Wrapper>
             <Progress scrollYProgress={scrollYProgress} />

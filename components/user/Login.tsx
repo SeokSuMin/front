@@ -12,7 +12,7 @@ import {
 import { ILoginInfo } from './UserModalView';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { login } from '../../thunk/userThunk';
+import { loginThunk } from '../../thunk/userThunk';
 import { message } from 'antd';
 import { IUser, loading } from '../../reducer/user';
 
@@ -183,8 +183,12 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
 
     const loginSubmit = async (value: ILoginInfo) => {
         try {
-            const userData = value as IUser;
-            await dispatch(login(userData)).unwrap();
+            const userData = {
+                userId: value.userId,
+                password: value.password,
+                email: '',
+            };
+            await dispatch(loginThunk(userData)).unwrap();
             loginView();
             message.success(value.userId + '님 환영합니다!');
         } catch (err) {
@@ -194,8 +198,6 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
             } else {
                 message.error(err as string);
             }
-        } finally {
-            dispatch(loading({ loading: false }));
         }
     };
 

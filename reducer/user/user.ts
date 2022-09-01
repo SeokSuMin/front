@@ -4,15 +4,15 @@ import {
     checkUserlogin,
     deleteMember,
     joinMembers,
-    login,
+    loginThunk,
     logout,
     searchUser,
     updateMember,
 } from '../thunk/userThunk';
 
 export interface IUser {
-    loginVisible?: boolean;
-    dashBoardVisible?: boolean;
+    // loginVisible?: boolean;
+    // dashBoardVisible?: boolean;
     userId?: string;
     email?: string;
     password?: string;
@@ -29,15 +29,15 @@ const user = createSlice({
     name: 'user',
     initialState: { loginVisible: false, dashBoardVisible: false } as IUser,
     reducers: {
-        togglLogin: (state, action: PayloadAction<IUser>) => {
-            return { ...state, ...action.payload };
-        },
-        togglDashBoard: (state, action: PayloadAction<IUser>) => {
-            return { ...state, ...action.payload };
-        },
-        loading: (state, action: PayloadAction<IUser>) => {
-            return { ...state, ...action.payload };
-        },
+        // togglLogin: (state, action: PayloadAction<IUser>) => {
+        //     return { ...state, ...action.payload };
+        // },
+        // togglDashBoard: (state, action: PayloadAction<IUser>) => {
+        //     return { ...state, ...action.payload };
+        // },
+        // loading: (state, action: PayloadAction<IUser>) => {
+        //     return { ...state, ...action.payload };
+        // },
     },
     extraReducers: (builder) => {
         builder
@@ -53,19 +53,19 @@ const user = createSlice({
                     loginVisible: true,
                 };
             })
-            .addCase(login.pending, (state, action) => {
-                return {
-                    ...state,
-                    loading: true,
-                };
-            })
-            .addCase(login.fulfilled, (state, action: PayloadAction<IUser>) => {
-                return {
-                    ...state,
-                    ...action.payload,
-                    loading: false,
-                };
-            })
+            // .addCase(loginThunk.pending, (state, action) => {
+            //     return {
+            //         ...state,
+            //         loading: true,
+            //     };
+            // })
+            // .addCase(loginThunk.fulfilled, (state, action: PayloadAction<IUser>) => {
+            //     return {
+            //         ...state,
+            //         ...action.payload,
+            //         loading: false,
+            //     };
+            // })
             .addCase(checkUserlogin.pending, (state, action) => {
                 return {
                     ...state,
@@ -151,5 +151,5 @@ const user = createSlice({
     },
 });
 
-export const { togglLogin, togglDashBoard, loading } = user.actions;
+// export const { } = user.actions;
 export default user.reducer;

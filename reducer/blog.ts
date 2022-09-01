@@ -58,15 +58,15 @@ export interface IBoardData {
 }
 
 export interface IBlog {
-    categoriMenus: { menu_name: string; sort: number; categoris: [{ [key: string]: number }] }[];
-    categoriTotal: number;
-    detailBoard: IBoardData | null;
-    uploadFileInfo: { fileId: string; fileName: string; progress?: number }[];
-    paging: IPaging;
-    currentCategoriId: number;
-    viewType: number;
-    loading: boolean;
-    hydration: boolean;
+    categoriMenus?: { menu_name: string; sort: number; categoris: [{ [key: string]: number }] }[];
+    categoriTotal?: number;
+    detailBoard?: IBoardData | null;
+    uploadFileInfo?: { fileId: string; fileName: string; progress?: number }[];
+    paging?: IPaging;
+    currentCategoriId?: number;
+    viewType?: number;
+    loading?: boolean;
+    hydration?: boolean;
 }
 
 const blog = createSlice({
@@ -81,22 +81,24 @@ const blog = createSlice({
         hydration: false,
     } as IBlog,
     reducers: {
-        loading: (state, action) => {
-            const loginVisible = action as PayloadAction<IBlog>;
-            return { ...state, ...loginVisible.payload };
+        loading: (state, action: PayloadAction<IBlog>) => {
+            return { ...state, ...action.payload };
         },
-        addUploadFiles: (state, action) => {
-            const uploadFileInfo = action as PayloadAction<IBlog>;
-            return { ...state, uploadFileInfo: [...state.uploadFileInfo, ...uploadFileInfo.payload.uploadFileInfo] };
+        addUploadFiles: (state, action: PayloadAction<IBlog>) => {
+            const prevUploadFileInfo = state.uploadFileInfo ? state.uploadFileInfo : [];
+            const newUploadFileInfo = action.payload.uploadFileInfo ? action.payload.uploadFileInfo : [];
+            return { ...state, uploadFileInfo: [...prevUploadFileInfo, ...newUploadFileInfo] };
         },
-        deleteUploadFile: (state, action) => {
-            const files = state.uploadFileInfo.filter((file) => file.fileName !== action.payload);
+        deleteUploadFile: (state, action: PayloadAction<string>) => {
+            const prevUploadFileInfo = state.uploadFileInfo ? state.uploadFileInfo : [];
+            const files = prevUploadFileInfo.filter((file) => file.fileName !== action.payload);
             return { ...state, uploadFileInfo: files };
         },
         fileProgress: (state, action) => {
             const fileId = action.payload.fileId;
             const progress = action.payload.progress;
-            const uploadFileInfo = state.uploadFileInfo.map((file) => {
+            const prevUploadFileInfo = state.uploadFileInfo ? state.uploadFileInfo : [];
+            const uploadFileInfo = prevUploadFileInfo.map((file) => {
                 if (file.fileId !== fileId) {
                     return file;
                 } else {
@@ -110,38 +112,51 @@ const blog = createSlice({
         },
         initTotalCount: (state, action: PayloadAction<number>) => {
             const totalCount = action.payload;
-            return {
-                ...state,
-                uploadFileInfo: [],
-                paging: { ...state.paging, totalCount },
-            };
+            if (state.paging) {
+                return {
+                    ...state,
+                    uploadFileInfo: [],
+                    paging: { ...state.paging, totalCount },
+                };
+            } else {
+                return {
+                    ...state,
+                };
+            }
         },
         goPage: (state, action: PayloadAction<number>) => {
-            let totalPage = Math.floor(state.paging.totalCount / state.paging.countList);
-            let page = action.payload ? action.payload : state.paging.page;
+            const prevPaging = state.paging as IPaging;
+            let totalPage = Math.floor(prevPaging.totalCount / prevPaging.countList);
+            let page = action.payload ? action.payload : prevPaging.page;
             if (page < 1) {
                 page = 1;
             }
-            if (state.paging.totalCount % state.paging.countList > 0) {
+            if (prevPaging.totalCount % prevPaging.countList > 0) {
                 totalPage++;
             }
-            if (totalPage < state.paging.page) {
+            if (totalPage < prevPaging.page) {
                 page = totalPage;
             }
-            const startPage = parseInt(String((page - 1) / state.paging.countPage)) * state.paging.countPage + 1;
-            let endPage = startPage + state.paging.countPage - 1;
+            const startPage = parseInt(String((page - 1) / prevPaging.countPage)) * prevPaging.countPage + 1;
+            let endPage = startPage + prevPaging.countPage - 1;
             if (endPage > totalPage) {
                 endPage = totalPage;
             }
-            return { ...state, paging: { ...state.paging, page, totalPage, startPage, endPage } };
+            return { ...state, paging: { ...prevPaging, page, totalPage, startPage, endPage } };
         },
         changeCountList: (state, action: PayloadAction<number>) => {
             const countList = action.payload;
             const page = 1;
-            return {
-                ...state,
-                paging: { ...state.paging, page, countList },
-            };
+            if (state.paging) {
+                return {
+                    ...state,
+                    paging: { ...state.paging, page, countList },
+                };
+            } else {
+                return {
+                    ...state,
+                };
+            }
         },
         changeCurrentCategoriId: (state, action: PayloadAction<number>) => {
             const categoriId = action.payload;

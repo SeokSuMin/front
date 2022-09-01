@@ -1,11 +1,15 @@
 import { AnyAction, CombinedState, combineReducers } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
-import user, { IUser } from './user';
+import user, { IUser } from './user/user';
 import blog, { IBlog } from './blog';
+import login, { ILogin } from './user/login';
+import userToggle, { IUserToggle } from './user/userToggle';
 
 export interface IState {
     user: IUser;
     blog: IBlog;
+    login: ILogin;
+    userToggle: IUserToggle;
 }
 
 const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> => {
@@ -37,6 +41,8 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
             const reducer = combineReducers({
                 blog,
                 user,
+                login,
+                userToggle,
             });
             return reducer(state, action);
         }
