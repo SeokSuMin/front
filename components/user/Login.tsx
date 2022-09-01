@@ -14,7 +14,6 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginThunk } from '../../thunk/userThunk';
 import { message } from 'antd';
-import { IUser, loading } from '../../reducer/user';
 
 const Wrapper = styled.div`
     width: 80%;
@@ -170,7 +169,7 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
     const gitLoginRef = useRef<HTMLAnchorElement>(null);
     const googleLoginRef = useRef<HTMLAnchorElement>(null);
     const dispatch = useAppDispatch();
-    const state = useAppSelector((state) => state.user);
+    const state = useAppSelector((state) => state.login);
 
     const move = (type: string) => {
         setValue('userId', '');

@@ -16,10 +16,10 @@ import JoinMenu from './JoinMenu';
 import { ILoginInfo } from './UserModalView';
 import * as path from 'path';
 import { message } from 'antd';
-import { IUser, loading } from '../../reducer/user';
-import { checkExUser, joinMembers } from '../../thunk/userThunk';
+import { checkExUserThunk, joinMemberThunk } from '../../thunk/userThunk';
 import dayjs from 'dayjs';
 import { rlto } from '../../util';
+import { IJoinMember } from '../../reducer/user/joinMember';
 dayjs().format();
 
 const Wrapper = styled.div`
@@ -123,7 +123,7 @@ const BackLogin = styled.span`
     cursor: pointer;
 `;
 
-interface IMemberJoinProps {
+interface IJoinMemberProps {
     register: UseFormRegister<ILoginInfo>;
     handleSubmit: UseFormHandleSubmit<ILoginInfo>;
     errors: FieldErrorsImpl<DeepRequired<ILoginInfo>>;
@@ -132,9 +132,9 @@ interface IMemberJoinProps {
     moveTypeView: (type: string) => void;
 }
 
-const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTypeView }: IMemberJoinProps) => {
+const JoinMember = ({ register, handleSubmit, errors, setValue, setError, moveTypeView }: IJoinMemberProps) => {
     const joinButton = useRef<HTMLButtonElement>(null);
-    const state = useAppSelector((state) => state.user);
+    const { loading } = useAppSelector((state) => state.login);
     const dispatch = useAppDispatch();
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [joinUserId, setJoinUserId] = useState('');
@@ -182,8 +182,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
 
     const checkUserId = async (userId: string) => {
         try {
-            dispatch(loading({ loading: true }));
-            await dispatch(checkExUser(userId)).unwrap();
+            await dispatch(checkExUserThunk(userId)).unwrap();
             setError('userId', { message: '' });
             return true;
         } catch (err) {
@@ -197,8 +196,6 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                     message.error(err as string);
                 }
             }
-        } finally {
-            dispatch(loading({ loading: false }));
         }
     };
 
@@ -212,17 +209,21 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                         userId: value.userId,
                         email: value.email,
                         password: value.password,
-                    } as IUser;
+                    } as IJoinMember;
                     if (profileImgURL) {
                         const fileName =
-                            dayjs().valueOf() + (profileImgURL as string).slice(-8).replace(/\//g, '') + `${extName}`;
+                            dayjs().valueOf() +
+                            (profileImgURL as string)
+                                .slice(-8)
+                                .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, '') +
+                            `${extName}`;
                         const convertIamgeFile = await rlto(profileImgURL as string, fileName, {
                             type: 'image/png',
                         });
                         userInfoObj.profileImg = convertIamgeFile;
                     }
-                    const memberJoinResult = await dispatch(joinMembers(userInfoObj)).unwrap();
-                    if (memberJoinResult) {
+                    const JoinMemberResult = await dispatch(joinMemberThunk(userInfoObj)).unwrap();
+                    if (JoinMemberResult) {
                         moveLoginView();
                         message.success('가입이 완료되었습니다.');
                     }
@@ -238,8 +239,6 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
             } else {
                 message.error(err as string);
             }
-        } finally {
-            dispatch(loading({ loading: false }));
         }
     };
 
@@ -299,7 +298,7 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
                         deleteProfileImg,
                     }}
                 />
-                <button ref={joinButton} disabled={state.loading} className="join" type="submit">
+                <button ref={joinButton} disabled={loading} className="join" type="submit">
                     가입하기
                 </button>
             </LoginForm>
@@ -308,4 +307,4 @@ const MemberJoin = ({ register, handleSubmit, errors, setValue, setError, moveTy
     );
 };
 
-export default MemberJoin;
+export default JoinMember;

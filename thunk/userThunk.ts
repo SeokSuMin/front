@@ -2,13 +2,17 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { BackUrl } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
+import { IChangePassword } from '../reducer/user/changePassword';
+import { IJoinMember } from '../reducer/user/joinMember';
 import { ILogin } from '../reducer/user/login';
-import { IUser } from '../reducer/user/user';
+import { IUpdateUser } from '../reducer/user/updateUser';
+import { loginUserInfo, deleteUserInfo } from '../reducer/user/userInfo';
+import { togglLogin } from '../reducer/user/userToggle';
 
 axios.defaults.baseURL = BackUrl;
 axios.defaults.withCredentials = true;
 
-export const checkExUser = createAsyncThunk(
+export const checkExUserThunk = createAsyncThunk(
     'CEHCK_EX_USER',
     async (userId: string, { getState, requestId, rejectWithValue }) => {
         try {
@@ -24,9 +28,9 @@ export const checkExUser = createAsyncThunk(
     },
 );
 
-export const joinMembers = createAsyncThunk(
+export const joinMemberThunk = createAsyncThunk(
     'JOIN_MEMBER',
-    async (memberInfo: IUser, { getState, requestId, rejectWithValue }) => {
+    async (memberInfo: IJoinMember, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
             const formData = new FormData();
             formData.append('userId', memberInfo.userId as string);
@@ -40,6 +44,7 @@ export const joinMembers = createAsyncThunk(
                 url: '/user/profileUpload',
                 data: formData,
             });
+            dispatch(togglLogin({ loginVisible: true, dashBoardVisible: false }));
             return true;
         } catch (err) {
             if (err instanceof AxiosError) {
@@ -53,10 +58,10 @@ export const joinMembers = createAsyncThunk(
 
 export const loginThunk = createAsyncThunk(
     'LOGIN',
-    async (userInfo: ILogin, { getState, requestId, rejectWithValue }) => {
+    async (userInfo: ILogin, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
             const response = await axios.post('/user/login', userInfo);
-            return response.data;
+            dispatch(loginUserInfo(response.data));
         } catch (err) {
             if (err instanceof AxiosError) {
                 return rejectWithValue(err.response?.data);
@@ -75,7 +80,7 @@ export const checkUserlogin = createAsyncThunk(
     },
 );
 
-export const logout = createAsyncThunk('LOGOUT', async (_, { getState, requestId, rejectWithValue }) => {
+export const logoutThunk = createAsyncThunk('LOGOUT', async (_, { getState, requestId, rejectWithValue }) => {
     try {
         const response = await axios.post('/user/logout', {});
         return response.data;
@@ -88,7 +93,7 @@ export const logout = createAsyncThunk('LOGOUT', async (_, { getState, requestId
     }
 });
 
-export const searchUser = createAsyncThunk(
+export const searchUserThunk = createAsyncThunk(
     'SEARCH_USER',
     async (email: string, { getState, requestId, rejectWithValue }) => {
         try {
@@ -104,9 +109,9 @@ export const searchUser = createAsyncThunk(
     },
 );
 
-export const changePassowrd = createAsyncThunk(
+export const changePassowrdThunk = createAsyncThunk(
     'CHANGE_PASSWORD',
-    async (userInfo: IUser, { getState, requestId, rejectWithValue }) => {
+    async (userInfo: IChangePassword, { getState, requestId, rejectWithValue }) => {
         try {
             await axios.post('/user/change/password', userInfo);
             return true;
@@ -120,19 +125,20 @@ export const changePassowrd = createAsyncThunk(
     },
 );
 
-export const updateMember = createAsyncThunk(
+export const updateUserThunk = createAsyncThunk(
     'UPDATE_MEMBER',
-    async (memberInfo: IUser, { getState, requestId, rejectWithValue }) => {
+    async (memberInfo: IUpdateUser, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
             const formData = new FormData();
             formData.append('userId', memberInfo.userId as string);
             formData.append('email', memberInfo.email as string);
-            formData.append('imgPath', memberInfo.imgPath as string);
-            if (memberInfo.profileImg) {
+            if (memberInfo.profileImg instanceof File) {
                 formData.append('file', memberInfo.profileImg);
+            } else {
+                formData.append('profileImg', memberInfo.profileImg);
             }
             const response = await axios.patch('/user/update', formData);
-            return response.data;
+            dispatch(loginUserInfo(response.data));
         } catch (err) {
             if (err instanceof AxiosError) {
                 return rejectWithValue(err.response?.data);
@@ -143,11 +149,12 @@ export const updateMember = createAsyncThunk(
     },
 );
 
-export const deleteMember = createAsyncThunk(
+export const deleteMemberThunk = createAsyncThunk(
     'DELETE_MEMBER',
-    async (userId: string, { getState, requestId, rejectWithValue }) => {
+    async (userId: string, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
             await axios.delete(`/user/${userId}`);
+            dispatch(deleteUserInfo());
             return true;
         } catch (err) {
             if (err instanceof AxiosError) {

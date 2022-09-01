@@ -1,52 +1,50 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { checkExUserThunk, loginThunk } from '../../thunk/userThunk';
+import { deleteMemberThunk, updateUserThunk } from '../../thunk/userThunk';
 
-export interface ILogin {
+export interface IUpdateUser {
     userId: string;
-    password: string;
+    email: string;
+    profileImg: File | string;
     loading?: boolean;
     hydration?: boolean;
 }
 
-const login = createSlice({
-    name: 'login',
-    initialState: { hydration: false } as ILogin,
+const updateUser = createSlice({
+    name: 'updateUser',
+    initialState: { hydration: false } as IUpdateUser,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(loginThunk.pending, (state, action) => {
+            .addCase(updateUserThunk.pending, (state, action) => {
                 return {
                     ...state,
                     loading: true,
                 };
             })
-            .addCase(loginThunk.rejected, (state, action) => {
+            .addCase(updateUserThunk.fulfilled, (state, action) => {
                 return {
                     ...state,
                     loading: false,
                 };
             })
-            .addCase(loginThunk.fulfilled, (state, action) => {
+            .addCase(updateUserThunk.rejected, (state, action) => {
                 return {
                     ...state,
                     loading: false,
                 };
             })
-            .addCase(checkExUserThunk.pending, (state, action) => {
+            .addCase(deleteMemberThunk.pending, (state, action) => {
                 return {
                     ...state,
                     loading: true,
                 };
             })
-            .addCase(checkExUserThunk.fulfilled, (state, action) => {
+            .addCase(deleteMemberThunk.fulfilled, (state, action) => {
                 return {
                     ...state,
-                    loading: false,
-                };
-            })
-            .addCase(checkExUserThunk.rejected, (state, action) => {
-                return {
-                    ...state,
+                    userId: '',
+                    password: '',
+                    imgPath: '',
                     loading: false,
                 };
             });
@@ -54,4 +52,4 @@ const login = createSlice({
 });
 
 // export const { togglLogin, togglDashBoard, loading } = login.actions;
-export default login.reducer;
+export default updateUser.reducer;

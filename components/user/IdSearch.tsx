@@ -11,9 +11,8 @@ import {
     UseFormSetValue,
 } from 'react-hook-form';
 import styled from 'styled-components';
-import { IUser, loading } from '../../reducer/user';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { changePassowrd, searchUser } from '../../thunk/userThunk';
+import { changePassowrdThunk, searchUserThunk } from '../../thunk/userThunk';
 import { ILoginInfo } from './UserModalView';
 
 const Wrapper = styled.div`
@@ -119,7 +118,7 @@ interface IIdSearchProps {
 
 const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveTypeView }: IIdSearchProps) => {
     const dispatch = useAppDispatch();
-    const { loading: searchLoading } = useAppSelector((state) => state.user);
+    const { loading: searchLoading } = useAppSelector((state) => state.searchUser);
     const [user, setUser] = useState<{ userId: string; registerDate: string } | null>(null);
 
     const search = async (email: string) => {
@@ -128,7 +127,7 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
                 message.error('이메일 정보는 필수입니다.');
                 return;
             }
-            const fineUser = await dispatch(searchUser(email)).unwrap();
+            const fineUser = await dispatch(searchUserThunk(email)).unwrap();
             setUser((prev) => {
                 return {
                     userId: fineUser.userId,
@@ -136,7 +135,6 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
                 };
             });
         } catch (err) {
-            dispatch(loading({ loading: false }));
             setUser((prev) => null);
             if (err instanceof Error) {
                 console.log(err.message);
@@ -157,7 +155,7 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
             if (value.password !== value.password1) {
                 setError('password1', { message: '비밀번호가 일치 하지 않습니다.' }, { shouldFocus: true });
             } else {
-                dispatch(changePassowrd({ userId: user?.userId, password: value.password } as IUser));
+                await dispatch(changePassowrdThunk({ userId: user!.userId, password: value.password }));
                 message.success('비밀번호가 변경 되었습니다.');
                 setValue('password', '');
                 setValue('password1', '');
@@ -167,8 +165,6 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
             }
         } catch (err) {
             console.log(err);
-        } finally {
-            dispatch(loading({ loading: false }));
         }
     };
 

@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import XToggle from '../../public/x-Toggle.svg';
-import { togglLogin } from '../../reducer/userToggle';
+import { togglLogin } from '../../reducer/user/userToggle';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import IdSearch from './IdSearch';
 import Login from './Login';
-import MemberJoin from './MemberJoin';
+import MemberJoin from './JoinMember';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -90,6 +90,9 @@ export interface ILoginInfo {
 }
 const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
     const { loading: loginLoading } = useAppSelector((state) => state.login);
+    const { loading: searchLoading } = useAppSelector((state) => state.searchUser);
+    const { loading: changeLoading } = useAppSelector((state) => state.changePassword);
+
     const dispatch = useAppDispatch();
     const [viewType, setViewType] = useState('login');
     const {
@@ -110,7 +113,7 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
         shouldFocusError: true,
     });
     const loginView = () => {
-        if (!loginLoading) {
+        if (!loginLoading && !searchLoading && !changeLoading) {
             dispatch(togglLogin({ loginVisible: false, dashBoardVisible: false }));
         }
     };
@@ -137,7 +140,7 @@ const UserModalView = ({ isVisible, scrollY }: ILoginProps) => {
                             top: scrollY + 200,
                         }}
                     >
-                        {loginLoading ? (
+                        {loginLoading || searchLoading || changeLoading ? (
                             <SpinWrapper>
                                 <Spin tip="Loading..." />
                             </SpinWrapper>

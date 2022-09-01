@@ -6,9 +6,9 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { fileBackUrl } from '../config';
-import { togglDashBoard, togglLogin } from '../reducer/userToggle';
+import { togglDashBoard, togglLogin } from '../reducer/user/userToggle';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { deleteMember, logout } from '../thunk/userThunk';
+import { deleteMemberThunk, logoutThunk } from '../thunk/userThunk';
 
 const Wrapper = styled(motion.div)<{ path: string }>`
     width: 100%;
@@ -120,7 +120,7 @@ const NavBar = () => {
     const scrollArr = router.pathname === '/' ? [400, 600] : [0, 0];
     const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgba(255,255,255,1)']);
     const borderBottom = useTransform(scrollY, scrollArr, ['1px solid rgba(0,0,0,0)', '1px solid rgba(217,217,217,1)']);
-    const { userId, imgPath, strategyType } = useAppSelector((state) => state.user);
+    const { userId, imgPath, strategyType } = useAppSelector((state) => state.userInfo);
     const dispatch = useAppDispatch();
 
     const loginView = () => {
@@ -131,7 +131,7 @@ const NavBar = () => {
     };
     const userLogout = async () => {
         try {
-            await dispatch(logout()).unwrap();
+            await dispatch(logoutThunk()).unwrap();
             message.success('로그아웃 되었습니다.');
         } catch (err) {
             if (err instanceof Error) {
@@ -152,7 +152,7 @@ const NavBar = () => {
             cancelText: '취소',
             async onOk() {
                 try {
-                    await dispatch(deleteMember(userId as string));
+                    await dispatch(deleteMemberThunk(userId as string));
                     message.success('탈퇴되었습니다.');
                 } catch (err) {
                     if (err instanceof Error) {

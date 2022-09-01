@@ -1,18 +1,18 @@
-import { Alert, Avatar, Button, message } from 'antd';
+import { Alert, Avatar, Button, message, Spin } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import XToggle from '../../public/x-Toggle.svg';
-import { togglDashBoard } from '../../reducer/userToggle';
+import { togglDashBoard, togglLogin } from '../../reducer/user/userToggle';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import * as path from 'path';
 import dayjs from 'dayjs';
-import { IUser } from '../../reducer/user';
 import { rlto } from '../../util';
-import { changePassowrd, updateMember, logout } from '../../thunk/userThunk';
+import { changePassowrdThunk, updateUserThunk, logoutThunk } from '../../thunk/userThunk';
 import { UserOutlined } from '@ant-design/icons';
+import { IUpdateUser } from '../../reducer/user/updateUser';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -39,6 +39,29 @@ const DashBoardModalView = styled(motion.div)`
     margin: 0 auto;
     z-index: 100;
     padding: 0.938em;
+`;
+
+const SpinWrapper = styled.div`
+    width: 100%;
+    height: 90%;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.625em;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 1;
+    position: absolute;
+    .ant-spin-spinning {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .ant-spin-text {
+        margin-top: 0.313em;
+    }
 `;
 
 const Close = styled.div`
@@ -172,9 +195,11 @@ export interface IUserInfo {
 
 const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const user = useAppSelector((state) => state.user);
+    const user = useAppSelector((state) => state.userInfo);
+    const { loading: updateLoading } = useAppSelector((state) => state.updateUser);
+    const { loading: changeLoading } = useAppSelector((state) => state.changePassword);
     const dispatch = useAppDispatch();
-    const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer | undefined>(
+    const [profileImgURL, setProfileImgURL] = useState<string | ArrayBuffer>(
         user?.strategyType !== 'local' ? user?.imgPath : user?.imgPath ? fileBackUrl + user?.imgPath : '',
     );
     const [extName, setExtName] = useState<string>('');
@@ -193,7 +218,9 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
         },
     });
     const dashBoardView = () => {
-        dispatch(togglDashBoard({ dashBoardVisible: false, loginVisible: false }));
+        if (!updateLoading && !changeLoading) {
+            dispatch(togglDashBoard({ dashBoardVisible: false, loginVisible: false }));
+        }
     };
 
     const clickImgFileInput = () => {
@@ -243,21 +270,25 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                 const userInfoObj = {
                     userId: user.userId,
                     email: value.email,
-                } as IUser;
+                } as IUpdateUser;
 
-                const prevFileName = fileBackUrl + user.imgPath;
-                if (profileImgURL !== '' && profileImgURL !== prevFileName) {
+                const prevImgPath = fileBackUrl + user.imgPath;
+                if (profileImgURL !== '' && profileImgURL !== prevImgPath) {
                     const fileName =
-                        dayjs().valueOf() + (profileImgURL as string).slice(-8).replace(/\//g, '') + `${extName}`;
+                        dayjs().valueOf() +
+                        (profileImgURL as string)
+                            .slice(-8)
+                            .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, '') +
+                        `${extName}`;
                     const convertIamgeFile = await rlto(profileImgURL as string, fileName, {
                         type: 'image/png',
                     });
                     userInfoObj.profileImg = convertIamgeFile;
                 } else {
-                    userInfoObj.imgPath = profileImgURL !== '' ? user.imgPath : '';
+                    userInfoObj.profileImg = profileImgURL !== '' ? user.imgPath : '';
                 }
 
-                await dispatch(updateMember(userInfoObj)).unwrap();
+                await dispatch(updateUserThunk(userInfoObj)).unwrap();
                 message.success('저장되었습니다.');
             } else {
                 if (value.password !== value.password1) {
@@ -267,10 +298,11 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                     const userInfoObj = {
                         userId: user.userId,
                         password: value.password,
-                    } as IUser;
-                    await dispatch(changePassowrd(userInfoObj)).unwrap();
+                    };
+                    await dispatch(changePassowrdThunk(userInfoObj)).unwrap();
                     message.success('비밀번호가 변경되어 자동 로그아웃 합니다.');
-                    await dispatch(logout()).unwrap();
+                    await dispatch(logoutThunk()).unwrap();
+                    dispatch(togglLogin({ dashBoardVisible: false, loginVisible: true }));
                 }
             }
         } catch (err) {
@@ -282,15 +314,6 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
             }
         }
     };
-
-    useEffect(() => {
-        if (user?.strategyType) {
-            setProfileImgURL(
-                user?.strategyType !== 'local' ? user?.imgPath : user?.imgPath ? fileBackUrl + user?.imgPath : '',
-            );
-        }
-    }, []);
-
     return (
         <AnimatePresence initial={false}>
             {isVisible ? (
@@ -306,6 +329,11 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                             top: scrollY + 200,
                         }}
                     >
+                        {updateLoading || changeLoading ? (
+                            <SpinWrapper>
+                                <Spin tip="Loading..." />
+                            </SpinWrapper>
+                        ) : null}
                         <Close>
                             <XToggle onClick={dashBoardView}></XToggle>
                         </Close>
