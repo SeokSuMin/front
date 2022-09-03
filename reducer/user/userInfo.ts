@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { checkUserlogin, logoutThunk } from '../../thunk/userThunk';
+import { checkUserloginThunk, logoutThunk } from '../../thunk/userThunk';
 
 export interface IUserInfo {
     userId: string;
@@ -33,18 +33,18 @@ const userInfo = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(checkUserlogin.pending, (state, action) => {
+            .addCase(checkUserloginThunk.pending, (state, action) => {
                 return {
                     ...state,
                 };
             })
-            .addCase(checkUserlogin.fulfilled, (state, action: PayloadAction<IUserInfo>) => {
+            .addCase(checkUserloginThunk.fulfilled, (state, action: PayloadAction<IUserInfo>) => {
                 return {
                     ...state,
                     ...action.payload,
                 };
             })
-            .addCase(checkUserlogin.rejected, (state, action) => {
+            .addCase(checkUserloginThunk.rejected, (state, action) => {
                 const error = action.error.code === 'ERR_BAD_REQUEST' ? false : true;
                 return {
                     ...state,

@@ -1,4 +1,4 @@
-import { MessageOutlined } from '@ant-design/icons';
+import { CommentOutlined, MessageOutlined } from '@ant-design/icons';
 import { Avatar, List } from 'antd';
 import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import path from 'path';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
-import { IBoardData } from '../../reducer/blog';
+import { IBoardData } from '../../reducer/blog/boardData';
 import { useAppSelector } from '../../store/hooks';
 
 const Content = styled.div`
@@ -45,14 +45,14 @@ interface IOneBoxListProps {
 
 const OneBoxList = ({ leaving, toggleLeaving, boardList }: IOneBoxListProps) => {
     const router = useRouter();
-    const { viewType } = useAppSelector((state) => state.blog);
+    const { viewType } = useAppSelector((state) => state.blogToggle);
     const moveDetailPage = (boardId: string) => {
         router.push(`/blog/${boardId}`);
     };
 
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            {viewType === 2 && !leaving ? (
+            {viewType === 'LIST' && !leaving ? (
                 <motion.div variants={oneBox} initial="hidden" animate="visible" exit="exit">
                     <List
                         size="small"
@@ -75,9 +75,9 @@ const OneBoxList = ({ leaving, toggleLeaving, boardList }: IOneBoxListProps) => 
                                                     style={{ width: '8.5rem', height: '8.5rem' }}
                                                     alt="example"
                                                     src={`${fileBackUrl}${item.board_id}/${
-                                                        item.board_files.find(
+                                                        item.board_files?.find(
                                                             (file) => path.extname(file.name) === '.png',
-                                                        ).name
+                                                        )?.name
                                                     }`}
                                                 />
                                             ) : (
@@ -97,9 +97,11 @@ const OneBoxList = ({ leaving, toggleLeaving, boardList }: IOneBoxListProps) => 
                                         description={
                                             <>
                                                 <span>{dayjs(item.createdAt).format('YYYY MM DD HH:mm')}</span>
-                                                <span style={{ marginLeft: '1em' }}>
-                                                    <MessageOutlined /> (6)
-                                                </span>
+                                                {item.comments.length ? (
+                                                    <span style={{ marginLeft: '1em' }}>
+                                                        <CommentOutlined /> ({item.comments.length})
+                                                    </span>
+                                                ) : null}
                                             </>
                                         }
                                     />

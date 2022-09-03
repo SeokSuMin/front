@@ -45,7 +45,7 @@ const WriteInput = styled(Input)`
 interface IWriteInputProps {
     // title: string;
     // changeTitle: (e: React.FormEvent<HTMLInputElement>) => void;
-    titleInputRef: React.MutableRefObject<InputRef>;
+    titleInputRef: React.MutableRefObject<InputRef | null>;
     // categoriInputRef: React.MutableRefObject<InputRef>;
     // menuInputRef: React.MutableRefObject<InputRef>;
     menu: string;
@@ -79,7 +79,7 @@ const WriteTtile = ({
     changeCategori,
 }: IWriteInputProps) => {
     const router = useRouter();
-    const { detailBoard } = useAppSelector((state) => state.blog);
+    const detailBoard = useAppSelector((state) => state.boardData);
     const [title, setTitile] = useState<string>('');
 
     const changeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +87,11 @@ const WriteTtile = ({
     };
 
     useEffect(() => {
-        setTitile(router?.query?.mode === 'modify' ? detailBoard?.title : '');
+        if (router?.query?.mode === 'modify') {
+            setTitile(detailBoard?.title ? detailBoard?.title : '');
+        } else {
+            setTitile('');
+        }
     }, [router.query.mode]);
 
     return (

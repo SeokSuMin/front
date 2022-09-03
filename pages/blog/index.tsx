@@ -5,15 +5,16 @@ import OneBoxList from '../../components/freeboard/OneBoxList';
 import TopMenu from '../../components/freeboard/TopMenu';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
-import { checkUserlogin } from '../../thunk/userThunk';
-import { getCategoriMenu } from '../../thunk/blogThunk';
+import { checkUserloginThunk } from '../../thunk/userThunk';
+import { getCategoriMenuThunk } from '../../thunk/blogThunk';
 import Paging from '../../components/blog/Paging';
 import { useQuery } from 'react-query';
 import { BackTop, Empty, message, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getBoardList } from '../../util';
-import { changeBoardViewType, changeCurrentCategoriId, goPage, initTotalCount } from '../../reducer/blog';
+import { goPage, initTotalCount } from '../../reducer/blog/paging';
 import { useRouter } from 'next/router';
+import { changeCurrentCategoriId, changeBoardViewType } from '../../reducer/blog/blogToggle';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -39,12 +40,9 @@ const ContentBox = styled.div`
 const Home = () => {
     const router = useRouter();
     // const page = router?.query?.page ? +router.query.page : 1;
-    const scrollRef = useRef<HTMLDivElement>(null);
-    const {
-        currentCategoriId,
-        paging: { countList, page },
-        viewType,
-    } = useAppSelector((state) => state.blog);
+    const scrollRef = useRef<HTMLDivElement | null>(null);
+    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
+    const { countList, page } = useAppSelector((state) => state.paging);
     const dispatch = useAppDispatch();
     const [leaving, setLeaving] = useState(false);
 
@@ -54,10 +52,10 @@ const Home = () => {
         {
             refetchOnWindowFocus: false,
             onSuccess: (data) => {
-                // console.log('data', data);
+                console.log('data 실행됨');
                 if (data.boardList.length) {
                     dispatch(initTotalCount(data.totalCount));
-                    dispatch(goPage());
+                    dispatch(goPage(0));
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth',
@@ -70,14 +68,18 @@ const Home = () => {
         },
     );
 
-    const changeListView = (type: number) => {
+    const changeListView = (type: string) => {
         if (type === viewType) {
             return;
         }
         if (leaving) {
             return;
         }
-        dispatch(changeBoardViewType(type));
+        // dispatch(changeBoardViewType(type));
+        router.push({
+            pathname: '/blog',
+            query: { page, categori: currentCategoriId, type },
+        });
         setLeaving(true);
     };
 
@@ -90,6 +92,7 @@ const Home = () => {
             // const numberRegExp = /[0-9]/;
             let pageNumber = router?.query?.page ? router?.query?.page : 1;
             let categoriNumber = router?.query?.categori ? router?.query?.categori : 0;
+            const type = router?.query?.type ? router?.query?.type : 'CARD';
             if (isNaN(pageNumber as number)) {
                 pageNumber = 1;
             }
@@ -98,15 +101,21 @@ const Home = () => {
             }
             dispatch(goPage(+pageNumber));
             dispatch(changeCurrentCategoriId(+categoriNumber));
-            await dispatch(getCategoriMenu());
+            dispatch(changeBoardViewType(type as string));
+            await dispatch(getCategoriMenuThunk());
         } catch (err) {
-            message.error(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
         }
     };
 
     useEffect(() => {
         initPage();
-    }, [router?.query?.categori, router?.query?.page]);
+    }, [router?.query?.categori, router?.query?.page, router?.query?.type]);
 
     return (
         <Wrapper>
@@ -136,7 +145,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
             axios.defaults.headers.common['Cookie'] = cookie;
         }
         // 로그인 사용자 체크
-        await dispatch(checkUserlogin());
+        await dispatch(checkUserloginThunk());
         // await dispatch(getCategoriMenu());
         // await dispatch(getBoardList());
         return {

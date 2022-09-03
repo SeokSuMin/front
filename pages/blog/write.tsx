@@ -11,23 +11,18 @@ import { rlto } from '../../util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
-import { checkUserlogin } from '../../thunk/userThunk';
-import { getCategoriMenu, isnertBoard } from '../../thunk/blogThunk';
+import { checkUserloginThunk } from '../../thunk/userThunk';
+import { getCategoriMenuThunk, getDetailBoardThunk, isnertBoard } from '../../thunk/blogThunk';
 import path from 'path';
-import {
-    addUploadFiles,
-    deleteBoardFiles,
-    deleteUploadFile,
-    fileProgress,
-    IBlog,
-    IBoardData,
-    loading,
-} from '../../reducer/blog';
+
 import { v4 as uuidv4 } from 'uuid';
 import { fileBackUrl } from '../../config';
 import { constants } from 'fs';
 import Router, { useRouter } from 'next/router';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { addUploadFiles, deleteUploadFile } from '../../reducer/blog/fileProgress';
+import { deleteBoardFiles, IBoardData } from '../../reducer/blog/boardData';
+import { ICategoriMenus } from '../../reducer/blog/categoriMenus';
 
 dayjs().format();
 
@@ -45,7 +40,7 @@ const SpinWrapper = styled.div`
     width: 100%;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.7);
-    z-index: 1;
+    z-index: 99;
     position: absolute;
     .ant-spin-spinning {
         width: 100%;
@@ -93,15 +88,16 @@ const SendBox = styled.div`
 
 const Write = () => {
     const router = useRouter();
-    const { categoriMenus, detailBoard, loading: writeLoading } = useAppSelector((state) => state.blog);
+    const { categoriMenus } = useAppSelector((state) => state.categoriMenus);
+    const detailBoard = useAppSelector((state) => state.boardData);
     const dispatch = useAppDispatch();
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const titleInputRef = useRef<InputRef | null>(null);
     const quillRef = useRef<any>(null);
 
-    const [menu, setMenu] = useState<string>();
-    const [categoriId, setCategoriId] = useState<number>();
+    const [menu, setMenu] = useState<string>('');
+    const [categoriId, setCategoriId] = useState<number>(0);
     const [files, setFiles] = useState<File[]>([]);
     const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
 
@@ -168,7 +164,7 @@ const Write = () => {
             setFiles((prevFiles) => {
                 return prevFiles.filter((file) => file.name !== (fileName as string));
             });
-            dispatch(deleteUploadFile(fileName));
+            dispatch(deleteUploadFile(fileName as string));
         } else {
             const fileId = fileName as number;
             dispatch(deleteBoardFiles(fileId));
@@ -243,7 +239,7 @@ const Write = () => {
             }
 
             boardData.title = title;
-            boardData.categori_id = categoriId;
+            boardData.categori_id = categoriId as number;
             boardData.uploadFiles = fileArr;
             allFileDeleteIds.push(...deleteFileIds);
 
@@ -257,22 +253,24 @@ const Write = () => {
             } else {
                 message.error(err as string);
             }
-            dispatch(loading({ loading: false }));
         }
     };
 
     const initPage = async () => {
-        const result = await dispatch(getCategoriMenu());
-        const resultCategoris = result.payload as IBlog;
+        const result = await dispatch(getCategoriMenuThunk());
+        const resultCategoris = result.payload as ICategoriMenus;
         if (router?.query?.mode === 'modify') {
-            for (const c of resultCategoris.categoriMenus) {
-                const findC = c.categoris.find((childC) => childC.categori_id === detailBoard?.categori_id);
-                if (findC) {
-                    setMenu(Object.values(c)[0] as string);
-                    setCategoriId(findC.categori_id);
-                    break;
+            dispatch(getDetailBoardThunk(router.query.detail as string)).then((r) => {
+                for (const c of resultCategoris.categoriMenus) {
+                    const findC = c.categoris.find((childC) => childC.categori_id === detailBoard?.categori_id);
+                    if (findC) {
+                        console.log('findC', findC);
+                        setMenu(Object.values(c)[0] as string);
+                        setCategoriId(findC.categori_id);
+                        break;
+                    }
                 }
-            }
+            });
         } else {
             setMenu(resultCategoris?.categoriMenus[0]?.menu_name);
             setCategoriId(resultCategoris?.categoriMenus[0]?.categoris[0].categori_id);
@@ -283,41 +281,42 @@ const Write = () => {
         initPage();
     }, [router.query.mode]);
 
+    console.log(menu, categoriId);
+
     return (
         <Wrapper>
-            {writeLoading ? (
-                <SpinWrapper>
-                    <Spin tip="완료하는중..." />
-                </SpinWrapper>
-            ) : (
-                <>
-                    <WriteBox>
-                        <WriteInput
-                            {...{
-                                titleInputRef,
-                                // menuInputRef,
-                                // categoriInputRef,
-                                menu,
-                                categoriMenus,
-                                // categoris,
-                                categoriId,
-                                changeMenu,
-                                changeCategori,
-                            }}
-                        />
-                        <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
-                        <FileLists {...{ deleteFile }} />
-                        <ContentBox>
-                            <QuillEditor {...{ quillRef }} />
-                        </ContentBox>
-                    </WriteBox>
-                    <SendBox>
-                        <Button disabled={writeLoading} onClick={submit} type="primary">
-                            작성완료
-                        </Button>
-                    </SendBox>
-                </>
-            )}
+            <>
+                <WriteBox>
+                    {detailBoard.loading ? (
+                        <SpinWrapper>
+                            <Spin tip="게시글 작성하는 중..." />
+                        </SpinWrapper>
+                    ) : null}
+                    <WriteInput
+                        {...{
+                            titleInputRef,
+                            // menuInputRef,
+                            // categoriInputRef,
+                            menu,
+                            categoriMenus,
+                            // categoris,
+                            categoriId,
+                            changeMenu,
+                            changeCategori,
+                        }}
+                    />
+                    <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
+                    <FileLists {...{ deleteFile }} />
+                    <ContentBox>
+                        <QuillEditor {...{ quillRef }} />
+                    </ContentBox>
+                </WriteBox>
+                <SendBox>
+                    <Button disabled={detailBoard.loading} onClick={submit} type="primary">
+                        작성완료
+                    </Button>
+                </SendBox>
+            </>
         </Wrapper>
     );
 };
@@ -332,7 +331,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
             axios.defaults.headers.common['Cookie'] = cookie;
         }
         // 로그인 사용자 체크
-        await dispatch(checkUserlogin());
+        await dispatch(checkUserloginThunk());
         // await dispatch(getCategoriMenu());
 
         return {

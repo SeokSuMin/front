@@ -10,7 +10,7 @@ import Intro from '../components/introduction/Intro';
 import Career from '../components/introduction/Career';
 import Progress from '../components/animation/Progress';
 import Plan from '../components/introduction/Plan';
-import { checkUserlogin } from '../thunk/userThunk';
+import { checkUserloginThunk } from '../thunk/userThunk';
 import axios from 'axios';
 
 const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
@@ -109,7 +109,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
             axios.defaults.headers.common['Cookie'] = cookie;
         }
         // 로그인 사용자 체크
-        await dispatch(checkUserlogin());
+        await dispatch(checkUserloginThunk());
         return {
             props: {},
         };

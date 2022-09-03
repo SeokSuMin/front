@@ -82,9 +82,9 @@ const CategorisDrawer = ({ visible, closeDrawer }: ICategorisDrawerProps) => {
                 >
                     전체보기 ({categoriTotal})
                 </span>
-                {categoriMenus?.map((categoriMenu) => {
+                {categoriMenus?.map((categoriMenu, i) => {
                     return (
-                        <Categoris key={categoriMenu.menu_name}>
+                        <Categoris key={i}>
                             <ul>
                                 <li>
                                     <span>• {categoriMenu.menu_name}</span>

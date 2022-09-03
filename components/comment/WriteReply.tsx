@@ -1,6 +1,7 @@
 import TextArea from 'antd/lib/input/TextArea';
 import styled from 'styled-components';
 import { IBoardComment } from '../../reducer/blog';
+import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
@@ -46,7 +47,7 @@ const ReplyButtonBox = styled.div`
 
 interface IWriteReplyProps {
     parentId?: number;
-    comment: IBoardComment;
+    comment: IComment;
     allComments: { [key: string]: { replyToggles: boolean; childToggles?: boolean; content: string } };
     changeComment: (e: React.ChangeEvent<HTMLTextAreaElement>, commentId: number) => void;
     submitComment: (
@@ -54,6 +55,7 @@ interface IWriteReplyProps {
         modify_flag: boolean,
         parent_id: number | null,
         parent_user_id: string | null,
+        content: string,
     ) => void;
     replyToggle: (commentId: number) => void;
 }
@@ -66,7 +68,7 @@ const WriteReply = ({
     submitComment,
     replyToggle,
 }: IWriteReplyProps) => {
-    const { loading } = useAppSelector((state) => state.blog);
+    const { loading } = useAppSelector((state) => state.comment);
     return (
         <Wrapper>
             <Reply>
@@ -76,7 +78,7 @@ const WriteReply = ({
                         placeholder="답글을 작성하세요"
                         autoSize={{ minRows: 2, maxRows: 3 }}
                         value={allComments[`${comment.comment_id}`]?.content}
-                        onChange={(e) => changeComment(e, comment.comment_id)}
+                        onChange={(e) => changeComment(e, comment.comment_id as number)}
                     />
                 </ReplyContent>
                 <ReplyButtonBox>
@@ -88,12 +90,13 @@ const WriteReply = ({
                                 false,
                                 parentId ? parentId : comment.comment_id,
                                 comment.user_id,
+                                '',
                             )
                         }
                     >
                         답글 작성
                     </button>
-                    <button onClick={() => replyToggle(comment.comment_id)}>취소</button>
+                    <button onClick={() => replyToggle(comment.comment_id as number)}>취소</button>
                 </ReplyButtonBox>
             </Reply>
         </Wrapper>

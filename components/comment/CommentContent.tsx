@@ -2,6 +2,7 @@ import { Tag } from 'antd';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import { IBoardComment } from '../../reducer/blog';
+import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
 import { getDifferenceTime } from '../../util';
 
@@ -61,17 +62,17 @@ const ReplyOption = styled.div`
 `;
 
 interface ICommentContentProps {
-    comment: IBoardComment;
+    comment: IComment;
     replyToggle: (commentId: number) => void;
     modifyToggle: (commentId: number, content: string) => void;
     allComments: {
         [key: string]: { replyToggles: boolean; childToggles: boolean; content: string; modify_flag: boolean };
     };
-    deletefirm: (commentId: number, parentId: number) => void;
+    deletefirm: (commentId: number, parentId: number | null) => void;
 }
 
 const CommentContent = ({ comment, replyToggle, modifyToggle, allComments, deletefirm }: ICommentContentProps) => {
-    const { userId } = useAppSelector((state) => state.user);
+    const { userId } = useAppSelector((state) => state.userInfo);
     return (
         <Wrapper>
             <Comment>
@@ -81,7 +82,7 @@ const CommentContent = ({ comment, replyToggle, modifyToggle, allComments, delet
                 <ContentBox>
                     <WriterInfo>
                         <span>{comment.user_id}</span>
-                        <span>{getDifferenceTime(comment.createdAt)}</span>
+                        <span>{getDifferenceTime(comment.createdAt as string)}</span>
                         <span>{comment.modify_flag ? ' (수정 됨)' : ''}</span>
                     </WriterInfo>
                     <Content>
@@ -103,18 +104,24 @@ const CommentContent = ({ comment, replyToggle, modifyToggle, allComments, delet
                     </Content>
                     <ReplyOption>
                         {userId !== comment.user_id ? (
-                            <span onClick={() => replyToggle(comment.comment_id)}>
-                                {allComments[`${comment.comment_id}`]?.replyToggles ? '숨기기' : '답글'}
+                            <span onClick={() => replyToggle(comment.comment_id as number)}>
+                                {allComments[`${comment.comment_id as number}`]?.replyToggles ? '숨기기' : '답글'}
                             </span>
                         ) : null}
 
                         {userId === comment.user_id ? (
-                            <span className="modify" onClick={() => modifyToggle(comment.comment_id, comment.content)}>
+                            <span
+                                className="modify"
+                                onClick={() => modifyToggle(comment.comment_id as number, comment.content)}
+                            >
                                 수정
                             </span>
                         ) : null}
                         {userId === comment.user_id ? (
-                            <span className="delete" onClick={() => deletefirm(comment.comment_id, comment.parent_id)}>
+                            <span
+                                className="delete"
+                                onClick={() => deletefirm(comment.comment_id as number, comment.parent_id)}
+                            >
                                 삭제
                             </span>
                         ) : null}

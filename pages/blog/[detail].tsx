@@ -1,8 +1,8 @@
 import { CommentOutlined, ExclamationCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { message, Modal, Spin, Tag } from 'antd';
 import styled from 'styled-components';
-import { deleteBoard, getCategoriMenu, getDetailBoard, insertComment } from '../../thunk/blogThunk';
-import { checkUserlogin } from '../../thunk/userThunk';
+import { deleteBoard, getCategoriMenuThunk, getDetailBoardThunk } from '../../thunk/blogThunk';
+import { checkUserloginThunk } from '../../thunk/userThunk';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -13,7 +13,6 @@ import path from 'path';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Comments from '../../components/comment/Comments';
-import { IBoardComment, initDetailBoard } from '../../reducer/blog';
 
 const { confirm } = Modal;
 
@@ -186,10 +185,11 @@ const DetailBoard = () => {
             }
         </style>
     `;
-    const commentDivRef = useRef<HTMLDivElement>(null);
+    const commentDivRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
-    const { detailBoard, loading } = useAppSelector((state) => state.blog);
-    const { userId } = useAppSelector((state) => state.user);
+    const detailBoard = useAppSelector((state) => state.boardData);
+    const { comments } = useAppSelector((state) => state.comment);
+    const { userId } = useAppSelector((state) => state.userInfo);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
@@ -209,7 +209,12 @@ const DetailBoard = () => {
                     message.success('삭제되었습니다.');
                     router.push('/blog');
                 } catch (err) {
-                    message.error(err);
+                    if (err instanceof Error) {
+                        console.log(err.message);
+                        message.error(err.message);
+                    } else {
+                        message.error(err as string);
+                    }
                 }
             },
             onCancel() {
@@ -219,8 +224,8 @@ const DetailBoard = () => {
     };
 
     const initPage = async () => {
-        await dispatch(getCategoriMenu());
-        await dispatch(getDetailBoard(router.query.detail as string));
+        await dispatch(getCategoriMenuThunk());
+        await dispatch(getDetailBoardThunk(router.query.detail as string));
     };
 
     useEffect(() => {
@@ -229,7 +234,7 @@ const DetailBoard = () => {
 
     return (
         <Wrapper>
-            {loading ? (
+            {detailBoard.loading ? (
                 <SpinWrapper>
                     <Spin tip="Loading..." />
                 </SpinWrapper>
@@ -244,7 +249,7 @@ const DetailBoard = () => {
                                             router.push(
                                                 {
                                                     pathname: '/blog/write',
-                                                    query: { mode: 'modify' },
+                                                    query: { mode: 'modify', detail: router.query.detail as string },
                                                 },
                                                 '/blog/write',
                                             )
@@ -258,10 +263,14 @@ const DetailBoard = () => {
                         </ModifyBoardButtonBox>
                         <MoveBoardButtonBox>
                             {detailBoard?.prevBoardId ? (
-                                <button onClick={() => moveDetailBoard(detailBoard.prevBoardId)}>이전글</button>
+                                <button onClick={() => moveDetailBoard(detailBoard.prevBoardId as string)}>
+                                    이전글
+                                </button>
                             ) : null}
                             {detailBoard?.nextBoardId ? (
-                                <button onClick={() => moveDetailBoard(detailBoard.nextBoardId)}>다음글</button>
+                                <button onClick={() => moveDetailBoard(detailBoard.nextBoardId as string)}>
+                                    다음글
+                                </button>
                             ) : null}
                             <button onClick={() => router.push('/blog')}>목록</button>
                         </MoveBoardButtonBox>
@@ -273,17 +282,17 @@ const DetailBoard = () => {
                                 <span>{detailBoard?.writer} [블로그 관리자]</span>
                                 <span>·</span>
                                 <span>{dayjs(detailBoard?.createdAt).format('YYYY-MM-DD HH:mm')}</span>
-                                {detailBoard?.comments?.length ? (
+                                {comments?.length ? (
                                     <span
-                                        onClick={() => commentDivRef.current.scrollIntoView({ behavior: 'smooth' })}
+                                        onClick={() => commentDivRef?.current?.scrollIntoView({ behavior: 'smooth' })}
                                         className="comment"
                                     >
-                                        <CommentOutlined /> 댓글 ({detailBoard.comments.length})
+                                        <CommentOutlined /> 댓글 ({comments.length})
                                     </span>
                                 ) : null}
                             </WriterInfoBox>
                             <TagBox>
-                                <Tag>{detailBoard?.categoris.categori_name}</Tag>
+                                <Tag>{detailBoard?.categoris?.categori_name}</Tag>
                             </TagBox>
                             <FileList>
                                 {detailBoard?.board_files?.map((file) => {
@@ -332,7 +341,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         console.log('stateInfo!', getState().blog);
 
         // 로그인 사용자 체크
-        await dispatch(checkUserlogin());
+        await dispatch(checkUserloginThunk());
         // await dispatch(getCategoriMenu());
         // await dispatch(getDetailBoard(boardId));
 

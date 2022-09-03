@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import path from 'path';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
-import { IBoardData } from '../../reducer/blog';
+import { IBoardData } from '../../reducer/blog/boardData';
 import { useAppSelector } from '../../store/hooks';
 
 const CardBox = styled(motion.div)`
@@ -165,13 +165,13 @@ interface IFourBoxListProps {
 
 const FourBoxList = ({ leaving, toggleLeaving, boardList }: IFourBoxListProps) => {
     const router = useRouter();
-    const { viewType } = useAppSelector((state) => state.blog);
+    const { viewType } = useAppSelector((state) => state.blogToggle);
     const moveDetailPage = (boardId: string) => {
         router.push(`/blog/${boardId}`);
     };
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            {viewType === 1 && !leaving ? (
+            {viewType === 'CARD' && !leaving ? (
                 <CardBox variants={fourBox} initial="hidden" animate="visible" exit="exit">
                     {boardList?.map((board) => {
                         return (
@@ -189,8 +189,9 @@ const FourBoxList = ({ leaving, toggleLeaving, boardList }: IFourBoxListProps) =
                                             <img
                                                 alt="example"
                                                 src={`${fileBackUrl}${board.board_id}/${
-                                                    board.board_files.find((file) => path.extname(file.name) === '.png')
-                                                        .name
+                                                    board.board_files?.find(
+                                                        (file) => path.extname(file.name) === '.png',
+                                                    )?.name
                                                 }`}
                                             />
                                         ) : (

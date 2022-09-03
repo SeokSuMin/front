@@ -36,7 +36,7 @@ const Freeboard = () => {
     const [boardId, setBoardId] = useState<number | null>(Number(router?.query?.boardId) || null);
     const { scrollY, scrollYProgress } = useScroll();
 
-    const changeListView = (type: number) => {
+    const changeListView = (type: string) => {
         if (type === viewType) {
             return;
         }

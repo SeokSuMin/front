@@ -9,10 +9,11 @@ import { Avatar, message, Modal, Spin } from 'antd';
 import CommentContent from './CommentContent';
 import WriteReply from './WriteReply';
 import Modify from './Modify';
-import { deleteComment, insertComment } from '../../thunk/blogThunk';
+import { deleteCommentThunk, insertCommentThunk } from '../../thunk/blogThunk';
 import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { IBoardComment } from '../../reducer/blog';
 import TopWriteComment from './TopWriteComment';
+import { IComment } from '../../reducer/blog/comment';
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
@@ -120,12 +121,13 @@ const ProfileImg = styled.div<{ path: string }>`
 `;
 
 interface ICommentsProps {
-    divRef: MutableRefObject<HTMLDivElement>;
+    divRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 const Comments = ({ divRef }: ICommentsProps) => {
-    const { userId } = useAppSelector((state) => state.user);
-    const { detailBoard } = useAppSelector((state) => state.blog);
+    const { userId } = useAppSelector((state) => state.userInfo);
+    const detailBoard = useAppSelector((state) => state.boardData);
+    const { comments } = useAppSelector((state) => state.comment);
     const [commentLoading, setCommentLoading] = useState(false);
     const dispatch = useAppDispatch();
     const [allComments, setAllComments] = useState<{
@@ -180,7 +182,7 @@ const Comments = ({ divRef }: ICommentsProps) => {
         });
     };
 
-    const deletefirm = (commentId: number, parentId: number) => {
+    const deletefirm = (commentId: number, parentId: number | null) => {
         confirm({
             icon: <ExclamationCircleOutlined />,
             title: '댓글 삭제',
@@ -190,10 +192,15 @@ const Comments = ({ divRef }: ICommentsProps) => {
             async onOk() {
                 try {
                     setCommentLoading(true);
-                    await dispatch(deleteComment({ commentId, parentId })).unwrap();
+                    await dispatch(deleteCommentThunk({ commentId, parentId })).unwrap();
                     message.success('삭제되었습니다.');
                 } catch (err) {
-                    message.success(err);
+                    if (err instanceof Error) {
+                        console.log(err.message);
+                        message.error(err.message);
+                    } else {
+                        message.error(err as string);
+                    }
                 } finally {
                     setCommentLoading(false);
                 }
@@ -209,7 +216,7 @@ const Comments = ({ divRef }: ICommentsProps) => {
         modify_flag: boolean,
         parent_id: number | null,
         parent_user_id: string | null,
-        content?: string,
+        content: string,
     ) => {
         const insertData = {
             comment_id: null,
@@ -219,7 +226,7 @@ const Comments = ({ divRef }: ICommentsProps) => {
             parent_id,
             parent_user_id,
             user_id: userId,
-        } as IBoardComment;
+        } as IComment;
 
         if (!comment_id) {
             if (!content.trim()) {
@@ -238,7 +245,7 @@ const Comments = ({ divRef }: ICommentsProps) => {
             insertData.comment_id = checkModifyId;
         }
         setCommentLoading(true);
-        await dispatch(insertComment(insertData)).unwrap();
+        await dispatch(insertCommentThunk(insertData)).unwrap();
         if (modify_flag) {
             allComments[`${comment_id}`].modify_flag = false;
         } else if (parent_id) {
@@ -250,8 +257,8 @@ const Comments = ({ divRef }: ICommentsProps) => {
 
     // 댓글 수 만큼 각 댓글에 고유 state 처리 작업 진행
     useEffect(() => {
-        if (detailBoard?.comments) {
-            for (const comment of detailBoard.comments) {
+        if (comments) {
+            for (const comment of comments) {
                 setAllComments((prev) => {
                     const mainComment = { replyToggles: false, content: '', childToggles: false, modify_flag: false };
                     // 사용자가 로그아웃하면 state를 다시 리셋한다.
@@ -290,7 +297,7 @@ const Comments = ({ divRef }: ICommentsProps) => {
                 }
             }
         }
-    }, [detailBoard?.comments, userId]);
+    }, [comments, userId]);
 
     return (
         <Wrapper ref={divRef}>
@@ -302,7 +309,7 @@ const Comments = ({ divRef }: ICommentsProps) => {
             <TopWriteComment {...{ submitComment }} />
             <CommentListBox>
                 <CommentList>
-                    {detailBoard?.comments?.map((comment) => {
+                    {comments?.map((comment) => {
                         return (
                             <React.Fragment key={comment.comment_id}>
                                 <div style={{ display: 'flex', marginTop: '4.375em' }}>
@@ -355,7 +362,7 @@ const Comments = ({ divRef }: ICommentsProps) => {
                                 {comment?.child_comment?.length ? (
                                     <ReplyCountBox>
                                         <LeftAreaBox />
-                                        <span onClick={() => toggleReplyList(comment.comment_id)}>
+                                        <span onClick={() => toggleReplyList(comment.comment_id as number)}>
                                             <div
                                                 className={
                                                     allComments[`${comment.comment_id}`]?.childToggles
@@ -378,13 +385,17 @@ const Comments = ({ divRef }: ICommentsProps) => {
                                                 return (
                                                     <React.Fragment key={childComment.comment_id}>
                                                         <div style={{ display: 'flex', marginTop: '4.375em' }}>
-                                                            <ProfileImg
-                                                                path={
-                                                                    childComment.strategy_type === 'local'
-                                                                        ? fileBackUrl + childComment.img_path
-                                                                        : childComment.img_path
-                                                                }
-                                                            ></ProfileImg>
+                                                            {childComment.img_path ? (
+                                                                <ProfileImg
+                                                                    path={
+                                                                        childComment.strategy_type === 'local'
+                                                                            ? fileBackUrl + childComment.img_path
+                                                                            : childComment.img_path
+                                                                    }
+                                                                ></ProfileImg>
+                                                            ) : (
+                                                                <Avatar size="large" icon={<UserOutlined />} />
+                                                            )}
                                                             {allComments[`${childComment.comment_id}`]?.modify_flag ? (
                                                                 <Modify
                                                                     {...{
@@ -411,7 +422,7 @@ const Comments = ({ divRef }: ICommentsProps) => {
                                                         {allComments[`${childComment.comment_id}`]?.replyToggles ? (
                                                             <WriteReply
                                                                 {...{
-                                                                    parentId: comment.comment_id,
+                                                                    parentId: comment.comment_id as number,
                                                                     comment: childComment,
                                                                     allComments,
                                                                     changeComment,

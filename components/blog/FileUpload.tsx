@@ -4,7 +4,7 @@ import { memo } from 'react';
 import styled from 'styled-components';
 
 interface IFileUploadProps {
-    inputRef: React.MutableRefObject<HTMLInputElement>;
+    inputRef: React.MutableRefObject<HTMLInputElement | null>;
     onUploadFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onUploadFileButtonClick: () => void;
 }

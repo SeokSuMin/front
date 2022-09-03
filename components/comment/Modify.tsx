@@ -3,6 +3,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import { IBoardComment } from '../../reducer/blog';
+import { IComment } from '../../reducer/blog/comment';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -42,7 +43,7 @@ const ReplyButtonBox = styled.div`
 
 interface IModifyProps {
     parentId: number | null;
-    comment: IBoardComment;
+    comment: IComment;
     modifyToggle: (commentId: number, content: string) => void;
     allComments: {
         [key: string]: { replyToggles: boolean; childToggles: boolean; content: string; modify_flag: boolean };
@@ -53,6 +54,7 @@ interface IModifyProps {
         modify_flag: boolean,
         parent_id: number | null,
         parent_user_id: string | null,
+        content: string,
     ) => void;
 }
 
@@ -64,19 +66,25 @@ const Modify = ({ parentId, comment, modifyToggle, allComments, changeComment, s
                     <TextArea
                         placeholder="댓글을 작성하세요"
                         autoSize={{ minRows: 3, maxRows: 4 }}
-                        value={allComments[comment.comment_id].content}
-                        onChange={(e) => changeComment(e, comment.comment_id)}
+                        value={allComments[comment.comment_id as number].content}
+                        onChange={(e) => changeComment(e, comment.comment_id as number)}
                     />
                 </ModifyComment>
                 <ReplyButtonBox>
                     <button
                         onClick={() =>
-                            submitComment(comment.comment_id, true, parentId, parentId ? comment.parent_user_id : null)
+                            submitComment(
+                                comment.comment_id,
+                                true,
+                                parentId,
+                                parentId ? comment.parent_user_id : null,
+                                '',
+                            )
                         }
                     >
                         댓글 수정
                     </button>
-                    <button onClick={() => modifyToggle(comment.comment_id, '')}>취소</button>
+                    <button onClick={() => modifyToggle(comment.comment_id as number, '')}>취소</button>
                 </ReplyButtonBox>
             </ModifyCommentBox>
         </Wrapper>

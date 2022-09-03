@@ -2,13 +2,16 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { BackUrl } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
-import { fileProgress, IBlog, IBoardComment, IBoardData } from '../reducer/blog';
 import path from 'path';
+import { getComments, IComment } from '../reducer/blog/comment';
+import { IBoardData } from '../reducer/blog/boardData';
+import { IBlogToggle } from '../reducer/blog/blogToggle';
+import { progress } from '../reducer/blog/fileProgress';
 
 axios.defaults.baseURL = BackUrl;
 axios.defaults.withCredentials = true;
 
-export const getCategoriMenu = createAsyncThunk(
+export const getCategoriMenuThunk = createAsyncThunk(
     'GET_CATEGORI_MENU',
     async (_, { getState, requestId, rejectWithValue }) => {
         try {
@@ -24,14 +27,17 @@ export const getCategoriMenu = createAsyncThunk(
     },
 );
 
-export const getDetailBoard = createAsyncThunk(
+export const getDetailBoardThunk = createAsyncThunk(
     'GET_DETAIL_BOARD',
-    async (board_id: string, { getState, requestId, rejectWithValue }) => {
+    async (board_id: string, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
             const {
                 blog: { currentCategoriId },
-            } = getState() as { blog: IBlog };
+            } = getState() as { blog: IBlogToggle };
             const response = await axios.get(`/blog/${board_id}/${currentCategoriId}`);
+            const comments = response.data.boardInfo.comments;
+            dispatch(getComments({ comments }));
+            delete response.data.boardInfo.comments;
             return response.data;
         } catch (err) {
             if (err instanceof AxiosError) {
@@ -61,13 +67,13 @@ export const isnertBoard = createAsyncThunk(
                     url: '/blog/uploadBoardFile',
                     method: 'post',
                     data: formData,
-                    onUploadProgress: (progress) => {
+                    onUploadProgress: (p) => {
                         //onUploadProgress업로드, onDownloadProgress다운로드 실시간 현황
-                        const { loaded, total } = progress;
+                        const { loaded, total } = p;
                         const percentageProgress = Math.floor((loaded / total) * 100);
                         const extName = path.extname(file.name);
                         if (extName !== '.png') {
-                            dispatch(fileProgress({ fileId: String(file.lastModified), progress: percentageProgress }));
+                            dispatch(progress({ fileId: String(file.lastModified), progress: percentageProgress }));
                         }
                     },
                 });
@@ -78,7 +84,7 @@ export const isnertBoard = createAsyncThunk(
                     name: file.name,
                 };
             });
-            delete insertData.boardData.uploadFiles;
+            // delete insertData.boardData.uploadFiles;
             await axios.post(`/blog/board/insert`, {
                 boardData: insertData.boardData,
                 fileNames,
@@ -95,9 +101,9 @@ export const isnertBoard = createAsyncThunk(
     },
 );
 
-export const insertComment = createAsyncThunk(
+export const insertCommentThunk = createAsyncThunk(
     'INSERT_COMMENT',
-    async (commentData: IBoardComment, { getState, requestId, rejectWithValue }) => {
+    async (commentData: IComment, { getState, requestId, rejectWithValue }) => {
         try {
             const response = await axios.post(`/blog/comment/insert`, commentData);
             return response.data;
@@ -127,9 +133,9 @@ export const deleteBoard = createAsyncThunk(
     },
 );
 
-export const deleteComment = createAsyncThunk(
+export const deleteCommentThunk = createAsyncThunk(
     'DELETE_COMMENT',
-    async (commentIds: { commentId: number; parentId: number }, { getState, requestId, rejectWithValue }) => {
+    async (commentIds: { commentId: number; parentId: number | null }, { getState, requestId, rejectWithValue }) => {
         try {
             const response = await axios.delete(`/blog/comment/${commentIds.commentId}`);
             return commentIds;

@@ -38,14 +38,16 @@ const PagingItem = styled.li`
 const Paging = () => {
     const router = useRouter();
     const dispath = useAppDispatch();
-    const { paging, currentCategoriId } = useAppSelector((state) => state.blog);
-
+    const paging = useAppSelector((state) => state.paging);
+    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
     const movePageFunc = (prevPageNum: number, newPageNum: number) => {
         if (prevPageNum !== newPageNum) {
             // dispath(goPage(newPageNum));
+            let movePage = newPageNum > paging.endPage ? paging.endPage : newPageNum;
+            movePage = movePage < 1 ? 1 : movePage;
             router.push({
                 pathname: '/blog',
-                query: { page: newPageNum, categori: currentCategoriId },
+                query: { page: movePage, categori: currentCategoriId, type: viewType },
             });
         }
         return;

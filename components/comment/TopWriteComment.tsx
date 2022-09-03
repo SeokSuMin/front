@@ -54,8 +54,8 @@ interface ITopWriteCommentProps {
 }
 
 const TopWriteComment = ({ submitComment }: ITopWriteCommentProps) => {
-    const { detailBoard, loading } = useAppSelector((state) => state.blog);
-    const { userId } = useAppSelector((state) => state.user);
+    const { comments, loading } = useAppSelector((state) => state.comment);
+    const { userId } = useAppSelector((state) => state.userInfo);
     const [content, setContent] = useState('');
     const changeMainComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.currentTarget.value);
@@ -69,7 +69,7 @@ const TopWriteComment = ({ submitComment }: ITopWriteCommentProps) => {
         <Wrapper>
             <CommentWriteBox>
                 <CommentWriteTitle>
-                    <span>{detailBoard?.comments ? detailBoard.comments.length : 0}개의 댓글</span>
+                    <span>{comments ? comments.length : 0}개의 댓글</span>
                 </CommentWriteTitle>
                 <CommentWriteArea>
                     <TextArea

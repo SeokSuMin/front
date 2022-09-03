@@ -132,8 +132,9 @@ const EtcBox = styled.div`
 
 const LeftProfile = () => {
     const router = useRouter();
-    const { userId } = useAppSelector((state) => state.user);
-    const { categoriMenus, currentCategoriId, categoriTotal } = useAppSelector((state) => state.blog);
+    const { userId } = useAppSelector((state) => state.userInfo);
+    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
+    const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
 
     const dispatch = useAppDispatch();
 
@@ -155,7 +156,7 @@ const LeftProfile = () => {
             // }
             router.push({
                 pathname: '/blog',
-                query: { page: '1', categori: newCategoriId },
+                query: { page: '1', categori: newCategoriId, type: viewType },
             });
         }
     };
@@ -202,9 +203,9 @@ const LeftProfile = () => {
                 >
                     전체보기 ({categoriTotal})
                 </span>
-                {categoriMenus?.map((categoriMenu) => {
+                {categoriMenus?.map((categoriMenu, i) => {
                     return (
-                        <Categoris key={categoriMenu.menu_name}>
+                        <Categoris key={i}>
                             <ul>
                                 <li>
                                     <span>• {categoriMenu.menu_name}</span>

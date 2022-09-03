@@ -8,6 +8,12 @@ import userInfo, { IUserInfo } from './user/userInfo';
 import joinMember, { IJoinMember } from './user/joinMember';
 import changePassword, { IChangePassword } from './user/changePassword';
 import updateUser, { IUpdateUser } from './user/updateUser';
+import categoriMenus, { ICategoriMenus } from './blog/categoriMenus';
+import blogToggle, { IBlogToggle } from './blog/blogToggle';
+import paging, { IPaging } from './blog/paging';
+import boardData, { IBoardData } from './blog/boardData';
+import comment, { IComments } from './blog/comment';
+import fileProgress, { IFileProgress } from './blog/fileProgress';
 
 export interface IState {
     blog: IBlog;
@@ -18,6 +24,12 @@ export interface IState {
     joinMember: IJoinMember;
     changePassword: IChangePassword;
     updateUser: IUpdateUser;
+    categoriMenus: ICategoriMenus;
+    blogToggle: IBlogToggle;
+    paging: IPaging;
+    boardData: IBoardData;
+    comment: IComments;
+    fileProgress: IFileProgress;
 }
 
 const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> => {
@@ -42,7 +54,7 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
             return {
                 ...state,
                 ...action.payload,
-                // ...newPayload, // 뒤로가기 또는 다른 페이지에서 서버사이드 렌더링 해도 스토어 유지
+                ...newPayload, // 뒤로가기 또는 다른 페이지에서 서버사이드 렌더링 해도 스토어 유지
             };
         }
         default: {
@@ -55,6 +67,12 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
                 joinMember,
                 changePassword,
                 updateUser,
+                categoriMenus,
+                blogToggle,
+                paging,
+                boardData,
+                comment,
+                fileProgress,
             });
             return reducer(state, action);
         }

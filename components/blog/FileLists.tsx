@@ -75,7 +75,8 @@ interface IFileListsProps {
 
 const FileLists = ({ deleteFile }: IFileListsProps) => {
     const router = useRouter();
-    const { uploadFileInfo, detailBoard } = useAppSelector((state) => state.blog);
+    const detailBoard = useAppSelector((state) => state.boardData);
+    const { uploadFileInfo } = useAppSelector((state) => state.fileProgress);
     return (
         <FileListBox>
             <Lable></Lable>

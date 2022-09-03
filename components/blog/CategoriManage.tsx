@@ -90,7 +90,7 @@ const CategoriManage = () => {
         setValue,
         formState: { errors },
     } = useForm<{ [key: string]: string }>();
-    const { categoriMenus, loading } = useAppSelector((state) => state.blog);
+    const { categoriMenus } = useAppSelector((state) => state.categoriMenus);
     const dispatch = useAppDispatch();
     const [menu, setMenu] = useState(categoriMenus[0]?.menu_name);
     const [deleteIds, setDeleteIds] = useState<number[]>([]);
@@ -129,7 +129,7 @@ const CategoriManage = () => {
             const updateData: { menu_name: string; categori_name: string; sort: number; categori_id: number | null }[] =
                 [];
             const deleteMenuIds: string[] = [];
-            const sort = categoriMenus.find((categori) => categori.menu_name === menu).sort;
+            const sort = categoriMenus.find((categori) => categori.menu_name === menu)?.sort as number;
             for (const key in value) {
                 if (!key.includes('new')) {
                     if (deleteIds.find((id) => id === +key)) {
@@ -157,7 +157,12 @@ const CategoriManage = () => {
             addCategoris.map((number) => cancelCategori(number));
             message.success('저장하였습니다.');
         } catch (err) {
-            message.error(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
         }
     };
 

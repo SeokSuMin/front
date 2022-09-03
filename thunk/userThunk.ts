@@ -72,7 +72,7 @@ export const loginThunk = createAsyncThunk(
     },
 );
 
-export const checkUserlogin = createAsyncThunk(
+export const checkUserloginThunk = createAsyncThunk(
     'CHECK_USER_LOGIN',
     async (_, { getState, requestId, rejectWithValue }) => {
         const response = await axios.get('/user/');

@@ -69,10 +69,14 @@ interface IQuillEditorProps {
 
 const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
     const router = useRouter();
-    const { detailBoard } = useAppSelector((state) => state.blog);
+    const detailBoard = useAppSelector((state) => state.boardData);
     const [content, setContent] = useState<string>('');
     useEffect(() => {
-        setContent(router?.query?.mode === 'modify' ? detailBoard?.content : '');
+        if (router?.query?.mode === 'modify') {
+            setContent(detailBoard?.content ? detailBoard?.content : '');
+        } else {
+            setContent('');
+        }
     }, [router.query.mode]);
 
     const changeContent = (value: string) => {

@@ -7,6 +7,7 @@ import { Drawer, Tag } from 'antd';
 import { useEffect, useState } from 'react';
 import CategorisDrawer from './blog/CategorisDrawer';
 import { useRouter } from 'next/router';
+import { useAppSelector } from '../store/hooks';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -76,6 +77,7 @@ interface IBlogLayoutProps {
 
 const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
     const router = useRouter();
+    const { viewType } = useAppSelector((state) => state.blogToggle);
     const [visible, setVisible] = useState(false);
     const DrawerVisible = () => {
         setVisible(true);
@@ -100,7 +102,14 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
 
     return (
         <Wrapper>
-            <TopImageBox onClick={() => router.push('/blog')}>
+            <TopImageBox
+                onClick={() =>
+                    router.push({
+                        pathname: '/blog',
+                        query: { page: '1', categori: '0', type: viewType },
+                    })
+                }
+            >
                 <TitleBox>
                     <h1>REACT PROJECT</h1>
                     <h2>MY BLOG</h2>

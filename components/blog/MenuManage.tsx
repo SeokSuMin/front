@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { getCategoriMenu, updateCategoris } from '../../thunk/blogThunk';
+import { updateCategoris } from '../../thunk/blogThunk';
 
 const Wrapper = styled.div``;
 
@@ -79,7 +79,7 @@ const MenuManage = () => {
         formState: { errors },
     } = useForm<{ [key: string]: string }>();
     const dispatch = useAppDispatch();
-    const { categoriMenus, loading } = useAppSelector((state) => state.blog);
+    const { categoriMenus } = useAppSelector((state) => state.categoriMenus);
     const [deleteIds, setDeleteIds] = useState<string[]>([]);
     const [addMenus, setAddMenus] = useState<number[]>([]);
 
@@ -148,7 +148,12 @@ const MenuManage = () => {
             addMenus.map((number) => cancelMenu(number));
             message.success('저장하였습니다.');
         } catch (err) {
-            message.error(err);
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
         }
     };
 
