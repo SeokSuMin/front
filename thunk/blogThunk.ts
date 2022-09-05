@@ -59,9 +59,10 @@ export const isnertBoard = createAsyncThunk(
                 const formData = new FormData();
                 formData.append('boardId', insertData.boardData.board_id);
                 formData.append('file', file);
+
                 await axios({
                     headers: {
-                        'Content-Type': 'multipart/form-data; charset: UTF-8;',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8;',
                     },
                     url: '/blog/uploadBoardFile',
                     method: 'post',
