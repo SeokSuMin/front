@@ -77,7 +77,7 @@ const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
         } else {
             setContent('');
         }
-    }, [router.query.mode]);
+    }, [router.query.mode, detailBoard?.content]);
 
     const changeContent = (value: string) => {
         // Quill오류인지 자음 모음이 분리됨, ref로 처리함.

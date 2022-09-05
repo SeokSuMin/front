@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getCategoriMenuThunk } from '../../thunk/blogThunk';
+import { getCategoriMenuThunk, updateCategorisThunk } from '../../thunk/blogThunk';
 
 export interface ICategoriMenus {
     categoriMenus: { menu_name: string; sort: number; categoris: [{ [key: string]: number }] }[];
@@ -27,6 +27,21 @@ const categoriMenus = createSlice({
                     categoriMenus: action.payload.categoriMenus,
                     categoriTotal: totalCount,
                     hydration: true,
+                    loading: false,
+                };
+            })
+            .addCase(updateCategorisThunk.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(updateCategorisThunk.fulfilled, (state, action) => {
+                const totalCount = action.payload.totalCount as number;
+                return {
+                    ...state,
+                    categoriMenus: action.payload.categoriMenus,
+                    categoriTotal: totalCount,
                     loading: false,
                 };
             });

@@ -11,7 +11,6 @@ import WriteReply from './WriteReply';
 import Modify from './Modify';
 import { deleteCommentThunk, insertCommentThunk } from '../../thunk/blogThunk';
 import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
-import { IBoardComment } from '../../reducer/blog';
 import TopWriteComment from './TopWriteComment';
 import { IComment } from '../../reducer/blog/comment';
 dayjs.extend(relativeTime);

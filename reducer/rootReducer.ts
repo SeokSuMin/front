@@ -1,6 +1,5 @@
 import { AnyAction, CombinedState, combineReducers } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
-import blog, { IBlog } from './blog';
 import login, { ILogin } from './user/login';
 import userToggle, { IUserToggle } from './user/userToggle';
 import searchUser, { ISearchUser } from './user/searchUser';
@@ -16,7 +15,6 @@ import comment, { IComments } from './blog/comment';
 import fileProgress, { IFileProgress } from './blog/fileProgress';
 
 export interface IState {
-    blog: IBlog;
     login: ILogin;
     userToggle: IUserToggle;
     searchUser: ISearchUser;
@@ -59,7 +57,6 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
         }
         default: {
             const reducer = combineReducers({
-                blog,
                 login,
                 userToggle,
                 searchUser,

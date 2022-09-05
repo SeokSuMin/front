@@ -1,7 +1,5 @@
 import { Tag } from 'antd';
 import styled from 'styled-components';
-import { fileBackUrl } from '../../config';
-import { IBoardComment } from '../../reducer/blog';
 import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
 import { getDifferenceTime } from '../../util';
@@ -81,14 +79,22 @@ const CommentContent = ({ comment, replyToggle, modifyToggle, allComments, delet
                 ></ProfileImg> */}
                 <ContentBox>
                     <WriterInfo>
-                        <span>{comment.user_id}</span>
+                        <span>
+                            {comment.strategy_type === 'local' ? comment.user_id : comment.user_id?.split('_')[1]}
+                        </span>
                         <span>{getDifferenceTime(comment.createdAt as string)}</span>
                         <span>{comment.modify_flag ? ' (수정 됨)' : ''}</span>
                     </WriterInfo>
                     <Content>
                         <div style={{ lineHeight: '1.250em' }}>
                             {comment.parent_user_id ? (
-                                <span style={{ color: 'rgb(6, 95, 212)' }}>@{comment.parent_user_id}&nbsp;&nbsp;</span>
+                                <span style={{ color: 'rgb(6, 95, 212)' }}>
+                                    @
+                                    {comment.parent_user_id.includes('_')
+                                        ? comment.parent_user_id?.split('_')[1]
+                                        : comment.parent_user_id}
+                                    &nbsp;&nbsp;
+                                </span>
                             ) : null}
                             {comment.content.split('\n').map((line, i) => {
                                 if (line.trim()) {

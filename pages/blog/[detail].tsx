@@ -1,7 +1,7 @@
 import { CommentOutlined, ExclamationCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { message, Modal, Spin, Tag } from 'antd';
 import styled from 'styled-components';
-import { deleteBoard, getCategoriMenuThunk, getDetailBoardThunk } from '../../thunk/blogThunk';
+import { deleteBoardThunk, getCategoriMenuThunk, getDetailBoardThunk } from '../../thunk/blogThunk';
 import { checkUserloginThunk } from '../../thunk/userThunk';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
@@ -205,7 +205,7 @@ const DetailBoard = () => {
             cancelText: '취소',
             async onOk() {
                 try {
-                    await dispatch(deleteBoard(boardId)).unwrap();
+                    await dispatch(deleteBoardThunk(boardId)).unwrap();
                     message.success('삭제되었습니다.');
                     router.push('/blog');
                 } catch (err) {
@@ -231,6 +231,9 @@ const DetailBoard = () => {
     useEffect(() => {
         initPage();
     }, [router.query.detail]);
+
+    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
+    const { page } = useAppSelector((state) => state.paging);
 
     return (
         <Wrapper>
@@ -272,7 +275,16 @@ const DetailBoard = () => {
                                     다음글
                                 </button>
                             ) : null}
-                            <button onClick={() => router.push('/blog')}>목록</button>
+                            <button
+                                onClick={() =>
+                                    router.push({
+                                        pathname: '/blog',
+                                        query: { page, categori: currentCategoriId, type: viewType },
+                                    })
+                                }
+                            >
+                                목록
+                            </button>
                         </MoveBoardButtonBox>
                     </TopMenuBox>
                     <BoardBox>
@@ -337,9 +349,6 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         if (req && cookie) {
             axios.defaults.headers.common['Cookie'] = cookie;
         }
-
-        console.log('stateInfo!', getState().blog);
-
         // 로그인 사용자 체크
         await dispatch(checkUserloginThunk());
         // await dispatch(getCategoriMenu());

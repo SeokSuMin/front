@@ -92,7 +92,7 @@ const WriteTtile = ({
         } else {
             setTitile('');
         }
-    }, [router.query.mode]);
+    }, [router.query.mode, detailBoard?.title]);
 
     return (
         <Wrapper>

@@ -7,6 +7,7 @@ import path from 'path';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import { IBoardData } from '../../reducer/blog/boardData';
+import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
 
 const Content = styled.div`
@@ -97,9 +98,10 @@ const OneBoxList = ({ leaving, toggleLeaving, boardList }: IOneBoxListProps) => 
                                         description={
                                             <>
                                                 <span>{dayjs(item.createdAt).format('YYYY MM DD HH:mm')}</span>
-                                                {item.comments.length ? (
+                                                {item?.comments?.length ? (
                                                     <span style={{ marginLeft: '1em' }}>
-                                                        <CommentOutlined /> ({item.comments.length})
+                                                        <CommentOutlined /> (
+                                                        {item?.comments?.filter((c) => c.parent_id === null).length})
                                                     </span>
                                                 ) : null}
                                             </>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { updateCategoris } from '../../thunk/blogThunk';
+import { updateCategorisThunk } from '../../thunk/blogThunk';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -153,7 +153,7 @@ const CategoriManage = () => {
                     categori_name,
                 });
             }
-            await dispatch(updateCategoris({ updateData, deleteMenuIds })).unwrap();
+            await dispatch(updateCategorisThunk({ updateData, deleteMenuIds })).unwrap();
             addCategoris.map((number) => cancelCategori(number));
             message.success('저장하였습니다.');
         } catch (err) {
@@ -173,10 +173,10 @@ const CategoriManage = () => {
                     <span className="menuText">메뉴 목록</span>
                     <Radio.Group value={menu} onChange={changeMenu}>
                         <Space direction="vertical">
-                            {categoriMenus?.map((categori) => {
+                            {categoriMenus?.map((categori, i) => {
                                 return (
                                     <>
-                                        <Radio key={categori.menu_name} value={categori.menu_name}>
+                                        <Radio key={i} value={categori.menu_name}>
                                             {categori.menu_name}
                                         </Radio>
                                         <br />

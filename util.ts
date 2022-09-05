@@ -1,7 +1,6 @@
 import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { BackUrl } from './config';
-import { fileProgress } from './reducer/blog';
 import { IState } from './reducer/rootReducer';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -25,7 +24,7 @@ const getBoardList = async (page: number, countList: number, currentCategoriId: 
         const limit = countList;
         const response = await axios.get(`/blog/${offset}/${limit}/${currentCategoriId}`);
         return response.data;
-    } catch (err) {
+    } catch (err: any) {
         throw Error(err);
     }
 };

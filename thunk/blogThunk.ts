@@ -31,10 +31,9 @@ export const getDetailBoardThunk = createAsyncThunk(
     'GET_DETAIL_BOARD',
     async (board_id: string, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
-            const {
-                blog: { currentCategoriId },
-            } = getState() as { blog: IBlogToggle };
-            const response = await axios.get(`/blog/${board_id}/${currentCategoriId}`);
+            const { blogToggle } = getState() as { blogToggle: IBlogToggle };
+            console.log('blogToggle', blogToggle);
+            const response = await axios.get(`/blog/${board_id}/${blogToggle.currentCategoriId}`);
             const comments = response.data.boardInfo.comments;
             dispatch(getComments({ comments }));
             delete response.data.boardInfo.comments;
@@ -117,7 +116,7 @@ export const insertCommentThunk = createAsyncThunk(
     },
 );
 
-export const deleteBoard = createAsyncThunk(
+export const deleteBoardThunk = createAsyncThunk(
     'DELETE_BOARD',
     async (boardId: string, { getState, requestId, rejectWithValue }) => {
         try {
@@ -149,7 +148,7 @@ export const deleteCommentThunk = createAsyncThunk(
     },
 );
 
-export const updateCategoris = createAsyncThunk(
+export const updateCategorisThunk = createAsyncThunk(
     'UPDATE_CATEGORIS',
     async (
         categoriData: {

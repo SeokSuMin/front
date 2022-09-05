@@ -1,7 +1,7 @@
 import { Drawer, Tag } from 'antd';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { changeCurrentCategoriId } from '../../reducer/blog';
+import { changeCurrentCategoriId } from '../../reducer/blog/blogToggle';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import XToggle from '../public/x-Toggle.svg';
 
@@ -50,7 +50,8 @@ interface ICategorisDrawerProps {
 
 const CategorisDrawer = ({ visible, closeDrawer }: ICategorisDrawerProps) => {
     const router = useRouter();
-    const { categoriMenus, loading, currentCategoriId, categoriTotal } = useAppSelector((state) => state.blog);
+    const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
+    const { currentCategoriId } = useAppSelector((state) => state.blogToggle);
     const dispatch = useAppDispatch();
 
     const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {

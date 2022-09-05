@@ -2,7 +2,6 @@ import { Tag } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
-import { IBoardComment } from '../../reducer/blog';
 import { IComment } from '../../reducer/blog/comment';
 
 const Wrapper = styled.div`

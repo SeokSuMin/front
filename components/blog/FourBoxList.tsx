@@ -7,6 +7,7 @@ import path from 'path';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import { IBoardData } from '../../reducer/blog/boardData';
+import { IComment, IComments } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
 
 const CardBox = styled(motion.div)`
@@ -208,9 +209,10 @@ const FourBoxList = ({ leaving, toggleLeaving, boardList }: IFourBoxListProps) =
                                             <span>{board.writer}</span>
                                             <div style={{ width: '10%', textAlign: 'center' }}>|</div>
                                             <span>{dayjs(board.createdAt).format('YYYY MM DD HH:mm')}</span>
-                                            {board.comments.length ? (
+                                            {board?.comments?.length ? (
                                                 <span className="comment">
-                                                    <CommentOutlined />({board.comments.length})
+                                                    <CommentOutlined />(
+                                                    {board?.comments?.filter((c) => c.parent_id === null).length})
                                                 </span>
                                             ) : null}
                                         </WriteInfo>

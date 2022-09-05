@@ -1,6 +1,5 @@
 import TextArea from 'antd/lib/input/TextArea';
 import styled from 'styled-components';
-import { IBoardComment } from '../../reducer/blog';
 import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
 

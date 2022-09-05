@@ -7,7 +7,6 @@ import GitHub from '../../public/github.svg';
 import EllipsisDot from '../../public/ellipsis-dot.svg';
 import { EditOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { changeCurrentCategoriId } from '../../reducer/blog';
 
 const Wrapper = styled.div`
     width: 20%;

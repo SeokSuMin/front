@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getDetailBoardThunk, isnertBoard } from '../../thunk/blogThunk';
+import { deleteBoardThunk, getDetailBoardThunk, isnertBoard } from '../../thunk/blogThunk';
+import { IComment } from './comment';
 
 interface IBoardFile {
     board_id: string;
@@ -18,6 +19,7 @@ export interface IBoardData {
     writer: string;
     uploadFiles: File[];
     board_files?: IBoardFile[];
+    comments?: IComment[];
     prevBoardId?: string;
     nextBoardId?: string;
     createdAt?: string;
@@ -31,14 +33,10 @@ const boardData = createSlice({
     reducers: {
         deleteBoardFiles: (state, action: PayloadAction<number>) => {
             const fildId = action.payload;
-            const prevDetailBoard = state as IBoardData;
-            const detailBoard = {
-                ...prevDetailBoard,
-                board_files: prevDetailBoard?.board_files?.filter((file) => file.file_id !== fildId),
-            };
+            const newFiles = state.board_files?.filter((file) => file.file_id !== fildId);
             return {
                 ...state,
-                detailBoard,
+                board_files: newFiles,
             };
         },
     },
@@ -79,6 +77,19 @@ const boardData = createSlice({
                     ...state,
                     ...detailBoard,
                     loading: false,
+                };
+            })
+            .addCase(deleteBoardThunk.pending, (state, action) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(deleteBoardThunk.fulfilled, (state, action) => {
+                const empty = { hydration: false } as IBoardData;
+                return {
+                    ...empty,
+                    loading: true,
                 };
             });
     },

@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import CategoriManage from '../../components/blog/CategoriManage';
 import MenuManage from '../../components/blog/MenuManage';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { getCategoriMenu, updateCategoris } from '../../thunk/blogThunk';
+import { getCategoriMenuThunk } from '../../thunk/blogThunk';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -40,7 +40,7 @@ const MenuManager = () => {
     };
 
     const initPage = async () => {
-        await dispatch(getCategoriMenu());
+        await dispatch(getCategoriMenuThunk());
     };
 
     useEffect(() => {

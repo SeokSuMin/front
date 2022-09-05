@@ -121,44 +121,43 @@ const Write = () => {
         inputRef.current.click();
     }, [inputRef.current]);
 
-    const onUploadFile = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files?.length === 0) {
+    const onUploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files?.length === 0) {
+            return;
+        }
+        const tempFiles = [...(e.target.files as FileList)];
+
+        for (const file of tempFiles) {
+            const extName = path.extname(file.name);
+            if (!['.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pptx'].includes(extName)) {
+                message.error('엑셀, 워드, 파워포인트 이외에 파일은 선택하실 수 없습니다.');
                 return;
             }
-            const tempFiles = [...(e.target.files as FileList)];
+        }
 
-            for (const file of tempFiles) {
-                const extName = path.extname(file.name);
-                if (!['.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pptx'].includes(extName)) {
-                    message.error('엑셀, 워드, 파워포인트 이외에 파일은 선택하실 수 없습니다.');
-                    return;
-                }
+        const insertFiles = tempFiles.filter((newFile) => {
+            const boardFileFlag = !detailBoard?.board_files?.find((file) => file.name === newFile.name);
+            const viewFileFlag = !files?.some((prevFile) => prevFile.name === newFile.name);
+            if (boardFileFlag && viewFileFlag) {
+                return true;
             }
+        });
 
-            const insertFiles = tempFiles.filter((newFile) => {
-                if (!files?.some((prevFile) => prevFile.name === newFile.name)) {
-                    return true;
-                }
-            });
-            setFiles((prevFiles) => [...prevFiles, ...insertFiles]);
+        setFiles((prevFiles) => [...prevFiles, ...insertFiles]);
 
-            if (insertFiles.length) {
-                dispatch(
-                    addUploadFiles({
-                        uploadFileInfo: insertFiles.map((file) => ({
-                            fileId: file.lastModified + '',
-                            fileName: file.name,
-                            progress: 0,
-                        })),
-                    }),
-                );
-            }
-            e.target.value = '';
-        },
-        [files],
-    );
-
+        if (insertFiles.length) {
+            dispatch(
+                addUploadFiles({
+                    uploadFileInfo: insertFiles.map((file) => ({
+                        fileId: file.lastModified + '',
+                        fileName: file.name,
+                        progress: 0,
+                    })),
+                }),
+            );
+        }
+        e.target.value = '';
+    };
     const deleteFile = (type: string, fileName: string | number) => {
         if (type === 'new') {
             setFiles((prevFiles) => {
@@ -260,17 +259,15 @@ const Write = () => {
         const result = await dispatch(getCategoriMenuThunk());
         const resultCategoris = result.payload as ICategoriMenus;
         if (router?.query?.mode === 'modify') {
-            dispatch(getDetailBoardThunk(router.query.detail as string)).then((r) => {
-                for (const c of resultCategoris.categoriMenus) {
-                    const findC = c.categoris.find((childC) => childC.categori_id === detailBoard?.categori_id);
-                    if (findC) {
-                        console.log('findC', findC);
-                        setMenu(Object.values(c)[0] as string);
-                        setCategoriId(findC.categori_id);
-                        break;
-                    }
+            const boardResult = await (await dispatch(getDetailBoardThunk(router.query.detail as string))).payload;
+            for (const c of resultCategoris.categoriMenus) {
+                const findC = c.categoris.find((childC) => childC.categori_id === boardResult.boardInfo.categori_id);
+                if (findC) {
+                    setMenu(Object.values(c)[0] as string);
+                    setCategoriId(findC.categori_id);
+                    break;
                 }
-            });
+            }
         } else {
             setMenu(resultCategoris?.categoriMenus[0]?.menu_name);
             setCategoriId(resultCategoris?.categoriMenus[0]?.categoris[0].categori_id);
@@ -280,8 +277,6 @@ const Write = () => {
     useEffect(() => {
         initPage();
     }, [router.query.mode]);
-
-    console.log(menu, categoriId);
 
     return (
         <Wrapper>

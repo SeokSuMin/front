@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import FourBoxList from '../../components/freeboard/FourBoxList';
-import OneBoxList from '../../components/freeboard/OneBoxList';
-import TopMenu from '../../components/freeboard/TopMenu';
+import FourBoxList from '../../components/blog/FourBoxList';
+import OneBoxList from '../../components/blog/OneBoxList';
+import TopMenu from '../../components/blog/TopMenu';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
 import { checkUserloginThunk } from '../../thunk/userThunk';
@@ -42,6 +42,7 @@ const Home = () => {
     // const page = router?.query?.page ? +router.query.page : 1;
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
+    const { comments } = useAppSelector((state) => state.comment);
     const { countList, page } = useAppSelector((state) => state.paging);
     const dispatch = useAppDispatch();
     const [leaving, setLeaving] = useState(false);
@@ -52,7 +53,7 @@ const Home = () => {
         {
             refetchOnWindowFocus: false,
             onSuccess: (data) => {
-                console.log('data 실행됨');
+                // console.log('data 실행됨', data);
                 if (data.boardList.length) {
                     dispatch(initTotalCount(data.totalCount));
                     dispatch(goPage(0));
@@ -121,7 +122,7 @@ const Home = () => {
         <Wrapper>
             {isLoading ? (
                 <Spin tip="Loading..." />
-            ) : data.boardList?.length ? (
+            ) : data?.boardList?.length ? (
                 <ContentBox>
                     <TopMenu {...{ viewType, changeListView, scrollRef }} />
                     <FourBoxList {...{ leaving, toggleLeaving, boardList: data?.boardList }} />

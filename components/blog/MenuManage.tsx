@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { updateCategoris } from '../../thunk/blogThunk';
+import { updateCategorisThunk } from '../../thunk/blogThunk';
 
 const Wrapper = styled.div``;
 
@@ -144,7 +144,7 @@ const MenuManage = () => {
                 });
             }
 
-            await dispatch(updateCategoris({ updateData, deleteMenuIds })).unwrap();
+            await dispatch(updateCategorisThunk({ updateData, deleteMenuIds })).unwrap();
             addMenus.map((number) => cancelMenu(number));
             message.success('저장하였습니다.');
         } catch (err) {
