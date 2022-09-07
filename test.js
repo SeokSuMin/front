@@ -116,4 +116,5 @@ function sumSalaries(department) {
     }
 }
 
-console.log(sumSalaries(bom));
+// console.log(sumSalaries(bom));
+console.log(decodeURI(encodeURIComponent('dlftkd')));

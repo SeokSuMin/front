@@ -154,8 +154,8 @@ const LeftProfile = () => {
             //     router.push('/blog');
             // }
             router.push({
-                pathname: '/blog',
-                query: { page: '1', categori: newCategoriId, type: viewType },
+                pathname: `/blog/categori/${newCategoriId}`,
+                query: { page: '1', type: viewType },
             });
         }
     };
@@ -198,7 +198,7 @@ const LeftProfile = () => {
                         fontWeight: currentCategoriId === 0 ? 'bold' : '',
                         marginBottom: '1.25em',
                     }}
-                    onClick={() => moveCategoriBoards(currentCategoriId, 0)}
+                    onClick={() => moveCategoriBoards(+currentCategoriId, 0)}
                 >
                     전체보기 ({categoriTotal})
                 </span>

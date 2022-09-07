@@ -196,7 +196,7 @@ const FourBoxList = ({ leaving, toggleLeaving, boardList }: IFourBoxListProps) =
                                                 }`}
                                             />
                                         ) : (
-                                            <img alt="example" src="no-image.JPG" />
+                                            <img alt="example" src="../../no-image.JPG" />
                                         )}
                                     </ThumImg>
                                     <Content>

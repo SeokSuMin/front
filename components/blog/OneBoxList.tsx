@@ -85,7 +85,7 @@ const OneBoxList = ({ leaving, toggleLeaving, boardList }: IOneBoxListProps) => 
                                                 <img
                                                     style={{ width: '8.5rem', height: '8.5rem' }}
                                                     alt="example"
-                                                    src="no-image.JPG"
+                                                    src="../../no-image.JPG"
                                                 />
                                             )}
                                         </span>

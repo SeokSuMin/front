@@ -51,16 +51,17 @@ interface ICategorisDrawerProps {
 const CategorisDrawer = ({ visible, closeDrawer }: ICategorisDrawerProps) => {
     const router = useRouter();
     const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
-    const { currentCategoriId } = useAppSelector((state) => state.blogToggle);
+    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
     const dispatch = useAppDispatch();
 
     const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
         if (router.pathname !== '/blog' || currentCategoriId !== newCategoriId) {
             closeDrawer();
             dispatch(changeCurrentCategoriId(newCategoriId));
-            if (router.pathname !== '/blog') {
-                router.push('/blog');
-            }
+            router.push({
+                pathname: `/blog/categori/${newCategoriId}`,
+                query: { page: '1', type: viewType },
+            });
         }
     };
     return (

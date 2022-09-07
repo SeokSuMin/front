@@ -278,8 +278,8 @@ const DetailBoard = () => {
                             <button
                                 onClick={() =>
                                     router.push({
-                                        pathname: '/blog',
-                                        query: { page, categori: currentCategoriId, type: viewType },
+                                        pathname: `/blog/categori/${currentCategoriId}`,
+                                        query: { page, type: viewType },
                                     })
                                 }
                             >
