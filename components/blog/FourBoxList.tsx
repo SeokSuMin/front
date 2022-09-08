@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import path from 'path';
+import { memo } from 'react';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import { IBoardData } from '../../reducer/blog/boardData';
@@ -161,15 +162,16 @@ const fourBoxItem = {
 interface IFourBoxListProps {
     leaving: boolean;
     toggleLeaving: () => void;
-    boardList: IBoardData[];
 }
 
-const FourBoxList = ({ leaving, toggleLeaving, boardList }: IFourBoxListProps) => {
+const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
     const router = useRouter();
-    const { viewType } = useAppSelector((state) => state.blogToggle);
+    const { viewType, currentCategoriId } = useAppSelector((state) => state.blogToggle);
+    const { boardList } = useAppSelector((state) => state.boardList);
     const moveDetailPage = (boardId: string) => {
-        router.push(`/blog/${boardId}`);
+        router.push(`/blog/categori_${currentCategoriId}/${boardId}`);
     };
+
     return (
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             {viewType === 'CARD' && !leaving ? (
@@ -227,4 +229,4 @@ const FourBoxList = ({ leaving, toggleLeaving, boardList }: IFourBoxListProps) =
     );
 };
 
-export default FourBoxList;
+export default memo(FourBoxList);

@@ -10,6 +10,7 @@ import updateUser, { IUpdateUser } from './user/updateUser';
 import categoriMenus, { ICategoriMenus } from './blog/categoriMenus';
 import blogToggle, { IBlogToggle } from './blog/blogToggle';
 import paging, { IPaging } from './blog/paging';
+import boardList, { IBoardList } from './blog/boardList';
 import boardData, { IBoardData } from './blog/boardData';
 import comment, { IComments } from './blog/comment';
 import fileProgress, { IFileProgress } from './blog/fileProgress';
@@ -25,6 +26,7 @@ export interface IState {
     categoriMenus: ICategoriMenus;
     blogToggle: IBlogToggle;
     paging: IPaging;
+    boardList: IBoardList;
     boardData: IBoardData;
     comment: IComments;
     fileProgress: IFileProgress;
@@ -67,6 +69,7 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
                 categoriMenus,
                 blogToggle,
                 paging,
+                boardList,
                 boardData,
                 comment,
                 fileProgress,

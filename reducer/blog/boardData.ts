@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { deleteBoardThunk, getDetailBoardThunk, isnertBoard } from '../../thunk/blogThunk';
+import { deleteBoardThunk, getBoardListThunk, getDetailBoardThunk, isnertBoard } from '../../thunk/blogThunk';
 import { IComment } from './comment';
 
 interface IBoardFile {
@@ -64,6 +64,12 @@ const boardData = createSlice({
                 return {
                     ...state,
                     loading: true,
+                };
+            })
+            .addCase(getDetailBoardThunk.rejected, (state, action) => {
+                return {
+                    ...state,
+                    loading: false,
                 };
             })
             .addCase(getDetailBoardThunk.fulfilled, (state, action) => {

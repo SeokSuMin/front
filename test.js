@@ -98,6 +98,15 @@ const mockOrgTreeList = [
     },
 ];
 
+function getParamMap(queryString) {
+    let splited = queryString.replace('?', '').split(/[=?&]/);
+    let param = {};
+    for (let i = 0; i < splited.length; i++) {
+        param[splited[i]] = splited[++i];
+    }
+    return param;
+}
+
 // 급여 합계를 구해주는 함수
 function sumSalaries(department) {
     if (Array.isArray(department)) {
@@ -116,5 +125,12 @@ function sumSalaries(department) {
     }
 }
 
-// console.log(sumSalaries(bom));
-console.log(decodeURI(encodeURIComponent('dlftkd')));
+// console.log(sumSalaries(bom))
+const url = '/blog/categori_0?page=1&type=CARD';
+const query = url.split('/blog/')[1];
+const categori = url.split('?')[0].split('_')[1];
+const querys = url.split('?')[1];
+const params = new URLSearchParams(querys);
+
+console.log(params.get('page'));
+console.log(params.get('type'));

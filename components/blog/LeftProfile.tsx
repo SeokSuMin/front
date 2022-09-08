@@ -131,10 +131,11 @@ const EtcBox = styled.div`
 
 const LeftProfile = () => {
     const router = useRouter();
+    const categoris = (router?.query?.categoris as string).split('_')[1];
     const { userId } = useAppSelector((state) => state.userInfo);
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
     const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
-
+    const { countList } = useAppSelector((state) => state.paging);
     const dispatch = useAppDispatch();
 
     const moveWritePage = () => {
@@ -150,12 +151,15 @@ const LeftProfile = () => {
     const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
         if (router.pathname !== '/blog' || currentCategoriId !== newCategoriId) {
             // dispatch(changeCurrentCategoriId(newCategoriId));
-            // if (router.pathname !== '/blog') {
-            //     router.push('/blog');
+            // if (router.pathname !== '/blog/[categoris]') {
+            //     router.push({
+            //         pathname: `/blog/categori_${newCategoriId}`,
+            //         query: { page: '1', type: viewType },
+            //     });
             // }
             router.push({
-                pathname: `/blog/categori/${newCategoriId}`,
-                query: { page: '1', type: viewType },
+                pathname: `/blog/categori_${newCategoriId}`,
+                query: { page: '1', countList, type: viewType },
             });
         }
     };
@@ -194,8 +198,8 @@ const LeftProfile = () => {
                 ) : null}
                 <span
                     style={{
-                        textDecoration: currentCategoriId === 0 ? 'underline' : '',
-                        fontWeight: currentCategoriId === 0 ? 'bold' : '',
+                        textDecoration: categoris === '0' ? 'underline' : '',
+                        fontWeight: categoris === '0' ? 'bold' : '',
                         marginBottom: '1.25em',
                     }}
                     onClick={() => moveCategoriBoards(+currentCategoriId, 0)}
@@ -214,7 +218,7 @@ const LeftProfile = () => {
                                     const totalCount = Object.values(categori)[0];
                                     return (
                                         <li
-                                            className={currentCategoriId == categori.categori_id ? 'active' : ''}
+                                            className={categoris === String(categori.categori_id) ? 'active' : ''}
                                             onClick={() => moveCategoriBoards(currentCategoriId, categori.categori_id)}
                                             key={categoriName}
                                         >

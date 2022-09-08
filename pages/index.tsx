@@ -12,6 +12,7 @@ import Progress from '../components/animation/Progress';
 import Plan from '../components/introduction/Plan';
 import { checkUserloginThunk } from '../thunk/userThunk';
 import axios from 'axios';
+import Seo from '../components/Seo';
 
 const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
 
@@ -80,6 +81,7 @@ export default function Home() {
 
     return (
         <Wrapper>
+            <Seo title="Ice Man | 소개페이지"></Seo>
             <Progress scrollYProgress={scrollYProgress} />
             <Intro contactBtn={contactBtn} />
             <Career scrollRef={scrollRef} />

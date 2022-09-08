@@ -1,4 +1,5 @@
 import { Select } from 'antd';
+import { useRouter } from 'next/router';
 import { memo, MutableRefObject } from 'react';
 import styled from 'styled-components';
 import TwoSquareToggle from '../../public/2-squares.svg';
@@ -42,9 +43,15 @@ interface ITopMenuProps {
 
 const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
     const dispath = useAppDispatch();
-    const { countList } = useAppSelector((state) => state.paging);
+    const router = useRouter();
+    const { countList, page } = useAppSelector((state) => state.paging);
+    const { currentCategoriId } = useAppSelector((state) => state.blogToggle);
     const changeCountListValue = (value: number) => {
-        dispath(changeCountList(value));
+        // dispath(changeCountList(value));
+        router.push({
+            pathname: `/blog/categori_${currentCategoriId}`,
+            query: { page, countList: value, type: viewType },
+        });
     };
     return (
         <Wrapper ref={scrollRef}>

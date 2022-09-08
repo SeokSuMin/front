@@ -27,12 +27,32 @@ export const getCategoriMenuThunk = createAsyncThunk(
     },
 );
 
+export const getBoardListThunk = createAsyncThunk(
+    'GET_BOARD_LIST',
+    async (
+        condition: { page: number; countList: number; categoriId: number },
+        { getState, requestId, rejectWithValue },
+    ) => {
+        try {
+            const offset = (condition.page - 1) * condition.countList;
+            const limit = condition.countList;
+            const response = await axios.get(`/blog/${offset}/${limit}/${condition.categoriId}`);
+            return response.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
+        }
+    },
+);
+
 export const getDetailBoardThunk = createAsyncThunk(
     'GET_DETAIL_BOARD',
     async (board_id: string, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
             const { blogToggle } = getState() as { blogToggle: IBlogToggle };
-            console.log('blogToggle', blogToggle);
             const response = await axios.get(`/blog/${board_id}/${blogToggle.currentCategoriId}`);
             const comments = response.data.boardInfo.comments;
             dispatch(getComments({ comments }));

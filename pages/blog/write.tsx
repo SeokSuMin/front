@@ -23,6 +23,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { addUploadFiles, deleteUploadFile } from '../../reducer/blog/fileProgress';
 import { deleteBoardFiles, IBoardData } from '../../reducer/blog/boardData';
 import { ICategoriMenus } from '../../reducer/blog/categoriMenus';
+import Seo from '../../components/Seo';
 
 dayjs().format();
 
@@ -244,7 +245,7 @@ const Write = () => {
 
             await dispatch(isnertBoard({ boardData, allFileDeleteIds })).unwrap();
             message.success('게시글을 저장했습니다.');
-            router.push('/blog');
+            router.push(`/blog/${detailBoard.board_id}`);
         } catch (err) {
             if (err instanceof Error) {
                 console.log(err.message);
@@ -281,6 +282,7 @@ const Write = () => {
     return (
         <Wrapper>
             <>
+                <Seo title="Ice Man | 블로그"></Seo>
                 <WriteBox>
                     {detailBoard.loading ? (
                         <SpinWrapper>

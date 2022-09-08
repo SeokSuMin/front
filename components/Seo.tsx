@@ -5,7 +5,7 @@ interface ITitle {
 }
 
 const Seo = ({ title }: ITitle) => {
-    const message = `${title} | Next Movies`;
+    const message = `${title}`;
     return (
         <Head>
             <title>{message}</title>

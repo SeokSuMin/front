@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import path from 'path';
+import { memo } from 'react';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';
 import { IBoardData } from '../../reducer/blog/boardData';
@@ -41,14 +42,14 @@ const oneBoxItem = {
 interface IOneBoxListProps {
     leaving: boolean;
     toggleLeaving: () => void;
-    boardList: IBoardData[];
 }
 
-const OneBoxList = ({ leaving, toggleLeaving, boardList }: IOneBoxListProps) => {
+const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
     const router = useRouter();
-    const { viewType } = useAppSelector((state) => state.blogToggle);
+    const { viewType, currentCategoriId } = useAppSelector((state) => state.blogToggle);
+    const { boardList } = useAppSelector((state) => state.boardList);
     const moveDetailPage = (boardId: string) => {
-        router.push(`/blog/${boardId}`);
+        router.push(`/blog/categori_${currentCategoriId}/${boardId}`);
     };
 
     return (
@@ -120,4 +121,4 @@ const OneBoxList = ({ leaving, toggleLeaving, boardList }: IOneBoxListProps) => 
     );
 };
 
-export default OneBoxList;
+export default memo(OneBoxList);

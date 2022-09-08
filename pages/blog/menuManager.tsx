@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import CategoriManage from '../../components/blog/CategoriManage';
 import MenuManage from '../../components/blog/MenuManage';
+import Seo from '../../components/Seo';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getCategoriMenuThunk } from '../../thunk/blogThunk';
 
@@ -49,6 +50,7 @@ const MenuManager = () => {
 
     return (
         <Wrapper>
+            <Seo title="Ice Man | 블로그"></Seo>
             <ChangeWorkBox>
                 <Button onClick={() => changeManageType(1)} type={manageType === 1 ? 'primary' : 'default'}>
                     메뉴관리

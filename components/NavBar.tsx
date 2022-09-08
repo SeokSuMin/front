@@ -208,7 +208,12 @@ const NavBar = () => {
                         {router.pathname === '/' ? <Circle layoutId="active" /> : null}
                     </LiMenu>
                     <LiMenu>
-                        <Link href="/blog/categori/0">
+                        <Link
+                            href={{
+                                pathname: `/blog/categori_0`,
+                                query: { page: '1', countList: '15', type: 'CARD' },
+                            }}
+                        >
                             <a>Blog</a>
                         </Link>
                         {router.pathname.includes('/blog') ? <Circle layoutId="active" /> : null}

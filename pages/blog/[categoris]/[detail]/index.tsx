@@ -1,18 +1,19 @@
 import { CommentOutlined, ExclamationCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { message, Modal, Spin, Tag } from 'antd';
 import styled from 'styled-components';
-import { deleteBoardThunk, getCategoriMenuThunk, getDetailBoardThunk } from '../../thunk/blogThunk';
-import { checkUserloginThunk } from '../../thunk/userThunk';
-import wrapper from '../../store/configStore';
+import { deleteBoardThunk, getCategoriMenuThunk, getDetailBoardThunk } from '../../../../thunk/blogThunk';
+import { checkUserloginThunk } from '../../../../thunk/userThunk';
+import wrapper from '../../../../store/configStore';
 import axios from 'axios';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import dayjs from 'dayjs';
 import parse from 'html-react-parser';
-import { fileBackUrl } from '../../config';
+import { fileBackUrl } from '../../../../config';
 import path from 'path';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Comments from '../../components/comment/Comments';
+import Comments from '../../../../components/comment/Comments';
+import Seo from '../../../../components/Seo';
 
 const { confirm } = Modal;
 
@@ -190,10 +191,12 @@ const DetailBoard = () => {
     const detailBoard = useAppSelector((state) => state.boardData);
     const { comments } = useAppSelector((state) => state.comment);
     const { userId } = useAppSelector((state) => state.userInfo);
+    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
+    const { page, countList } = useAppSelector((state) => state.paging);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
-        router.push(`/blog/${boardId}`);
+        router.push(`/blog/categori_${currentCategoriId}/${boardId}`);
     };
 
     const deletefirm = (boardId: string) => {
@@ -207,7 +210,10 @@ const DetailBoard = () => {
                 try {
                     await dispatch(deleteBoardThunk(boardId)).unwrap();
                     message.success('삭제되었습니다.');
-                    router.push('/blog');
+                    router.push({
+                        pathname: `/blog/categori_${currentCategoriId}`,
+                        query: { page, countList, type: viewType },
+                    });
                 } catch (err) {
                     if (err instanceof Error) {
                         console.log(err.message);
@@ -225,18 +231,20 @@ const DetailBoard = () => {
 
     const initPage = async () => {
         await dispatch(getCategoriMenuThunk());
-        await dispatch(getDetailBoardThunk(router.query.detail as string));
+        const result = await dispatch(getDetailBoardThunk(router.query.detail as string));
+        if (result?.payload?.boardInfo?.board_id !== router.query.detail) {
+            message.warn('존재하지 않는 게시글 입니다.');
+            window.history.back();
+        }
     };
 
     useEffect(() => {
         initPage();
     }, [router.query.detail]);
 
-    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
-    const { page } = useAppSelector((state) => state.paging);
-
     return (
         <Wrapper>
+            <Seo title="Ice Man | 블로그"></Seo>
             {detailBoard.loading ? (
                 <SpinWrapper>
                     <Spin tip="Loading..." />
@@ -278,8 +286,8 @@ const DetailBoard = () => {
                             <button
                                 onClick={() =>
                                     router.push({
-                                        pathname: `/blog/categori/${currentCategoriId}`,
-                                        query: { page, type: viewType },
+                                        pathname: `/blog/categori_${currentCategoriId}`,
+                                        query: { page, countList, type: viewType },
                                     })
                                 }
                             >
