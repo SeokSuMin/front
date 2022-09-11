@@ -90,6 +90,7 @@ const SendBox = styled.div`
 const Write = () => {
     const router = useRouter();
     const { categoriMenus } = useAppSelector((state) => state.categoriMenus);
+    const { currentCategoriId } = useAppSelector((state) => state.blogToggle);
     const detailBoard = useAppSelector((state) => state.boardData);
     const dispatch = useAppDispatch();
 
@@ -245,7 +246,7 @@ const Write = () => {
 
             await dispatch(isnertBoard({ boardData, allFileDeleteIds })).unwrap();
             message.success('게시글을 저장했습니다.');
-            router.push(`/blog/${detailBoard.board_id}`);
+            router.push(`/blog/categori_${currentCategoriId}/${detailBoard.board_id}`);
         } catch (err) {
             if (err instanceof Error) {
                 console.log(err.message);

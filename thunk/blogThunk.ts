@@ -7,6 +7,7 @@ import { getComments, IComment } from '../reducer/blog/comment';
 import { IBoardData } from '../reducer/blog/boardData';
 import { IBlogToggle } from '../reducer/blog/blogToggle';
 import { progress } from '../reducer/blog/fileProgress';
+import { goPage, initTotalCount, IPaging } from '../reducer/blog/paging';
 
 axios.defaults.baseURL = BackUrl;
 axios.defaults.withCredentials = true;
@@ -139,7 +140,7 @@ export const insertCommentThunk = createAsyncThunk(
 
 export const deleteBoardThunk = createAsyncThunk(
     'DELETE_BOARD',
-    async (boardId: string, { getState, requestId, rejectWithValue }) => {
+    async (boardId: string, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
             const response = await axios.delete(`/blog/board/${boardId}`);
             return true;
@@ -169,12 +170,34 @@ export const deleteCommentThunk = createAsyncThunk(
     },
 );
 
-export const updateCategorisThunk = createAsyncThunk(
-    'UPDATE_CATEGORIS',
+export const updateMenuThunk = createAsyncThunk(
+    'UPDATE_MENU',
     async (
         categoriData: {
-            updateData: { menu_name: string; sort: number; categori_id?: number | null }[];
-            deleteMenuIds: string[];
+            updateData: { menu_id: number | null; menu_name: string; sort: number }[];
+            deleteMenuIds: number[];
+        },
+        { getState, requestId, rejectWithValue },
+    ) => {
+        try {
+            const response = await axios.patch(`/blog/menu/update`, categoriData);
+            return response.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
+        }
+    },
+);
+
+export const updateCategorisThunk = createAsyncThunk(
+    'UPDATE_CATEGORI',
+    async (
+        categoriData: {
+            updateData: { categori_id: number | null; menu_id: number; categori_name: string; sort: number }[];
+            deleteCategoriIds: number[];
         },
         { getState, requestId, rejectWithValue },
     ) => {

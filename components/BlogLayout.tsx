@@ -105,8 +105,8 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
             <TopImageBox
                 onClick={() =>
                     router.push({
-                        pathname: `/blog/categori/0`,
-                        query: { page: '1', type: viewType },
+                        pathname: `/blog/categori_0`,
+                        query: { page: '1', countList: '15', type: 'CARD' },
                     })
                 }
             >

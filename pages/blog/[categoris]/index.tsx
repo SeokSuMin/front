@@ -176,8 +176,6 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         if (isNaN(countList as number)) {
             countList = 15;
         }
-
-        // console.log('page!!!', page);
         // console.log(categoriId);
         // console.log(type);
 

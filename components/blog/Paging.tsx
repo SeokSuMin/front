@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { goPage } from '../../reducer/blog';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
@@ -46,8 +45,8 @@ const Paging = () => {
             let movePage = newPageNum > paging.endPage ? paging.endPage : newPageNum;
             movePage = movePage < 1 ? 1 : movePage;
             router.push({
-                pathname: '/blog',
-                query: { page: movePage, categori: currentCategoriId, type: viewType },
+                pathname: `/blog/categori_${currentCategoriId}`,
+                query: { page: movePage, countList: paging.countList, type: viewType },
             });
         }
         return;

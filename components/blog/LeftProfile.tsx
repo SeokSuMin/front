@@ -131,7 +131,6 @@ const EtcBox = styled.div`
 
 const LeftProfile = () => {
     const router = useRouter();
-    const categoris = (router?.query?.categoris as string).split('_')[1];
     const { userId } = useAppSelector((state) => state.userInfo);
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
     const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
@@ -198,8 +197,8 @@ const LeftProfile = () => {
                 ) : null}
                 <span
                     style={{
-                        textDecoration: categoris === '0' ? 'underline' : '',
-                        fontWeight: categoris === '0' ? 'bold' : '',
+                        textDecoration: currentCategoriId === 0 ? 'underline' : '',
+                        fontWeight: currentCategoriId === 0 ? 'bold' : '',
                         marginBottom: '1.25em',
                     }}
                     onClick={() => moveCategoriBoards(+currentCategoriId, 0)}
@@ -208,25 +207,27 @@ const LeftProfile = () => {
                 </span>
                 {categoriMenus?.map((categoriMenu, i) => {
                     return (
-                        <Categoris key={i}>
+                        <Categoris key={categoriMenu.menu_id}>
                             <ul>
                                 <li>
                                     <span>• {categoriMenu.menu_name}</span>
                                 </li>
                                 {categoriMenu.categoris?.map((categori) => {
-                                    const categoriName = Object.keys(categori)[0];
-                                    const totalCount = Object.values(categori)[0];
-                                    return (
-                                        <li
-                                            className={categoris === String(categori.categori_id) ? 'active' : ''}
-                                            onClick={() => moveCategoriBoards(currentCategoriId, categori.categori_id)}
-                                            key={categoriName}
-                                        >
-                                            <span>
-                                                └ {categoriName} ({totalCount})
-                                            </span>
-                                        </li>
-                                    );
+                                    if (categori !== null) {
+                                        return (
+                                            <li
+                                                className={currentCategoriId === categori.categori_id ? 'active' : ''}
+                                                onClick={() =>
+                                                    moveCategoriBoards(currentCategoriId, categori.categori_id)
+                                                }
+                                                key={categori.categori_name}
+                                            >
+                                                <span>
+                                                    └ {categori.categori_name} ({categori.total_count})
+                                                </span>
+                                            </li>
+                                        );
+                                    }
                                 })}
                             </ul>
                         </Categoris>

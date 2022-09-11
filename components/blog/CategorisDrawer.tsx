@@ -84,27 +84,29 @@ const CategorisDrawer = ({ visible, closeDrawer }: ICategorisDrawerProps) => {
                 >
                     전체보기 ({categoriTotal})
                 </span>
-                {categoriMenus?.map((categoriMenu, i) => {
+                {categoriMenus?.map((categoriMenu) => {
                     return (
-                        <Categoris key={i}>
+                        <Categoris key={categoriMenu.menu_id}>
                             <ul>
                                 <li>
                                     <span>• {categoriMenu.menu_name}</span>
                                 </li>
                                 {categoriMenu.categoris?.map((categori) => {
-                                    const categoriName = Object.keys(categori)[0];
-                                    const totalCount = Object.values(categori)[0];
-                                    return (
-                                        <li
-                                            className={currentCategoriId == categori.categori_id ? 'active' : ''}
-                                            onClick={() => moveCategoriBoards(currentCategoriId, categori.categori_id)}
-                                            key={categoriName}
-                                        >
-                                            <span>
-                                                └ {categoriName} ({totalCount})
-                                            </span>
-                                        </li>
-                                    );
+                                    if (categori !== null) {
+                                        return (
+                                            <li
+                                                className={currentCategoriId == categori.categori_id ? 'active' : ''}
+                                                onClick={() =>
+                                                    moveCategoriBoards(currentCategoriId, categori.categori_id)
+                                                }
+                                                key={categori.categori_name}
+                                            >
+                                                <span>
+                                                    └ {categori.categori_name} ({categori.total_count})
+                                                </span>
+                                            </li>
+                                        );
+                                    }
                                 })}
                             </ul>
                         </Categoris>

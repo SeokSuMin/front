@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { updateCategorisThunk } from '../../thunk/blogThunk';
+import { updateMenuThunk } from '../../thunk/blogThunk';
 
 const Wrapper = styled.div``;
 
@@ -106,45 +106,33 @@ const MenuManage = () => {
     // 업데이트 및 메뉴 삭제진행
     const submit = async (value: { [key: string]: string }) => {
         try {
-            const updateData: { menu_name: string; sort: number; categori_id?: number | null }[] = [];
-            const deleteMenuIds: string[] = [];
+            const updateData: { menu_id: number | null; menu_name: string; sort: number }[] = [];
+            const deleteMenuIds: number[] = [];
 
-            for (const c of categoriMenus) {
-                const cIds = c.categoris.map((c) => c.categori_id).join('_');
-                if (deleteIds.find((ids) => ids === cIds)) {
-                    deleteMenuIds.push(cIds);
+            for (const menu of categoriMenus) {
+                const menu_id = menu.menu_id;
+                if (deleteIds.find((id) => +id === menu_id)) {
+                    deleteMenuIds.push(menu_id);
                 } else {
-                    const menu_name = value[`menu${cIds}`];
-                    const sort = value[`sort${cIds}`];
-                    if (updateData.find((data) => data.sort === +sort)) {
-                        message.warn('메뉴 정렬번호는 겹칠 수 없습니다.');
-                        setError(`sort${cIds}`, { message: '' }, { shouldFocus: true });
+                    const result = insertUpdateData('', updateData, value, menu_id);
+                    if (!result) {
                         return;
-                    }
-
-                    // upsert진행위해 배열로 만듬
-                    for (const id of cIds.split('_')) {
-                        console.log(id);
-                        updateData.push({
-                            menu_name,
-                            sort: +sort,
-                            categori_id: +id,
-                        });
+                    } else {
+                        updateData.push(result);
                     }
                 }
             }
             // 추가된 메뉴있으면 적용
             for (const addNumber of addMenus) {
-                const menu_name = value[`new_menu${addNumber}`];
-                const sort = value[`new_sort${addNumber}`];
-                updateData.push({
-                    menu_name,
-                    sort: +sort,
-                    categori_id: null,
-                });
+                const result = insertUpdateData('new_', updateData, value, addNumber);
+                if (!result) {
+                    return;
+                } else {
+                    updateData.push(result);
+                }
             }
 
-            await dispatch(updateCategorisThunk({ updateData, deleteMenuIds })).unwrap();
+            await dispatch(updateMenuThunk({ updateData, deleteMenuIds })).unwrap();
             addMenus.map((number) => cancelMenu(number));
             message.success('저장하였습니다.');
         } catch (err) {
@@ -157,18 +145,39 @@ const MenuManage = () => {
         }
     };
 
+    const insertUpdateData = (
+        valueName: string,
+        updateData: { menu_id: number | null; menu_name: string; sort: number }[],
+        value: { [key: string]: string },
+        menu_id: number,
+    ) => {
+        const menu_name = value[`${valueName}menu${menu_id}`];
+        const sort = +value[`${valueName}sort${menu_id}`];
+        if (updateData.find((data) => data.sort === sort)) {
+            message.warn('메뉴 정렬번호는 겹칠 수 없습니다.');
+            setError(`${valueName}sort${menu_id}`, { message: '' }, { shouldFocus: true });
+            return false;
+        } else {
+            return {
+                menu_id: valueName === 'new_' ? null : menu_id,
+                menu_name,
+                sort,
+            };
+        }
+    };
+
     return (
         <Wrapper>
             <ManagerForm onSubmit={handleSubmit(submit)}>
                 <Checkbox.Group style={{ width: '100%' }} onChange={deleteMenu}>
                     {categoriMenus?.map((categori, i) => {
-                        const allCategoriIds = categori.categoris.map((c) => c.categori_id).join('_');
+                        const menu_id = categori.menu_id;
                         return (
                             <InputBox key={categori.menu_name}>
                                 <div className="menuBox">
                                     <label>{i + 1}</label>
                                     <input
-                                        {...register('menu' + allCategoriIds, {
+                                        {...register(`menu${menu_id}`, {
                                             required: true,
                                         })}
                                         type="text"
@@ -178,7 +187,7 @@ const MenuManage = () => {
                                 </div>
                                 <div className="sortBox">
                                     <input
-                                        {...register('sort' + allCategoriIds, {
+                                        {...register(`sort${menu_id}`, {
                                             required: true,
                                             min: 1,
                                         })}
@@ -187,7 +196,7 @@ const MenuManage = () => {
                                         defaultValue={categori.sort}
                                     />
                                 </div>
-                                <Checkbox value={allCategoriIds} />
+                                <Checkbox value={menu_id} />
                                 <span style={{ marginLeft: 2 }}>(삭제)</span>
                             </InputBox>
                         );

@@ -10,10 +10,11 @@ import dayjs from 'dayjs';
 import parse from 'html-react-parser';
 import { fileBackUrl } from '../../../../config';
 import path from 'path';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Comments from '../../../../components/comment/Comments';
 import Seo from '../../../../components/Seo';
+import { goPage, initTotalCount } from '../../../../reducer/blog/paging';
 
 const { confirm } = Modal;
 
@@ -192,7 +193,8 @@ const DetailBoard = () => {
     const { comments } = useAppSelector((state) => state.comment);
     const { userId } = useAppSelector((state) => state.userInfo);
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
-    const { page, countList } = useAppSelector((state) => state.paging);
+    const { page, countList, totalCount } = useAppSelector((state) => state.paging);
+    const [deleteFlag, setDeleteFlag] = useState(false);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
@@ -209,11 +211,13 @@ const DetailBoard = () => {
             async onOk() {
                 try {
                     await dispatch(deleteBoardThunk(boardId)).unwrap();
-                    message.success('삭제되었습니다.');
-                    router.push({
-                        pathname: `/blog/categori_${currentCategoriId}`,
-                        query: { page, countList, type: viewType },
-                    });
+                    dispatch(initTotalCount(totalCount - 1));
+                    dispatch(goPage(page));
+                    setDeleteFlag(true);
+                    // router.push({
+                    //     pathname: `/blog/categori_${currentCategoriId}`,
+                    //     query: { page, countList, type: viewType },
+                    // });
                 } catch (err) {
                     if (err instanceof Error) {
                         console.log(err.message);
@@ -239,8 +243,15 @@ const DetailBoard = () => {
     };
 
     useEffect(() => {
-        initPage();
-    }, [router.query.detail]);
+        if (deleteFlag) {
+            router.push({
+                pathname: `/blog/categori_${currentCategoriId}`,
+                query: { page, countList, type: viewType },
+            });
+        } else {
+            initPage();
+        }
+    }, [router.query.detail, deleteFlag]);
 
     return (
         <Wrapper>

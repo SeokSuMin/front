@@ -49,14 +49,13 @@ const paging = createSlice({
             if (endPage > totalPage) {
                 endPage = totalPage;
             }
+
             return { ...state, page, totalPage, startPage, endPage, hydration: true };
         },
         changeCountList: (state, action: PayloadAction<number>) => {
             const countList = action.payload;
-            const page = 1;
             return {
                 ...state,
-                page,
                 countList,
                 hydration: true,
             };
