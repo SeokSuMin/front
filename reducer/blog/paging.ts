@@ -25,7 +25,7 @@ const paging = createSlice({
     } as IPaging,
     reducers: {
         initTotalCount: (state, action: PayloadAction<number>) => {
-            const totalCount = action.payload;
+            const totalCount = action.payload !== 0 ? action.payload : 1;
             return {
                 ...state,
                 // uploadFileInfo: [],

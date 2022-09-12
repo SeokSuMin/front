@@ -1,6 +1,6 @@
 import { Dropdown, Menu, Tag } from 'antd';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PencilToggle from '../../public/pencil-solid.svg';
 import GitHub from '../../public/github.svg';
@@ -9,9 +9,8 @@ import { EditOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
-    width: 20%;
+    width: 100%;
     min-width: 8.125rem;
-    height: 100%;
     border: 0.063em solid rgb(217, 217, 217);
     margin-top: 2.324em;
     border-radius: 0.63em;
@@ -129,12 +128,13 @@ const EtcBox = styled.div`
     }
 `;
 
-const LeftProfile = () => {
+const Profile = () => {
     const router = useRouter();
     const { userId } = useAppSelector((state) => state.userInfo);
-    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
+    const { viewType } = useAppSelector((state) => state.blogToggle);
     const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
     const { countList } = useAppSelector((state) => state.paging);
+    const [categoriId, setCategoriId] = useState<string>('');
     const dispatch = useAppDispatch();
 
     const moveWritePage = () => {
@@ -162,6 +162,14 @@ const LeftProfile = () => {
             });
         }
     };
+
+    useEffect(() => {
+        if (router?.query?.categoris) {
+            setCategoriId((router.query.categoris as string).split('_')[1]);
+        } else {
+            setCategoriId('');
+        }
+    }, [router?.query?.categoris]);
 
     const menu = (
         <Menu
@@ -197,11 +205,11 @@ const LeftProfile = () => {
                 ) : null}
                 <span
                     style={{
-                        textDecoration: currentCategoriId === 0 ? 'underline' : '',
-                        fontWeight: currentCategoriId === 0 ? 'bold' : '',
+                        textDecoration: categoriId === '0' ? 'underline' : 'none',
+                        fontWeight: categoriId === '0' ? 'bold' : 'none',
                         marginBottom: '1.25em',
                     }}
-                    onClick={() => moveCategoriBoards(+currentCategoriId, 0)}
+                    onClick={() => moveCategoriBoards(+categoriId, 0)}
                 >
                     전체보기 ({categoriTotal})
                 </span>
@@ -216,10 +224,8 @@ const LeftProfile = () => {
                                     if (categori !== null) {
                                         return (
                                             <li
-                                                className={currentCategoriId === categori.categori_id ? 'active' : ''}
-                                                onClick={() =>
-                                                    moveCategoriBoards(currentCategoriId, categori.categori_id)
-                                                }
+                                                className={+categoriId === categori.categori_id ? 'active' : ''}
+                                                onClick={() => moveCategoriBoards(+categoriId, categori.categori_id)}
                                                 key={categori.categori_name}
                                             >
                                                 <span>
@@ -243,4 +249,4 @@ const LeftProfile = () => {
     );
 };
 
-export default LeftProfile;
+export default Profile;

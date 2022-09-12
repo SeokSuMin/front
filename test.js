@@ -1,3 +1,5 @@
+import * as Cheerio from 'cheerio';
+
 const mockOrgTreeList = [
     {
         label: 'Liberty Health',
@@ -99,8 +101,8 @@ const mockOrgTreeList = [
 ];
 
 function getParamMap(queryString) {
-    let splited = queryString.replace('?', '').split(/[=?&]/);
-    let param = {};
+    const splited = queryString.replace('?', '').split(/[=?&]/);
+    const param = {};
     for (let i = 0; i < splited.length; i++) {
         param[splited[i]] = splited[++i];
     }
@@ -115,7 +117,7 @@ function sumSalaries(department) {
     } else {
         // 두 번째 경우
         let sum = 0;
-        for (let subdep of Object.values(department)) {
+        for (const subdep of Object.values(department)) {
             const temp = sumSalaries(subdep);
             console.log('temp', temp);
             sum = sum + temp;
@@ -125,12 +127,14 @@ function sumSalaries(department) {
     }
 }
 
-// console.log(sumSalaries(bom))
-const url = '/blog/categori_0?page=1&type=CARD';
-const query = url.split('/blog/')[1];
-const categori = url.split('?')[0].split('_')[1];
-const querys = url.split('?')[1];
-const params = new URLSearchParams(querys);
-
-console.log(params.get('page'));
-console.log(params.get('type'));
+function test() {
+    try {
+        const $ = Cheerio.load(
+            `<div id="quillContent"><p><img src="http://localhost:3005/8435977c12e741fa98018e92d6d95481/1662896052367vdf2Q.png" width="821" style="cursor: nesw-resize;"></p><p>안녕하세요~~</p><span>이러나 저러나 똑같네요~~~~</span></div>`,
+        );
+        console.log($);
+    } catch (e) {
+        console.log(e);
+    }
+}
+test();

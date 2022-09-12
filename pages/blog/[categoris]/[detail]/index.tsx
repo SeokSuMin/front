@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import Comments from '../../../../components/comment/Comments';
 import Seo from '../../../../components/Seo';
 import { goPage, initTotalCount } from '../../../../reducer/blog/paging';
+import LeftProfileBox from '../../../../components/blog/LeftProfileBox';
 
 const { confirm } = Modal;
 
@@ -192,13 +193,14 @@ const DetailBoard = () => {
     const detailBoard = useAppSelector((state) => state.boardData);
     const { comments } = useAppSelector((state) => state.comment);
     const { userId } = useAppSelector((state) => state.userInfo);
-    const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
+    const { viewType } = useAppSelector((state) => state.blogToggle);
     const { page, countList, totalCount } = useAppSelector((state) => state.paging);
     const [deleteFlag, setDeleteFlag] = useState(false);
+    const [categoriId, setCategoriId] = useState((router.query.categoris as string).split('_')[1]);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
-        router.push(`/blog/categori_${currentCategoriId}/${boardId}`);
+        router.push(`/blog/categori_${categoriId}/${boardId}`);
     };
 
     const deletefirm = (boardId: string) => {
@@ -245,7 +247,7 @@ const DetailBoard = () => {
     useEffect(() => {
         if (deleteFlag) {
             router.push({
-                pathname: `/blog/categori_${currentCategoriId}`,
+                pathname: `/blog/categori_${categoriId}`,
                 query: { page, countList, type: viewType },
             });
         } else {
@@ -297,7 +299,7 @@ const DetailBoard = () => {
                             <button
                                 onClick={() =>
                                     router.push({
-                                        pathname: `/blog/categori_${currentCategoriId}`,
+                                        pathname: `/blog/categori_${categoriId}`,
                                         query: { page, countList, type: viewType },
                                     })
                                 }

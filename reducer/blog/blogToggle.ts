@@ -8,14 +8,14 @@ export interface IBlogToggle {
 
 const blogToggle = createSlice({
     name: 'blogToggle',
-    initialState: { hydration: false, currentCategoriId: 0 } as IBlogToggle,
+    initialState: { hydration: false, currentCategoriId: 0, viewType: 'CARD' } as IBlogToggle,
     reducers: {
         changeCurrentCategoriId: (state, action: PayloadAction<number>) => {
             const categoriId = action.payload;
             return {
                 ...state,
                 currentCategoriId: categoriId,
-                hydration: true,
+                // hydration: true,
             };
         },
         changeBoardViewType: (state, action: PayloadAction<string>) => {
@@ -23,7 +23,7 @@ const blogToggle = createSlice({
             return {
                 ...state,
                 viewType,
-                hydration: true,
+                // hydration: true,
             };
         },
     },

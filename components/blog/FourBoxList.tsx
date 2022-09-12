@@ -10,6 +10,7 @@ import { fileBackUrl } from '../../config';
 import { IBoardData } from '../../reducer/blog/boardData';
 import { IComment, IComments } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
+import * as Cheerio from 'cheerio';
 
 const CardBox = styled(motion.div)`
     width: 100%;
@@ -21,9 +22,7 @@ const CardBox = styled(motion.div)`
 const Card = styled(motion.div)`
     flex: 0 1 30%;
     margin-right: 5%;
-    height: auto;
-    border: 0.063rem solid rgb(230, 230, 230);
-    margin-top: 1.875em;
+    margin-top: 10%;
     position: relative;
     &::after {
         display: block;
@@ -35,12 +34,12 @@ const Card = styled(motion.div)`
     &:nth-child(3) {
         margin-top: 0px;
     }
-    @media screen and (min-width: 49.065rem) {
+    @media screen and (min-width: 53rem) {
         &:nth-child(3n + 0) {
             margin-right: 0;
         }
     }
-    @media screen and (max-width: 49.063rem) {
+    @media screen and (max-width: 53rem) {
         flex: 0 1 47%;
         margin-right: 6%;
         &:nth-child(2n + 0) {
@@ -48,23 +47,31 @@ const Card = styled(motion.div)`
         }
         &:nth-child(3),
         &:nth-child(4) {
-            margin-top: 1.875em;
+            margin-top: 10%;
         }
     }
 `;
 
 const CardContent = styled(motion.div)`
     width: 100%;
-    height: 100%;
+    height: 120%;
+    @media screen and (max-width: 53rem) {
+        height: 110%;
+    }
     cursor: pointer;
     background-color: white;
     transform-origin: center right;
     position: absolute;
+    margin-top: 5.75em;
+    &:first-child {
+        margin-top: 0px;
+    }
 `;
 
-const ThumImg = styled.div`
+const ThumImg = styled(motion.div)`
     width: 100%;
     height: 55%;
+    border: 0.063rem solid rgb(230, 230, 230);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -74,28 +81,51 @@ const ThumImg = styled.div`
     }
     //
 `;
-const Content = styled.div`
+const Content = styled(motion.div)`
     width: 100%;
     height: 45%;
-    padding: 0.313em;
+    border: 0.063rem solid rgb(230, 230, 230);
+    border-top: none;
+    padding: 0.625em;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    span:first-child {
-        border-radius: 0.313em;
-        background-color: rgb(245, 245, 245);
-        border: none;
-    }
+`;
+const Title = styled.div`
+    height: 30%;
+    display: flex;
+    align-items: center;
     h2 {
         width: 100%;
-        font-size: 0.75rem;
-        font-weight: bold;
+        font-size: 0.875rem;
+        font-weight: 900;
         line-height: 1.2rem;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         overflow: hidden;
-        @media screen and (max-width: 60rem) and (min-width: 49.065rem) {
+        @media screen and (max-width: 54rem) and (min-width: 53rem) {
+            -webkit-line-clamp: 1;
+        }
+        @media screen and (max-width: 40rem) {
+            -webkit-line-clamp: 1;
+        }
+    }
+`;
+const Description = styled.div`
+    height: 30%;
+    display: flex;
+    align-items: center;
+    span {
+        color: gray;
+        width: 100%;
+        font-size: 0.75rem;
+        line-height: 1.2em;
+        width: 100%;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        @media screen and (max-width: 54rem) and (min-width: 53rem) {
             -webkit-line-clamp: 1;
         }
         @media screen and (max-width: 40rem) {
@@ -110,6 +140,7 @@ const TagInfo = styled.div`
 `;
 
 const WriteInfo = styled.div`
+    height: 40%;
     display: flex;
     align-items: center;
     color: gray;
@@ -128,8 +159,8 @@ const WriteInfo = styled.div`
 `;
 
 const ProfileImg = styled.div`
-    width: 1.9rem;
-    height: 1.9rem;
+    width: 1.7rem;
+    height: 1.7rem;
     background-image: url('/profile.png');
     background-position: center;
     background-size: cover;
@@ -172,9 +203,11 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
         router.push(`/blog/categori_${currentCategoriId}/${boardId}`);
     };
 
+    console.log(leaving);
+
     return (
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            {viewType === 'CARD' && !leaving ? (
+        <AnimatePresence initial={false}>
+            {viewType === 'CARD' ? (
                 <CardBox variants={fourBox} initial="hidden" animate="visible" exit="exit">
                     {boardList?.map((board) => {
                         return (
@@ -202,10 +235,12 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                         )}
                                     </ThumImg>
                                     <Content>
-                                        <TagInfo>
+                                        {/* <TagInfo>
                                             <Tag color="blue">{board.categoris.categori_name}</Tag>
-                                        </TagInfo>
-                                        <h2>{board.title}</h2>
+                                        </TagInfo> */}
+                                        <Title>
+                                            <h2>{board.title}</h2>
+                                        </Title>
                                         <WriteInfo>
                                             <ProfileImg />
                                             <span>{board.writer}</span>
@@ -218,6 +253,13 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                                 </span>
                                             ) : null}
                                         </WriteInfo>
+                                        <Description>
+                                            <span>
+                                                {Cheerio.load(board.content).text().length
+                                                    ? Cheerio.load(board.content).text().slice(0, 50)
+                                                    : '(내용없음)'}
+                                            </span>
+                                        </Description>
                                     </Content>
                                 </CardContent>
                             </Card>

@@ -1,5 +1,6 @@
 import { Select } from 'antd';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { memo, MutableRefObject } from 'react';
 import styled from 'styled-components';
 import TwoSquareToggle from '../../public/2-squares.svg';
@@ -20,9 +21,9 @@ const ToggleBox = styled.div`
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    & > div {
+    /* & > div {
         padding-left: 0.625em;
-    }
+    } */
     svg {
         width: 1.125em;
         height: 1.563em;
@@ -35,6 +36,18 @@ const ToggleBox = styled.div`
     }
 `;
 
+const Title = styled.div`
+    margin-right: auto;
+    .menu {
+        font-weight: 900;
+        font-size: 0.875rem;
+    }
+    .categori {
+        color: gray;
+        font-size: 0.75rem;
+    }
+`;
+
 interface ITopMenuProps {
     viewType: string;
     changeListView: (type: string) => void;
@@ -44,8 +57,11 @@ interface ITopMenuProps {
 const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
     const dispath = useAppDispatch();
     const router = useRouter();
+    const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
     const { countList, page } = useAppSelector((state) => state.paging);
     const { currentCategoriId } = useAppSelector((state) => state.blogToggle);
+    const [menuTitle, setMenuTitle] = useState('');
+    const [categoriTitle, setCategoriTitle] = useState('');
     const changeCountListValue = (value: number) => {
         // dispath(changeCountList(value));
         router.push({
@@ -53,10 +69,35 @@ const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
             query: { page, countList: value, type: viewType },
         });
     };
+
+    useEffect(() => {
+        if (currentCategoriId === 0) {
+            setMenuTitle('전체보기');
+            setCategoriTitle('');
+        } else {
+            for (const menu of categoriMenus) {
+                const findCategori = menu.categoris.find((c) => c?.categori_id === currentCategoriId);
+                if (findCategori) {
+                    setMenuTitle(menu.menu_name);
+                    setCategoriTitle(findCategori.categori_name);
+                    break;
+                }
+            }
+        }
+    }, [currentCategoriId]);
+
     return (
         <Wrapper ref={scrollRef}>
             <ToggleBox>
-                {/* <BasicListToggle className={viewType === 2 ? 'active' : ''} onClick={() => changeListView(1)} /> */}
+                <Title>
+                    <span className="menu">{menuTitle}</span>
+                    {currentCategoriId !== 0 ? (
+                        <>
+                            <span> - </span>
+                            <span className="categori">({categoriTitle})</span>
+                        </>
+                    ) : null}
+                </Title>
                 <TwoSquareToggle
                     className={viewType === 'LIST' ? 'active' : ''}
                     onClick={() => changeListView('LIST')}

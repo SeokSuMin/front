@@ -1,6 +1,6 @@
 import { Checkbox, message, Radio, RadioChangeEvent, Space } from 'antd';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -218,12 +218,10 @@ const CategoriManage = () => {
                         <Space direction="vertical">
                             {categoriMenus?.map((categori, i) => {
                                 return (
-                                    <>
-                                        <Radio key={categori.menu_id} value={categori.menu_id}>
-                                            {categori.menu_name}
-                                        </Radio>
+                                    <React.Fragment key={categori.menu_id}>
+                                        <Radio value={categori.menu_id}>{categori.menu_name}</Radio>
                                         <br />
-                                    </>
+                                    </React.Fragment>
                                 );
                             })}
                         </Space>

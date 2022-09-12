@@ -18,6 +18,10 @@ const Wrapper = styled.div`
     flex-direction: column;
     align-items: center;
     position: relative;
+
+    .ant-back-top {
+        right: 50px;
+    }
 `;
 
 const IntroLayout = styled.div`

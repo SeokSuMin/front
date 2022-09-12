@@ -51,18 +51,24 @@ interface ICategorisDrawerProps {
 const CategorisDrawer = ({ visible, closeDrawer }: ICategorisDrawerProps) => {
     const router = useRouter();
     const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
+    const { countList } = useAppSelector((state) => state.paging);
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
     const dispatch = useAppDispatch();
 
     const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
-        if (router.pathname !== '/blog' || currentCategoriId !== newCategoriId) {
-            closeDrawer();
-            dispatch(changeCurrentCategoriId(newCategoriId));
-            router.push({
-                pathname: `/blog/categori/${newCategoriId}`,
-                query: { page: '1', type: viewType },
-            });
-        }
+        // if (router.pathname !== '/blog' || currentCategoriId !== newCategoriId) {
+        //     closeDrawer();
+        //     dispatch(changeCurrentCategoriId(newCategoriId));
+        //     router.push({
+        //         pathname: `/blog/categori_${newCategoriId}`,
+        //         query: { page: '1', countList, type: viewType },
+        //     });
+        // }
+        closeDrawer();
+        router.push({
+            pathname: `/blog/categori_${newCategoriId}`,
+            query: { page: '1', countList, type: viewType },
+        });
     };
     return (
         <Drawer

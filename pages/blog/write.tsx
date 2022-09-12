@@ -24,6 +24,7 @@ import { addUploadFiles, deleteUploadFile } from '../../reducer/blog/fileProgres
 import { deleteBoardFiles, IBoardData } from '../../reducer/blog/boardData';
 import { ICategoriMenus } from '../../reducer/blog/categoriMenus';
 import Seo from '../../components/Seo';
+import { useBeforeunload } from 'react-beforeunload';
 
 dayjs().format();
 
@@ -31,7 +32,7 @@ const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), {
 
 const Wrapper = styled.div`
     width: 100%;
-    margin-left: 0.63em;
+    padding: 0px 1.875em 0px 1.875em;
     margin-top: 3.74em;
     position: relative;
     z-index: 0;
@@ -85,9 +86,13 @@ const ContentBox = styled.div`
 const SendBox = styled.div`
     padding-top: 0.63em;
     text-align: right;
+    button:first-child {
+        margin-right: 0.625em;
+    }
 `;
 
 const Write = () => {
+    useBeforeunload((event) => event.preventDefault());
     const router = useRouter();
     const { categoriMenus } = useAppSelector((state) => state.categoriMenus);
     const { currentCategoriId } = useAppSelector((state) => state.blogToggle);
@@ -98,17 +103,17 @@ const Write = () => {
     const titleInputRef = useRef<InputRef | null>(null);
     const quillRef = useRef<any>(null);
 
-    const [menu, setMenu] = useState<string>('');
+    const [menuId, setMenuId] = useState<number>();
     const [categoriId, setCategoriId] = useState<number>(0);
     const [files, setFiles] = useState<File[]>([]);
     const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
 
-    const changeMenu = (value: string) => {
-        setMenu(value);
+    const changeMenu = (value: number) => {
+        setMenuId(value);
         // setCategoris(categoriMenus?.find((cData) => cData.menu_name === value).categoris);
-        const c = categoriMenus?.find((cData) => cData.menu_name === value)?.categoris[0];
-        if (c) {
-            setCategoriId(c.categori_id);
+        const menu = categoriMenus?.find((menuData) => menuData.menu_id === value)?.categoris[0];
+        if (menu) {
+            setCategoriId(menu.categori_id);
         }
     };
 
@@ -246,7 +251,11 @@ const Write = () => {
 
             await dispatch(isnertBoard({ boardData, allFileDeleteIds })).unwrap();
             message.success('게시글을 저장했습니다.');
-            router.push(`/blog/categori_${currentCategoriId}/${detailBoard.board_id}`);
+            if (router.query.mode === 'modify') {
+                router.push(`/blog/categori_${currentCategoriId}/${detailBoard.board_id}`);
+            } else {
+                window.history.back();
+            }
         } catch (err) {
             if (err instanceof Error) {
                 console.log(err.message);
@@ -262,59 +271,69 @@ const Write = () => {
         const resultCategoris = result.payload as ICategoriMenus;
         if (router?.query?.mode === 'modify') {
             const boardResult = await (await dispatch(getDetailBoardThunk(router.query.detail as string))).payload;
-            for (const c of resultCategoris.categoriMenus) {
-                const findC = c.categoris.find((childC) => childC.categori_id === boardResult.boardInfo.categori_id);
+            for (const menu of resultCategoris.categoriMenus) {
+                const findC = menu.categoris.find((childC) => childC.categori_id === boardResult.boardInfo.categori_id);
                 if (findC) {
-                    setMenu(Object.values(c)[0] as string);
+                    setMenuId(menu.menu_id);
                     setCategoriId(findC.categori_id);
                     break;
                 }
             }
         } else {
-            setMenu(resultCategoris?.categoriMenus[0]?.menu_name);
+            setMenuId(resultCategoris?.categoriMenus[0]?.menu_id);
             setCategoriId(resultCategoris?.categoriMenus[0]?.categoris[0].categori_id);
         }
     };
 
+    const beforeunload = (e: BeforeUnloadEvent) => {
+        const dialogText = 'Dialog text here';
+        e.preventDefault();
+        e.returnValue = dialogText;
+        return dialogText;
+    };
+
     useEffect(() => {
         initPage();
+        window.addEventListener('beforeunload', beforeunload);
+        return () => {
+            window.removeEventListener('beforeunload', beforeunload);
+        };
     }, [router.query.mode]);
 
     return (
         <Wrapper>
-            <>
-                <Seo title="Ice Man | 블로그"></Seo>
-                <WriteBox>
-                    {detailBoard.loading ? (
-                        <SpinWrapper>
-                            <Spin tip="게시글 작성하는 중..." />
-                        </SpinWrapper>
-                    ) : null}
-                    <WriteInput
-                        {...{
-                            titleInputRef,
-                            // menuInputRef,
-                            // categoriInputRef,
-                            menu,
-                            categoriMenus,
-                            // categoris,
-                            categoriId,
-                            changeMenu,
-                            changeCategori,
-                        }}
-                    />
-                    <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
-                    <FileLists {...{ deleteFile }} />
-                    <ContentBox>
-                        <QuillEditor {...{ quillRef }} />
-                    </ContentBox>
-                </WriteBox>
-                <SendBox>
-                    <Button disabled={detailBoard.loading} onClick={submit} type="primary">
-                        작성완료
-                    </Button>
-                </SendBox>
-            </>
+            <Seo title="Ice Man | 블로그"></Seo>
+            <WriteBox>
+                {detailBoard.loading ? (
+                    <SpinWrapper>
+                        <Spin tip="게시글 작성하는 중..." />
+                    </SpinWrapper>
+                ) : null}
+                <WriteInput
+                    {...{
+                        titleInputRef,
+                        // menuInputRef,
+                        // categoriInputRef,
+                        menuId,
+                        categoriMenus,
+                        // categoris,
+                        categoriId,
+                        changeMenu,
+                        changeCategori,
+                    }}
+                />
+                <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
+                <FileLists {...{ deleteFile }} />
+                <ContentBox>
+                    <QuillEditor {...{ quillRef }} />
+                </ContentBox>
+            </WriteBox>
+            <SendBox>
+                <Button onClick={() => window.history.back()}>취소</Button>
+                <Button disabled={detailBoard.loading} onClick={submit} type="primary">
+                    작성완료
+                </Button>
+            </SendBox>
         </Wrapper>
     );
 };

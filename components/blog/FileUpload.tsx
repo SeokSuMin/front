@@ -9,15 +9,6 @@ interface IFileUploadProps {
     onUploadFileButtonClick: () => void;
 }
 
-const Lable = styled.label`
-    width: 8%;
-    text-align: left;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-right: 0.725em;
-    margin-left: 0.725em;
-`;
-
 const FileUploadBox = styled.div`
     display: flex;
     align-items: center;
@@ -27,6 +18,15 @@ const FileUploadBox = styled.div`
         display: flex;
         align-items: center;
     }
+`;
+
+const Lable = styled.label`
+    width: 10%;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 0.725em;
+    /* margin-left: 0.725em; */
 `;
 
 const FileUpload = ({ inputRef, onUploadFile, onUploadFileButtonClick }: IFileUploadProps) => {

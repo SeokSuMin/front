@@ -10,12 +10,19 @@ import { fileBackUrl } from '../../config';
 import { IBoardData } from '../../reducer/blog/boardData';
 import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
+import * as Cheerio from 'cheerio';
 
 const Content = styled.div`
-    margin-top: 2em;
-    margin-left: 3.2em;
     font-size: 0.938rem;
     font-weight: bold;
+    color: black;
+`;
+
+const Description = styled.div`
+    font-size: 0.825rem;
+    margin-left: 3.692em;
+    margin-top: 1.538em;
+    color: gray;
 `;
 
 const oneBox = {
@@ -53,8 +60,8 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
     };
 
     return (
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            {viewType === 'LIST' && !leaving ? (
+        <AnimatePresence initial={false}>
+            {viewType === 'LIST' ? (
                 <motion.div variants={oneBox} initial="hidden" animate="visible" exit="exit">
                     <List
                         size="small"
@@ -95,22 +102,42 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                 >
                                     <List.Item.Meta
                                         avatar={<Avatar src={'/profile.png'} />}
-                                        title={<span>{item.writer}</span>}
+                                        title={
+                                            <>
+                                                <span>{item.writer}</span>
+                                                <span style={{ fontSize: '0.750rem' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                                                <span style={{ fontSize: '0.750rem', color: 'gray' }}>
+                                                    {dayjs(item.createdAt).format('YYYY MM DD HH:mm')}
+                                                </span>
+                                            </>
+                                        }
                                         description={
                                             <>
-                                                <span>{dayjs(item.createdAt).format('YYYY MM DD HH:mm')}</span>
-                                                {item?.comments?.length ? (
-                                                    <span style={{ marginLeft: '1em' }}>
-                                                        <CommentOutlined /> (
-                                                        {item?.comments?.filter((c) => c.parent_id === null).length})
-                                                    </span>
-                                                ) : null}
+                                                <Content>
+                                                    <a onClick={() => moveDetailPage(item.board_id)}>
+                                                        {item.title}
+                                                        {item?.comments?.length ? (
+                                                            <span style={{ marginLeft: '1em' }}>
+                                                                <CommentOutlined /> (
+                                                                {
+                                                                    item?.comments?.filter((c) => c.parent_id === null)
+                                                                        .length
+                                                                }
+                                                                )
+                                                            </span>
+                                                        ) : null}
+                                                    </a>
+                                                </Content>
                                             </>
                                         }
                                     />
-                                    <Content>
-                                        <a onClick={() => moveDetailPage(item.board_id)}>{item.title}</a>
-                                    </Content>
+                                    <Description>
+                                        <a onClick={() => moveDetailPage(item.board_id)}>
+                                            {Cheerio.load(item.content).text().length
+                                                ? Cheerio.load(item.content).text().slice(0, 100)
+                                                : '(내용없음)'}
+                                        </a>
+                                    </Description>
                                 </List.Item>
                             </motion.div>
                         )}

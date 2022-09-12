@@ -18,12 +18,11 @@ const TitleBox = styled.div`
 `;
 
 const Lable = styled.label`
-    width: 8%;
+    width: 10%;
     text-align: left;
     font-size: 0.8rem;
     font-weight: bold;
     margin-right: 0.725em;
-    margin-left: 0.725em;
 `;
 
 const CategoriBox = styled.div`
@@ -33,7 +32,7 @@ const CategoriBox = styled.div`
 `;
 const WriteInput = styled(Input)`
     height: 1.7rem;
-    width: 80%;
+    width: 90%;
 
     &:nth-child(3),
     &:nth-child(4) {
@@ -43,37 +42,23 @@ const WriteInput = styled(Input)`
 `;
 
 interface IWriteInputProps {
-    // title: string;
-    // changeTitle: (e: React.FormEvent<HTMLInputElement>) => void;
     titleInputRef: React.MutableRefObject<InputRef | null>;
-    // categoriInputRef: React.MutableRefObject<InputRef>;
-    // menuInputRef: React.MutableRefObject<InputRef>;
-    menu: string;
+    menuId: number | undefined;
     categoriMenus: {
+        menu_id: number;
         menu_name: string;
-        categoris: [
-            {
-                [key: string]: number;
-            },
-        ];
+        sort: number;
+        categoris: [{ categori_id: number; menu_id: number; sort: number; categori_name: string; total_count: number }];
     }[];
-    // categoris: [
-    //     {
-    //         [key: string]: string | number;
-    //     },
-    // ];
     categoriId: number;
-    changeMenu: (value: string) => void;
+    changeMenu: (value: number) => void;
     changeCategori: (value: number) => void;
 }
 
 const WriteTtile = ({
     titleInputRef,
-    // menuInputRef,
-    // categoriInputRef,
-    menu,
+    menuId,
     categoriMenus,
-    // categoris,
     categoriId,
     changeMenu,
     changeCategori,
@@ -102,32 +87,33 @@ const WriteTtile = ({
             </TitleBox>
             <CategoriBox>
                 <Lable>메뉴명</Lable>
-                <Select value={menu} onChange={changeMenu}>
-                    {categoriMenus?.map((categoriMenu) => (
-                        <Option key={categoriMenu.menu_name} value={categoriMenu.menu_name}>
-                            {categoriMenu.menu_name}
-                        </Option>
-                    ))}
-                    {/* <Option value="direct">직접입력</Option> */}
+                <Select value={menuId} onChange={changeMenu}>
+                    {categoriMenus?.map((categoriMenu) => {
+                        if (categoriMenu.categoris[0] !== null) {
+                            return (
+                                <Option key={categoriMenu.menu_id} value={categoriMenu.menu_id}>
+                                    {categoriMenu.menu_name}
+                                </Option>
+                            );
+                        }
+                    })}
                 </Select>
-                {/* {menu === 'direct' ? <WriteInput ref={menuInputRef} placeholder="메뉴이름" /> : null} */}
             </CategoriBox>
             <CategoriBox>
                 <Lable>카테고리</Lable>
                 <Select style={{ minWidth: 80 }} value={categoriId} onChange={changeCategori}>
                     {categoriMenus
-                        ?.find((mData) => mData.menu_name === menu)
+                        ?.find((mData) => mData.menu_id === menuId)
                         ?.categoris.map((categori) => {
-                            const categoriName = Object.keys(categori)[0];
-                            return (
-                                <Option key={categori.categori_id} value={categori.categori_id}>
-                                    {categoriName}
-                                </Option>
-                            );
+                            if (categori !== null) {
+                                return (
+                                    <Option key={categori.categori_id} value={categori.categori_id}>
+                                        {categori.categori_name}
+                                    </Option>
+                                );
+                            }
                         })}
-                    {/* <Option value="direct">직접입력</Option> */}
                 </Select>
-                {/* {categoriId === 'direct' ? <WriteInput ref={categoriInputRef} placeholder="카테고리" /> : null} */}
             </CategoriBox>
         </Wrapper>
     );

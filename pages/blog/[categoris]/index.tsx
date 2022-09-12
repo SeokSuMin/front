@@ -16,9 +16,11 @@ import { changeCountList, goPage, initTotalCount } from '../../../reducer/blog/p
 import { useRouter } from 'next/router';
 import { changeCurrentCategoriId, changeBoardViewType } from '../../../reducer/blog/blogToggle';
 import Seo from '../../../components/Seo';
+import LeftProfileBox from '../../../components/blog/LeftProfileBox';
 
 const Wrapper = styled.div`
     width: 100%;
+    height: 100%;
     .ant-spin-spinning {
         width: 100%;
         height: 100%;
@@ -85,18 +87,20 @@ const Home = () => {
         if (leaving) {
             return;
         }
+
         // dispatch(changeBoardViewType(type));
         router.push({
             pathname: `/blog/categori_${currentCategoriId}`,
             query: { page, countList, type },
         });
-        setLeaving(true);
+        // if (boardList?.length) {
+        //     setLeaving(true);
+        // }
     };
 
     const toggleLeaving = () => {
         setLeaving((prev) => !prev);
     };
-
     // const initPage = async () => {
     //     try {
     //         // const numberRegExp = /[0-9]/;
@@ -127,22 +131,21 @@ const Home = () => {
     //     }
     // };
 
-    // useEffect(() => {
-    //     initPage();
-    // }, [router?.query?.page, router?.query?.categoris, router?.query?.type]);
-
     return (
         <Wrapper>
             <Seo title="Ice Man | 블로그"></Seo>
-            {boardList?.length ? (
-                <ContentBox>
-                    <TopMenu {...{ viewType, changeListView, scrollRef }} />
-                    <FourBoxList {...{ leaving, toggleLeaving }} />
-                    <OneBoxList {...{ leaving, toggleLeaving }} />
-                    <Paging />
-                </ContentBox>
-            ) : (
-                <Empty description={<span>게시글이 없습니다.</span>} style={{ marginTop: 100 }} />
+            <ContentBox>
+                <TopMenu {...{ viewType, changeListView, scrollRef }} />
+                {boardList?.length ? (
+                    <>
+                        <FourBoxList {...{ leaving, toggleLeaving }} />
+                        <OneBoxList {...{ leaving, toggleLeaving }} />
+                        <Paging />
+                    </>
+                ) : null}
+            </ContentBox>
+            {boardList?.length ? null : (
+                <Empty description={<span>게시글이 없습니다.</span>} style={{ marginTop: 200 }} />
             )}
         </Wrapper>
     );
