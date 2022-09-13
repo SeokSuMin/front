@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PencilToggle from '../../public/pencil-solid.svg';
 import GitHub from '../../public/github.svg';
+import FaceBook from '../../public/facebook.svg';
+import Instagram from '../../public/instagram.svg';
+import Mail from '../../public/mail.svg';
 import EllipsisDot from '../../public/ellipsis-dot.svg';
 import { EditOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -118,13 +121,17 @@ const Categoris = styled.div`
 
 const EtcBox = styled.div`
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     /* margin-top: 1.25em; */
     border-top: 0.063em solid rgb(217, 217, 217);
     text-align: center;
-    padding: 0.63em;
+    padding-top: 0.63em;
+
     svg {
-        margin-top: 0.313em;
-        width: 1.875rem;
+        margin-left: 0.313em;
+        width: 1.5rem;
     }
 `;
 
@@ -241,7 +248,16 @@ const Profile = () => {
                 })}
             </CategoriBox>
             <EtcBox>
-                <a href="">
+                <a href="https://www.instagram.com/seoks00min/" target="_blank" rel="noreferrer">
+                    <Instagram />
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=100004078510540" target="_blank" rel="noreferrer">
+                    <FaceBook />
+                </a>
+                <a onClick={() => window.open('mailto:yahoo2344@naver.com?subject=&body=')}>
+                    <Mail />
+                </a>
+                <a href="https://github.com/SeokSuMin/front" target="_blank" rel="noreferrer">
                     <GitHub />
                 </a>
             </EtcBox>

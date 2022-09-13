@@ -60,7 +60,8 @@ const SpinWrapper = styled.div`
 const TopMenuBox = styled.div`
     width: 98%;
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
+    justify-content: flex-end;
     padding-bottom: 0.625em;
     button {
         margin-left: 0.357em;

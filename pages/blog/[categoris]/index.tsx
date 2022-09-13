@@ -37,6 +37,9 @@ const Wrapper = styled.div`
 const ContentBox = styled.div`
     width: 100%;
     padding-left: 1.875em;
+    @media screen and (max-width: 36rem) {
+        padding-left: 0px;
+    }
     position: relative;
 `;
 

@@ -4,12 +4,12 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
     width: 100%;
-    margin-top: 40px;
+    margin-top: 5em;
 `;
 
 const PagingBox = styled.div`
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 `;
 
 const PagingList = styled.ul`
