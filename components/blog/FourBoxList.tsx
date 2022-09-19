@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import path from 'path';
 import { memo } from 'react';
 import styled from 'styled-components';
-import { fileBackUrl } from '../../config';
+import { fileBackUrl, imgExtFormat } from '../../config';
 import { IBoardData } from '../../reducer/blog/boardData';
 import { IComment, IComments } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
@@ -202,9 +202,6 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
     const moveDetailPage = (boardId: string) => {
         router.push(`/blog/categori_${currentCategoriId}/${boardId}`);
     };
-
-    console.log(leaving);
-
     return (
         <AnimatePresence initial={false}>
             {viewType === 'CARD' ? (
@@ -221,14 +218,33 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                     transition={{ type: 'tween', duration: 0.2 }}
                                 >
                                     <ThumImg>
-                                        {board.board_files?.find((file) => path.extname(file.name) === '.png') ? (
+                                        {board.board_files?.find((file) =>
+                                            imgExtFormat.includes(path.extname(file.name).toLocaleLowerCase()),
+                                        ) ? (
                                             <img
                                                 alt="example"
-                                                src={`${fileBackUrl}${board.board_id}/${
-                                                    board.board_files?.find(
-                                                        (file) => path.extname(file.name) === '.png',
-                                                    )?.name
-                                                }`}
+                                                src={
+                                                    [1].map((v) => {
+                                                        const $ = Cheerio.load(board.content);
+                                                        const firstImage = Array.from(
+                                                            $('#quillContent').find('*'),
+                                                        ).find((tag) => {
+                                                            if ($(tag).prop('tagName') === 'IMG') {
+                                                                return true;
+                                                            } else {
+                                                                return false;
+                                                            }
+                                                        });
+                                                        return $(firstImage).prop('src') as string;
+                                                    })[0]
+                                                }
+                                                // src={`${fileBackUrl}${board.board_id}/${
+                                                //     board.board_files?.find((file) =>
+                                                //         imgExtFormat.includes(
+                                                //             path.extname(file.name).toLocaleLowerCase(),
+                                                //         ),
+                                                //     )?.name
+                                                // }`}
                                             />
                                         ) : (
                                             <img alt="example" src="../../no-image.JPG" />

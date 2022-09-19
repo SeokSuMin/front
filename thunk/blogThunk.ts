@@ -51,10 +51,10 @@ export const getBoardListThunk = createAsyncThunk(
 
 export const getDetailBoardThunk = createAsyncThunk(
     'GET_DETAIL_BOARD',
-    async (board_id: string, { dispatch, getState, requestId, rejectWithValue }) => {
+    async (condition: { boardId: string; categoriId: number }, { dispatch, getState, requestId, rejectWithValue }) => {
         try {
-            const { blogToggle } = getState() as { blogToggle: IBlogToggle };
-            const response = await axios.get(`/blog/${board_id}/${blogToggle.currentCategoriId}`);
+            // const { blogToggle } = getState() as { blogToggle: IBlogToggle };
+            const response = await axios.get(`/blog/${condition.boardId}/${condition.categoriId}`);
             const comments = response.data.boardInfo.comments;
             dispatch(getComments({ comments }));
             delete response.data.boardInfo.comments;
@@ -72,7 +72,11 @@ export const getDetailBoardThunk = createAsyncThunk(
 export const isnertBoard = createAsyncThunk(
     'INSERT_BOARD',
     async (
-        insertData: { boardData: IBoardData; allFileDeleteIds: number[] },
+        insertData: {
+            boardData: IBoardData;
+            allFileDeleteIds: number[];
+            imgFileName: { board_id: string; name: string }[];
+        },
         { dispatch, getState, requestId, rejectWithValue },
     ) => {
         try {
@@ -99,12 +103,15 @@ export const isnertBoard = createAsyncThunk(
                     },
                 });
             }
+            // 일반 파일 처리
             const fileNames = insertData.boardData.uploadFiles.map((file) => {
                 return {
                     board_id: insertData.boardData.board_id,
                     name: file.name,
                 };
             });
+            // 이미지 파일처리
+            fileNames.push(...insertData.imgFileName);
             // delete insertData.boardData.uploadFiles;
             await axios.post(`/blog/board/insert`, {
                 boardData: insertData.boardData,

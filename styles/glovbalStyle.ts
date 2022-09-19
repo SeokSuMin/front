@@ -36,8 +36,7 @@ const GlobalStyle = createGlobalStyle`
     }
     body {
         line-height: 1;
-        font-family: 'Source Sans Pro', sans-serif;
-        
+        font-family: 'Source Sans Pro', sans-serif;       
     }
     menu, ol, ul {
         list-style: none;
@@ -103,6 +102,7 @@ const GlobalStyle = createGlobalStyle`
         font-size: 0.75rem;
         align-items: center;
     }
+
 `;
 
 export default GlobalStyle;

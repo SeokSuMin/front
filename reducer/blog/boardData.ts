@@ -73,7 +73,7 @@ const boardData = createSlice({
                 };
             })
             .addCase(getDetailBoardThunk.fulfilled, (state, action) => {
-                const prevNextIds = action.payload.prevNextBoardIds[0];
+                const prevNextIds = action.payload.prevNextBoardIds ? action.payload.prevNextBoardIds[0] : '';
                 const detailBoard = {
                     ...action.payload.boardInfo,
                     prevBoardId: prevNextIds ? prevNextIds.prev : '',

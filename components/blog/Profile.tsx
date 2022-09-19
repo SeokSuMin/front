@@ -129,9 +129,13 @@ const EtcBox = styled.div`
     text-align: center;
     padding-top: 0.63em;
 
-    svg {
+    a {
         margin-left: 0.313em;
         width: 1.5rem;
+    }
+
+    a:first-child {
+        margin-left: 0px;
     }
 `;
 

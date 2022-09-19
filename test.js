@@ -1,4 +1,4 @@
-import * as Cheerio from 'cheerio';
+const Cheerio = require('cheerio');
 
 const mockOrgTreeList = [
     {
@@ -127,14 +127,12 @@ function sumSalaries(department) {
     }
 }
 
-function test() {
-    try {
-        const $ = Cheerio.load(
-            `<div id="quillContent"><p><img src="http://localhost:3005/8435977c12e741fa98018e92d6d95481/1662896052367vdf2Q.png" width="821" style="cursor: nesw-resize;"></p><p>안녕하세요~~</p><span>이러나 저러나 똑같네요~~~~</span></div>`,
-        );
-        console.log($);
-    } catch (e) {
-        console.log(e);
+Array.from(
+    Cheerio.load(
+        '<div id="quillContent"><p>후아유?</p><p><br></p><p style="text-align: center;"><img src="http://localhost:3005/a5f84d6639ad40168d218e233a9548bb/KakaoTalk_20220815_2358312571663217571229.jpg" width="680"></p></div>',
+    ),
+).find((tag) => {
+    if (tag.prop('tagName') === 'IMG') {
+        console.log(tag);
     }
-}
-test();
+});

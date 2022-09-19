@@ -16,7 +16,7 @@ import { getCategoriMenuThunk, getDetailBoardThunk, isnertBoard } from '../../th
 import path from 'path';
 
 import { v4 as uuidv4 } from 'uuid';
-import { fileBackUrl } from '../../config';
+import { fileBackUrl, imgExtFormat } from '../../config';
 import { constants } from 'fs';
 import Router, { useRouter } from 'next/router';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -29,6 +29,7 @@ import { useBeforeunload } from 'react-beforeunload';
 dayjs().format();
 
 const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), { ssr: false });
+// const CkEditors = dynamic(() => import('../../components/blog/CkEditors'), { ssr: false });
 
 const Wrapper = styled.div`
     width: 100%;
@@ -70,13 +71,14 @@ const ContentBox = styled.div`
     flex-direction: column;
     .ql-editor {
         height: 27rem;
+        line-height: 2em;
     }
     .ql-editor {
         overflow-y: auto;
         resize: vertical;
     }
     strong {
-        font-weight: bold;
+        font-weight: 900;
     }
     em {
         font-style: italic;
@@ -95,19 +97,22 @@ const Write = () => {
     useBeforeunload((event) => event.preventDefault());
     const router = useRouter();
     const { categoriMenus } = useAppSelector((state) => state.categoriMenus);
-    const { currentCategoriId } = useAppSelector((state) => state.blogToggle);
     const detailBoard = useAppSelector((state) => state.boardData);
+    const { viewType } = useAppSelector((state) => state.blogToggle);
+    const { countList } = useAppSelector((state) => state.paging);
     const dispatch = useAppDispatch();
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const titleInputRef = useRef<InputRef | null>(null);
     const quillRef = useRef<any>(null);
 
+    const [pageCategori, setPageCategori] = useState<string>('0');
     const [menuId, setMenuId] = useState<number>();
     const [categoriId, setCategoriId] = useState<number>(0);
     const [files, setFiles] = useState<File[]>([]);
     const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
-
+    const [uuid, setUuid] = useState('');
+    1;
     const changeMenu = (value: number) => {
         setMenuId(value);
         // setCategoris(categoriMenus?.find((cData) => cData.menu_name === value).categoris);
@@ -192,8 +197,9 @@ const Write = () => {
                 ? Cheerio.load(`<div id='quillContent'>${quillRef?.current?.state?.value}</div>`)
                 : '';
             const fileArr: File[] = [...files];
+            const imgFileName: { board_id: string; name: string }[] = [];
             const allFileDeleteIds: number[] = [];
-            const uuid = router?.query?.mode === 'modify' ? detailBoard?.board_id : uuidv4().split('-').join('');
+            // const uuid = router?.query?.mode === 'modify' ? detailBoard?.board_id : uuidv4().split('-').join('');
 
             // 삭제된 이미지 파일 체크를 위한 이미지 이름 배열
             let prevBoardFileNames: string[] =
@@ -201,7 +207,7 @@ const Write = () => {
                     ? detailBoard?.board_files
                         ? detailBoard?.board_files
                               .map((file) => file.name)
-                              .filter((file) => path.extname(file) === '.png')
+                              .filter((file) => imgExtFormat.includes(path.extname(file).toLocaleLowerCase()))
                         : []
                     : [];
             const boardData = { board_id: uuid } as IBoardData;
@@ -213,25 +219,15 @@ const Write = () => {
                 await Promise.all(
                     allTags.map(async (tag) => {
                         if ($(tag).prop('tagName') === 'IMG') {
-                            const base64Img = $(tag).prop('src') as string;
-                            // 기존 파일이 아닌것만 파일추가 작업 진행
-                            if (!base64Img.includes(fileBackUrl)) {
-                                const fileName =
-                                    dayjs().valueOf() +
-                                    base64Img
-                                        .slice(-8)
-                                        .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, '') +
-                                    '.png';
-                                const filePath = fileBackUrl + uuid + '/' + fileName;
-                                const convertIamgeFile = await rlto(base64Img, fileName, { type: 'image/*' });
-                                fileArr.push(convertIamgeFile);
-                                $(tag).prop('src', filePath);
-                                // 기존 추가된 이미지에서 없으면 삭제진행
-                            } else if (
-                                prevBoardFileNames.length &&
-                                prevBoardFileNames.find((name) => base64Img.includes(name))
-                            ) {
-                                prevBoardFileNames = prevBoardFileNames.filter((name) => !base64Img.includes(name));
+                            const imgSrc = $(tag).prop('src') as string;
+                            // 수정시 기존 저장된 이미지 비교후 삭제 진행, 신규 이미지는 추가
+                            if (prevBoardFileNames.find((name) => imgSrc.includes(name))) {
+                                prevBoardFileNames = prevBoardFileNames.filter((name) => !imgSrc.includes(name));
+                            } else if (!prevBoardFileNames.find((name) => imgSrc.includes(name))) {
+                                imgFileName.push({
+                                    board_id: uuid,
+                                    name: imgSrc.split('/')[imgSrc.split('/').length - 1],
+                                });
                             }
                         }
                     }),
@@ -248,13 +244,15 @@ const Write = () => {
             boardData.categori_id = categoriId as number;
             boardData.uploadFiles = fileArr;
             allFileDeleteIds.push(...deleteFileIds);
-
-            await dispatch(isnertBoard({ boardData, allFileDeleteIds })).unwrap();
+            await dispatch(isnertBoard({ boardData, allFileDeleteIds, imgFileName })).unwrap();
             message.success('게시글을 저장했습니다.');
             if (router.query.mode === 'modify') {
-                router.push(`/blog/categori_${currentCategoriId}/${detailBoard.board_id}`);
+                router.push(`/blog/categori_${categoriId}/${detailBoard.board_id}`);
             } else {
-                window.history.back();
+                router.push({
+                    pathname: `/blog/categori_${categoriId}`,
+                    query: { page: '1', countList, type: viewType },
+                });
             }
         } catch (err) {
             if (err instanceof Error) {
@@ -270,18 +268,23 @@ const Write = () => {
         const result = await dispatch(getCategoriMenuThunk());
         const resultCategoris = result.payload as ICategoriMenus;
         if (router?.query?.mode === 'modify') {
-            const boardResult = await (await dispatch(getDetailBoardThunk(router.query.detail as string))).payload;
+            const boardResult = await (
+                await dispatch(getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: -1 }))
+            ).payload;
             for (const menu of resultCategoris.categoriMenus) {
                 const findC = menu.categoris.find((childC) => childC.categori_id === boardResult.boardInfo.categori_id);
                 if (findC) {
                     setMenuId(menu.menu_id);
                     setCategoriId(findC.categori_id);
+                    setUuid(boardResult.boardInfo.board_id);
+                    // setPageCategori(router.query.categoriId as string);
                     break;
                 }
             }
         } else {
             setMenuId(resultCategoris?.categoriMenus[0]?.menu_id);
             setCategoriId(resultCategoris?.categoriMenus[0]?.categoris[0].categori_id);
+            setUuid(uuidv4().split('-').join(''));
         }
     };
 
@@ -325,7 +328,8 @@ const Write = () => {
                 <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
                 <FileLists {...{ deleteFile }} />
                 <ContentBox>
-                    <QuillEditor {...{ quillRef }} />
+                    {!detailBoard.loading ? <QuillEditor {...{ quillRef, uuid }} /> : null}
+                    {/* <CkEditors /> */}
                 </ContentBox>
             </WriteBox>
             <SendBox>

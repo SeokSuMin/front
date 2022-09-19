@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import dayjs from 'dayjs';
 import parse from 'html-react-parser';
-import { fileBackUrl } from '../../../../config';
+import { fileBackUrl, imgExtFormat } from '../../../../config';
 import path from 'path';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -238,7 +238,9 @@ const DetailBoard = () => {
 
     const initPage = async () => {
         await dispatch(getCategoriMenuThunk());
-        const result = await dispatch(getDetailBoardThunk(router.query.detail as string));
+        const result = await dispatch(
+            getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: +categoriId }),
+        );
         if (result?.payload?.boardInfo?.board_id !== router.query.detail) {
             message.warn('존재하지 않는 게시글 입니다.');
             window.history.back();
@@ -274,7 +276,11 @@ const DetailBoard = () => {
                                             router.push(
                                                 {
                                                     pathname: '/blog/write',
-                                                    query: { mode: 'modify', detail: router.query.detail as string },
+                                                    query: {
+                                                        mode: 'modify',
+                                                        categoriId,
+                                                        detail: router.query.detail as string,
+                                                    },
                                                 },
                                                 '/blog/write',
                                             )
@@ -331,7 +337,7 @@ const DetailBoard = () => {
                             <FileList>
                                 {detailBoard?.board_files?.map((file) => {
                                     const extName = path.extname(file.name);
-                                    if (extName !== '.png') {
+                                    if (!imgExtFormat.includes(extName.toLocaleLowerCase())) {
                                         return (
                                             <Files key={file.file_id}>
                                                 <a

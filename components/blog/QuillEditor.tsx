@@ -2,9 +2,36 @@ import React, { memo, useEffect, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize';
-import { Button } from 'antd';
+import dayjs from 'dayjs';
 import { useAppSelector } from '../../store/hooks';
 import { useRouter } from 'next/router';
+import axios from 'axios';
+import { fileBackUrl } from '../../config';
+import styled from 'styled-components';
+import { Input } from 'antd';
+import * as Cheerio from 'cheerio';
+
+const { Search } = Input;
+
+const Delta = Quill.import('delta');
+
+const TitleBox = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8em;
+    .ant-input-group-wrapper {
+        width: 15%;
+        min-width: 6.25em;
+    }
+`;
+
+const Lable = styled.label`
+    width: 10%;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 0.725em;
+`;
 
 //Text direction
 Quill.register(Quill.import('attributors/style/direction'), true);
@@ -27,6 +54,31 @@ const toolbarOptions = [
     [{ color: [] }, { background: [] }],
     ['link', 'image', 'video'],
 ];
+
+const handlers = {
+    image: async function () {
+        const fileInput = document.createElement('input');
+        fileInput.setAttribute('type', 'file');
+        fileInput.setAttribute('multiple', 'multiple');
+        fileInput.setAttribute('accept', 'image/*');
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files !== null) {
+                for (const file of fileInput.files) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const range = (this as any).quill.getSelection(true);
+                        (this as any).quill.updateContents(
+                            new Delta().retain(range.index).delete(range.length).insert({ image: e?.target?.result }),
+                        );
+                    };
+                    reader.readAsDataURL(file);
+                }
+                fileInput.value = '';
+            }
+        });
+        fileInput.click();
+    },
+};
 
 // 옵션에 상응하는 포맷, 추가해주지 않으면 text editor에 적용된 스타일을 볼수 없음
 const formats = [
@@ -54,6 +106,7 @@ const formats = [
 const modules = {
     toolbar: {
         container: toolbarOptions,
+        handlers,
     },
     ImageResize: {
         parchment: Quill.import('parchment'),
@@ -62,15 +115,17 @@ const modules = {
 
 interface IQuillEditorProps {
     quillRef: React.MutableRefObject<any>;
+    uuid: string;
     // contentValue: string;
     // changeQuill: (content: string) => void;
     // setContentValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
+const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
     const router = useRouter();
     const detailBoard = useAppSelector((state) => state.boardData);
-    const [content, setContent] = useState<string>('');
+    const [content, setContent] = useState<string | null>(null);
+
     useEffect(() => {
         if (router?.query?.mode === 'modify') {
             setContent(detailBoard?.content ? detailBoard?.content : '');
@@ -79,22 +134,74 @@ const QuillEditor = ({ quillRef }: IQuillEditorProps) => {
         }
     }, [router.query.mode, detailBoard?.content]);
 
-    const changeContent = (value: string) => {
-        // Quill오류인지 자음 모음이 분리됨, ref로 처리함.
-        // setContent(value);
+    const changeImgSize = (size: string) => {
+        const $ = Cheerio.load(quillRef.current.state.value);
+        const allTags = Array.from($('html').find('*'));
+        allTags.map((tag) => {
+            if ($(tag).prop('tagName') === 'IMG') {
+                $(tag).prop('width', size + 'px');
+            }
+        });
+        setContent($.html());
     };
 
     return (
         <>
+            <TitleBox>
+                <Lable>이미지크기</Lable>
+                <Search placeholder="ex) 300" enterButton="적용" size="small" onSearch={changeImgSize} />
+            </TitleBox>
             <ReactQuill
+                // content를 키로 지정해 모드 변경시 내용을 초기화한다.
+                key={content}
                 ref={quillRef}
                 placeholder="write Text"
-                value={content}
-                // defaultValue={content}
+                // value={content}
+                defaultValue={content as string}
                 theme="snow"
-                modules={modules}
+                modules={{
+                    toolbar: {
+                        container: toolbarOptions,
+                        handlers: {
+                            image: async function () {
+                                const fileInput = document.createElement('input');
+                                fileInput.setAttribute('type', 'file');
+                                fileInput.setAttribute('multiple', 'multiple');
+                                fileInput.setAttribute('accept', 'image/*');
+                                fileInput.addEventListener('change', async () => {
+                                    if (fileInput.files !== null) {
+                                        const formData = new FormData();
+                                        formData.append('boardId', uuid);
+                                        for (const file of fileInput.files) {
+                                            formData.append('file', file);
+                                        }
+
+                                        const response = await axios.post('/blog/uploadBoardFile', formData);
+                                        const fileNames = response.data.fileNames as string[];
+                                        for (const fileName of fileNames.reverse()) {
+                                            const range = (this as any).quill.getSelection(true);
+                                            (this as any).quill.updateContents(
+                                                new Delta()
+                                                    .retain(range.index)
+                                                    .delete(range.length)
+                                                    .insert({
+                                                        image: `${fileBackUrl}${uuid}/${fileName}`,
+                                                    }),
+                                            );
+                                        }
+                                        fileInput.value = '';
+                                    }
+                                });
+                                fileInput.click();
+                            },
+                        },
+                    },
+                    ImageResize: {
+                        parchment: Quill.import('parchment'),
+                    },
+                }}
                 formats={formats}
-                onChange={(content, delta, source, editor) => changeContent(editor.getHTML())}
+                // onChange={(content, delta, source, editor) => setContent(editor.getHTML())}
             ></ReactQuill>
         </>
     );
