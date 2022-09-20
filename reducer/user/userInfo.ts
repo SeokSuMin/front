@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { checkUserloginThunk, logoutThunk } from '../../thunk/userThunk';
+import { checkUserloginThunk, getAdminInfoThunk, logoutThunk } from '../../thunk/userThunk';
+
+interface IAdminUserInfo {
+    userId: string;
+    imgPath: string;
+}
 
 export interface IUserInfo {
     userId: string;
@@ -8,6 +13,7 @@ export interface IUserInfo {
     imgPath: string;
     updatedAt: string;
     createdAt: string;
+    adminInfo?: IAdminUserInfo;
     hydration?: boolean;
 }
 
@@ -29,6 +35,9 @@ const userInfo = createSlice({
                 createdAt: '',
                 loading: false,
             };
+        },
+        updateAdminProfileImage: (state, action: PayloadAction<IAdminUserInfo>) => {
+            return { ...state, adminInfo: action.payload };
         },
     },
     extraReducers: (builder) => {
@@ -63,9 +72,20 @@ const userInfo = createSlice({
                     createdAt: '',
                     loading: false,
                 };
+            })
+            .addCase(getAdminInfoThunk.pending, (state, action) => {
+                return {
+                    ...state,
+                };
+            })
+            .addCase(getAdminInfoThunk.fulfilled, (state, action: PayloadAction<IAdminUserInfo>) => {
+                return {
+                    ...state,
+                    adminInfo: action.payload,
+                };
             });
     },
 });
 
-export const { loginUserInfo, deleteUserInfo } = userInfo.actions;
+export const { loginUserInfo, deleteUserInfo, updateAdminProfileImage } = userInfo.actions;
 export default userInfo.reducer;

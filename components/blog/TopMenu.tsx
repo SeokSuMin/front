@@ -26,10 +26,15 @@ const ToggleBox = styled.div`
     } */
     svg {
         width: 1.125em;
-        height: 1.563em;
+        height: 1.3em;
         margin-right: 0.313em;
         cursor: pointer;
+        margin-top: auto;
+
         /* fill: green; */
+    }
+    svg path {
+        margin-top: auto;
     }
     .active {
         fill: green;
@@ -38,13 +43,36 @@ const ToggleBox = styled.div`
 
 const Title = styled.div`
     margin-right: auto;
-    .menu {
-        font-weight: 900;
+    margin-top: auto;
+    font-size: 0.875rem;
+    font-weight: 900;
+    /* .menu {
         font-size: 0.875rem;
-    }
-    .categori {
+        font-weight: 900;
+    } */
+    /* .categori {
         color: gray;
         font-size: 0.75rem;
+    } */
+`;
+
+const Write = styled.div`
+    font-size: 0.875rem;
+    margin-top: auto;
+    padding-bottom: 5px;
+    position: relative;
+    span:first-child {
+        font-size: 0.775rem;
+        width: 3.125em;
+        right: 2em;
+        top: 0.288em;
+        position: absolute;
+        font-weight: 900;
+        cursor: pointer;
+        color: gray;
+    }
+    span:first-child:hover {
+        text-decoration: underline;
     }
 `;
 
@@ -57,6 +85,7 @@ interface ITopMenuProps {
 const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
     const dispath = useAppDispatch();
     const router = useRouter();
+    const { userId } = useAppSelector((state) => state.userInfo);
     const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
     const { countList, page } = useAppSelector((state) => state.paging);
     const { currentCategoriId } = useAppSelector((state) => state.blogToggle);
@@ -68,6 +97,16 @@ const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
             pathname: `/blog/categori_${currentCategoriId}`,
             query: { page, countList: value, type: viewType },
         });
+    };
+
+    const moveWritePage = () => {
+        router.push(
+            {
+                pathname: '/blog/write',
+                query: { categoriId: currentCategoriId, mode: 'write' },
+            },
+            // '/blog/write',
+        );
     };
 
     useEffect(() => {
@@ -93,11 +132,18 @@ const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
                     <span className="menu">{menuTitle}</span>
                     {currentCategoriId !== 0 ? (
                         <>
-                            <span> - </span>
-                            <span className="categori">({categoriTitle})</span>
+                            <span>, </span>
+                            <span className="categori">{categoriTitle}</span>
                         </>
                     ) : null}
                 </Title>
+                {userId === 'iceMan' ? (
+                    <Write>
+                        <span onClick={moveWritePage}>글쓰기</span>
+                        <span>|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    </Write>
+                ) : null}
+
                 <TwoSquareToggle
                     className={viewType === 'LIST' ? 'active' : ''}
                     onClick={() => changeListView('LIST')}

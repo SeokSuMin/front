@@ -23,6 +23,9 @@ const CommentWriteTitle = styled.div`
 
 const CommentWriteArea = styled.div`
     width: 100%;
+    textarea {
+        padding: 0.625em;
+    }
 `;
 
 const CommentSubmitBox = styled.div`

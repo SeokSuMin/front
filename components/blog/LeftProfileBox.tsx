@@ -5,7 +5,13 @@ import CategorisDrawer from './CategorisDrawer';
 import Profile from './Profile';
 
 const Wrapper = styled.div`
-    width: 18%;
+    width: 11.563em;
+    //width: 18%;
+    //min-width: 8.125rem;
+    @media screen and (max-width: 36rem) {
+        width: 15%;
+        min-width: 15%;
+    }
 `;
 const LeftSideToggleBox = styled.div`
     height: 100%;

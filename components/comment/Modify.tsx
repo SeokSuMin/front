@@ -14,6 +14,9 @@ const ModifyCommentBox = styled.div`
 
 const ModifyComment = styled.div`
     width: 100%;
+    textarea {
+        padding: 0.625em;
+    }
     display: flex;
 `;
 

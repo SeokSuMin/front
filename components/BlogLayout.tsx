@@ -9,25 +9,32 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     padding-bottom: 11.25em;
+    padding-left: 3em;
+    padding-right: 3em;
     min-height: 100%;
     position: relative;
 `;
 
 const TopImageBox = styled.div`
     width: 100%;
-    height: 21.875rem;
-    background-image: url('/topImage.jpg');
+    height: 25rem;
+    background-image: url('/topImage2.jpg');
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     display: flex;
     align-items: center;
+    font-family: 'Mukta', sans-serif;
+    font-family: 'Roboto Slab', serif;
+    font-family: 'Source Sans Pro', sans-serif;
 `;
 const TitleBox = styled.div`
     text-align: center;
     margin-left: 6.25em;
-    font-style: italic;
+    font-weight: bold;
     h1 {
         font-size: 2.188rem;
+        color: white;
     }
     h2 {
         font-size: 1.875rem;
@@ -81,8 +88,7 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
                 }
             >
                 <TitleBox>
-                    <h1>REACT PROJECT</h1>
-                    <h2>MY BLOG</h2>
+                    <h1>My own universe</h1>
                 </TitleBox>
             </TopImageBox>
             <BodyBox>

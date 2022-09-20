@@ -10,10 +10,10 @@ import Mail from '../../public/mail.svg';
 import EllipsisDot from '../../public/ellipsis-dot.svg';
 import { EditOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { fileBackUrl } from '../../config';
 
 const Wrapper = styled.div`
     width: 100%;
-    min-width: 8.125rem;
     border: 0.063em solid rgb(217, 217, 217);
     margin-top: 2.324em;
     border-radius: 0.63em;
@@ -47,10 +47,10 @@ const ProfileImgeBox = styled.div`
     }
 `;
 
-const ProfileImg = styled.div`
+const ProfileImg = styled.div<{ adminPath: string | undefined }>`
     width: 5rem;
     height: 5rem;
-    background-image: url('/profile.png');
+    background-image: url(${(props) => (props.adminPath ? fileBackUrl + props.adminPath : '/profile.png')});
     background-position: center;
     background-size: contain;
     border-radius: 50%;
@@ -130,8 +130,8 @@ const EtcBox = styled.div`
     padding-top: 0.63em;
 
     a {
-        margin-left: 0.313em;
-        width: 1.5rem;
+        margin-left: 0.5em;
+        width: 1.25rem;
     }
 
     a:first-child {
@@ -141,7 +141,7 @@ const EtcBox = styled.div`
 
 const Profile = () => {
     const router = useRouter();
-    const { userId } = useAppSelector((state) => state.userInfo);
+    const { userId, adminInfo } = useAppSelector((state) => state.userInfo);
     const { viewType } = useAppSelector((state) => state.blogToggle);
     const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
     const { countList } = useAppSelector((state) => state.paging);
@@ -200,7 +200,7 @@ const Profile = () => {
     return (
         <Wrapper>
             <ProfileImgeBox>
-                <ProfileImg></ProfileImg>
+                <ProfileImg adminPath={adminInfo?.imgPath}></ProfileImg>
                 <span>IceMan</span>
                 <p>아이스맨 같은 개발자가 되고 싶은 사람입니다.</p>
             </ProfileImgeBox>

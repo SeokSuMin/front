@@ -11,7 +11,7 @@ import { rlto } from '../../util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
-import { checkUserloginThunk } from '../../thunk/userThunk';
+import { checkUserloginThunk, getAdminInfoThunk } from '../../thunk/userThunk';
 import { getCategoriMenuThunk, getDetailBoardThunk, isnertBoard } from '../../thunk/blogThunk';
 import path from 'path';
 
@@ -282,8 +282,21 @@ const Write = () => {
                 }
             }
         } else {
-            setMenuId(resultCategoris?.categoriMenus[0]?.menu_id);
-            setCategoriId(resultCategoris?.categoriMenus[0]?.categoris[0].categori_id);
+            const categoriId = router?.query?.categoriId ? (router.query.categoriId as string) : '0';
+            if (categoriId !== '0') {
+                for (const menu of resultCategoris.categoriMenus) {
+                    const findCategori = menu.categoris.find((c) => c?.categori_id === +categoriId);
+                    if (findCategori) {
+                        console.log('findCategori', findCategori);
+                        setMenuId(menu.menu_id);
+                        setCategoriId(+categoriId);
+                        break;
+                    }
+                }
+            } else {
+                setMenuId(resultCategoris?.categoriMenus[0]?.menu_id);
+                setCategoriId(resultCategoris?.categoriMenus[0]?.categoris[0].categori_id);
+            }
             setUuid(uuidv4().split('-').join(''));
         }
     };
@@ -353,7 +366,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         }
         // 로그인 사용자 체크
         await dispatch(checkUserloginThunk());
-        // await dispatch(getCategoriMenu());
+        await dispatch(getAdminInfoThunk());
 
         return {
             props: {},

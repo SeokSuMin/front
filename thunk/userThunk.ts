@@ -6,7 +6,7 @@ import { IChangePassword } from '../reducer/user/changePassword';
 import { IJoinMember } from '../reducer/user/joinMember';
 import { ILogin } from '../reducer/user/login';
 import { IUpdateUser } from '../reducer/user/updateUser';
-import { loginUserInfo, deleteUserInfo } from '../reducer/user/userInfo';
+import { loginUserInfo, deleteUserInfo, IUserInfo, updateAdminProfileImage } from '../reducer/user/userInfo';
 import { togglLogin } from '../reducer/user/userToggle';
 
 axios.defaults.baseURL = BackUrl;
@@ -80,6 +80,14 @@ export const checkUserloginThunk = createAsyncThunk(
     },
 );
 
+export const getAdminInfoThunk = createAsyncThunk(
+    'GET_ADMIN_INFO',
+    async (_, { getState, requestId, rejectWithValue }) => {
+        const response = await axios.get('/user/adminInfo');
+        return response.data;
+    },
+);
+
 export const logoutThunk = createAsyncThunk('LOGOUT', async (_, { getState, requestId, rejectWithValue }) => {
     try {
         const response = await axios.post('/user/logout', {});
@@ -138,6 +146,10 @@ export const updateUserThunk = createAsyncThunk(
                 formData.append('profileImg', memberInfo.profileImg);
             }
             const response = await axios.patch('/user/update', formData);
+            const checkAdmin = (response.data as IUserInfo).userId;
+            if (checkAdmin === 'iceMan') {
+                dispatch(updateAdminProfileImage({ userId: response.data.userId, imgPath: response.data.imgPath }));
+            }
             dispatch(loginUserInfo(response.data));
         } catch (err) {
             if (err instanceof AxiosError) {

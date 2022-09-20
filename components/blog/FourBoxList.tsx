@@ -22,7 +22,7 @@ const CardBox = styled(motion.div)`
 const Card = styled(motion.div)`
     flex: 0 1 30%;
     margin-right: 5%;
-    margin-top: 10%;
+    margin-top: 12%;
     position: relative;
     &::after {
         display: block;
@@ -47,17 +47,17 @@ const Card = styled(motion.div)`
         }
         &:nth-child(3),
         &:nth-child(4) {
-            margin-top: 10%;
+            margin-top: 18%;
         }
     }
 `;
 
 const CardContent = styled(motion.div)`
     width: 100%;
-    height: 120%;
-    @media screen and (max-width: 53rem) {
-        height: 110%;
-    }
+    height: 125%;
+    /* @media screen and (max-width: 53rem) {
+        height: 115%;
+    } */
     cursor: pointer;
     background-color: white;
     transform-origin: center right;
@@ -86,35 +86,35 @@ const Content = styled(motion.div)`
     height: 45%;
     border: 0.063rem solid rgb(230, 230, 230);
     border-top: none;
-    padding: 0.625em;
+    padding: 0.313em 0em 0.625em 0.625em;
     display: flex;
     flex-direction: column;
 `;
 const Title = styled.div`
-    height: 30%;
+    height: 35%;
     display: flex;
     align-items: center;
     h2 {
         width: 100%;
-        font-size: 0.875rem;
+        font-size: 0.813rem;
         font-weight: 900;
         line-height: 1.2rem;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         overflow: hidden;
-        @media screen and (max-width: 54rem) and (min-width: 53rem) {
+        @media screen and (max-width: 55rem) and (min-width: 53rem) {
             -webkit-line-clamp: 1;
         }
-        @media screen and (max-width: 40rem) {
+        @media screen and (max-width: 46rem) {
             -webkit-line-clamp: 1;
         }
     }
 `;
 const Description = styled.div`
-    height: 30%;
+    height: 35%;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     span {
         color: gray;
         width: 100%;
@@ -125,7 +125,7 @@ const Description = styled.div`
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         overflow: hidden;
-        @media screen and (max-width: 54rem) and (min-width: 53rem) {
+        @media screen and (max-width: 55rem) and (min-width: 53rem) {
             -webkit-line-clamp: 1;
         }
         @media screen and (max-width: 40rem) {
@@ -134,21 +134,38 @@ const Description = styled.div`
     }
 `;
 
-const TagInfo = styled.div`
-    width: 100%;
-    padding: 0.125em 0px;
-`;
+// const TagInfo = styled.div`
+//     width: 100%;
+//     padding: 0.125em 0px;
+// `;
 
 const WriteInfo = styled.div`
-    height: 40%;
+    width: 100%;
+    height: 35%;
     display: flex;
     align-items: center;
     color: gray;
     font-size: 0.813rem;
+    .registDate {
+        color: gray;
+        width: 40%;
+        font-size: 0.75rem;
+        line-height: 1.2em;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        @media screen and (max-width: 55rem) and (min-width: 53rem) {
+            -webkit-line-clamp: 1;
+        }
+        @media screen and (max-width: 40rem) {
+            -webkit-line-clamp: 1;
+        }
+    }
     .comment {
         display: flex;
         align-items: center;
-        margin-left: auto;
+        margin-left: 0.313em;
         margin-right: 0.813em;
         cursor: pointer;
         svg {
@@ -158,10 +175,11 @@ const WriteInfo = styled.div`
     }
 `;
 
-const ProfileImg = styled.div`
+const ProfileImg = styled.div<{ adminPath: string | undefined }>`
     width: 1.7rem;
     height: 1.7rem;
-    background-image: url('/profile.png');
+    flex-shrink: 0;
+    background-image: url(${(props) => (props.adminPath ? fileBackUrl + props.adminPath : '/profile.png')});
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -197,6 +215,7 @@ interface IFourBoxListProps {
 
 const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
     const router = useRouter();
+    const { adminInfo } = useAppSelector((state) => state.userInfo);
     const { viewType, currentCategoriId } = useAppSelector((state) => state.blogToggle);
     const { boardList } = useAppSelector((state) => state.boardList);
     const moveDetailPage = (boardId: string) => {
@@ -258,13 +277,15 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                             <h2>{board.title}</h2>
                                         </Title>
                                         <WriteInfo>
-                                            <ProfileImg />
+                                            <ProfileImg adminPath={adminInfo?.imgPath} />
                                             <span>{board.writer}</span>
                                             <div style={{ width: '10%', textAlign: 'center' }}>|</div>
-                                            <span>{dayjs(board.createdAt).format('YYYY MM DD HH:mm')}</span>
+                                            <span className="registDate">
+                                                {dayjs(board.createdAt).format('YYYY MM DD HH:mm')}
+                                            </span>
                                             {board?.comments?.length ? (
                                                 <span className="comment">
-                                                    <CommentOutlined />(
+                                                    {/* <CommentOutlined /> */}(
                                                     {board?.comments?.filter((c) => c.parent_id === null).length})
                                                 </span>
                                             ) : null}

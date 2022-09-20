@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
     width: 100%;
-    margin-top: 5em;
+    margin-top: 7.5em;
 `;
 
 const PagingBox = styled.div`
@@ -24,13 +24,14 @@ const PagingItem = styled.li`
     cursor: pointer;
     div {
         padding: 5px;
-        border: 1px solid rgb(217, 217, 217);
+        // border: 1px solid rgb(217, 217, 217);
         border-radius: 3px;
     }
     .active {
-        color: white;
+        font-weight: bold;
+        /* color: white;
         border: 1px solid rgb(24, 144, 255);
-        background-color: rgb(24, 144, 255);
+        background-color: rgb(24, 144, 255); */
     }
 `;
 

@@ -5,7 +5,7 @@ import OneBoxList from '../../../components/blog/OneBoxList';
 import TopMenu from '../../../components/blog/TopMenu';
 import wrapper from '../../../store/configStore';
 import axios from 'axios';
-import { checkUserloginThunk } from '../../../thunk/userThunk';
+import { checkUserloginThunk, getAdminInfoThunk } from '../../../thunk/userThunk';
 import { getBoardListThunk, getCategoriMenuThunk } from '../../../thunk/blogThunk';
 import Paging from '../../../components/blog/Paging';
 import { useQuery } from 'react-query';
@@ -36,7 +36,7 @@ const Wrapper = styled.div`
 
 const ContentBox = styled.div`
     width: 100%;
-    padding-left: 1.875em;
+    padding-left: 1.25em;
     @media screen and (max-width: 36rem) {
         padding-left: 0px;
     }
@@ -188,6 +188,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         // 로그인 사용자 체크
         // console.log('서버사이드');
         await dispatch(checkUserloginThunk());
+        await dispatch(getAdminInfoThunk());
         await dispatch(getCategoriMenuThunk());
         const result = await dispatch(
             getBoardListThunk({ page: page as number, countList: countList as number, categoriId }),

@@ -2,7 +2,7 @@ import { CommentOutlined, ExclamationCircleOutlined, PaperClipOutlined } from '@
 import { message, Modal, Spin, Tag } from 'antd';
 import styled from 'styled-components';
 import { deleteBoardThunk, getCategoriMenuThunk, getDetailBoardThunk } from '../../../../thunk/blogThunk';
-import { checkUserloginThunk } from '../../../../thunk/userThunk';
+import { checkUserloginThunk, getAdminInfoThunk } from '../../../../thunk/userThunk';
 import wrapper from '../../../../store/configStore';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
@@ -16,6 +16,7 @@ import Comments from '../../../../components/comment/Comments';
 import Seo from '../../../../components/Seo';
 import { goPage, initTotalCount } from '../../../../reducer/blog/paging';
 import LeftProfileBox from '../../../../components/blog/LeftProfileBox';
+import { ICategoriMenus } from '../../../../reducer/blog/categoriMenus';
 
 const { confirm } = Modal;
 
@@ -62,19 +63,33 @@ const TopMenuBox = styled.div`
     display: flex;
     // justify-content: space-between;
     justify-content: flex-end;
-    padding-bottom: 0.625em;
+    padding-bottom: 0.75em;
     button {
         margin-left: 0.357em;
         border: none;
         border-radius: 0.357em;
         padding: 0.5em 0.714em;
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         font-weight: bold;
         cursor: pointer;
     }
     button:active {
         background-color: rgb(210, 210, 210);
     }
+`;
+const Title = styled.div`
+    margin-right: auto;
+    margin-top: auto;
+    font-size: 0.875rem;
+    font-weight: 900;
+    /* .menu {
+        font-size: 0.875rem;
+        font-weight: 900;
+    } */
+    /* .categori {
+        color: gray;
+        font-size: 0.75rem;
+    } */
 `;
 
 const MoveBoardButtonBox = styled.div``;
@@ -91,8 +106,8 @@ const BoardBox = styled.div`
 
 const TitleBox = styled.div`
     h1 {
-        font-size: 2.5rem;
-        line-height: 3.5rem;
+        font-size: 2rem;
+        line-height: 3rem;
         font-weight: bold;
     }
 `;
@@ -101,7 +116,10 @@ const WriterInfoBox = styled.div`
     display: flex;
     align-items: center;
     span:first-child {
-        font-size: 1.25rem;
+        font-size: 1rem;
+        .blogManage {
+            font-size: 0.75rem;
+        }
     }
     span:nth-child(2) {
         margin: 0 0.625em;
@@ -156,6 +174,7 @@ const Boundary = styled.div`
 `;
 const Content = styled.div`
     width: 100%;
+    min-height: 25rem;
     padding-top: 1.25em;
 `;
 
@@ -198,6 +217,8 @@ const DetailBoard = () => {
     const { page, countList, totalCount } = useAppSelector((state) => state.paging);
     const [deleteFlag, setDeleteFlag] = useState(false);
     const [categoriId, setCategoriId] = useState((router.query.categoris as string).split('_')[1]);
+    const [menuTitle, setMenuTitle] = useState('');
+    const [categoriTitle, setCategoriTitle] = useState('');
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
@@ -237,13 +258,26 @@ const DetailBoard = () => {
     };
 
     const initPage = async () => {
-        await dispatch(getCategoriMenuThunk());
         const result = await dispatch(
             getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: +categoriId }),
         );
         if (result?.payload?.boardInfo?.board_id !== router.query.detail) {
             message.warn('존재하지 않는 게시글 입니다.');
             window.history.back();
+        }
+        const menuResult = (await (await dispatch(getCategoriMenuThunk())).payload) as ICategoriMenus;
+        if (+categoriId === 0) {
+            setMenuTitle('전체보기');
+            setCategoriTitle('');
+        } else {
+            for (const menu of menuResult.categoriMenus) {
+                const findCategori = menu.categoris.find((c) => c?.categori_id === +categoriId);
+                if (findCategori) {
+                    setMenuTitle(menu.menu_name);
+                    setCategoriTitle(findCategori.categori_name);
+                    break;
+                }
+            }
         }
     };
 
@@ -268,6 +302,15 @@ const DetailBoard = () => {
             ) : (
                 <>
                     <TopMenuBox>
+                        <Title>
+                            <span className="menu">{menuTitle}</span>
+                            {+categoriId !== 0 ? (
+                                <>
+                                    <span>, </span>
+                                    <span className="categori">{categoriTitle}</span>
+                                </>
+                            ) : null}
+                        </Title>
                         <ModifyBoardButtonBox>
                             {userId === 'iceMan' ? (
                                 <>
@@ -292,6 +335,9 @@ const DetailBoard = () => {
                                 </>
                             ) : null}
                         </ModifyBoardButtonBox>
+                        <button onClick={() => commentDivRef?.current?.scrollIntoView({ behavior: 'smooth' })}>
+                            댓글 ▼
+                        </button>
                         <MoveBoardButtonBox>
                             {detailBoard?.prevBoardId ? (
                                 <button onClick={() => moveDetailBoard(detailBoard.prevBoardId as string)}>
@@ -319,21 +365,23 @@ const DetailBoard = () => {
                         <TitleBox>
                             <h1>{detailBoard?.title}</h1>
                             <WriterInfoBox>
-                                <span>{detailBoard?.writer} [블로그 관리자]</span>
+                                <span>
+                                    {detailBoard?.writer} <span className="blogManage">[블로그 관리자]</span>
+                                </span>
                                 <span>·</span>
                                 <span>{dayjs(detailBoard?.createdAt).format('YYYY-MM-DD HH:mm')}</span>
-                                {comments?.length ? (
+                                {/* {comments?.length ? (
                                     <span
                                         onClick={() => commentDivRef?.current?.scrollIntoView({ behavior: 'smooth' })}
                                         className="comment"
                                     >
                                         <CommentOutlined /> 댓글 ({comments.length})
                                     </span>
-                                ) : null}
+                                ) : null} */}
                             </WriterInfoBox>
-                            <TagBox>
+                            {/* <TagBox>
                                 <Tag>{detailBoard?.categoris?.categori_name}</Tag>
-                            </TagBox>
+                            </TagBox> */}
                             <FileList>
                                 {detailBoard?.board_files?.map((file) => {
                                     const extName = path.extname(file.name);
@@ -379,6 +427,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         }
         // 로그인 사용자 체크
         await dispatch(checkUserloginThunk());
+        await dispatch(getAdminInfoThunk());
         // await dispatch(getCategoriMenu());
         // await dispatch(getDetailBoard(boardId));
 

@@ -53,6 +53,7 @@ interface IOneBoxListProps {
 
 const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
     const router = useRouter();
+    const { adminInfo } = useAppSelector((state) => state.userInfo);
     const { viewType, currentCategoriId } = useAppSelector((state) => state.blogToggle);
     const { boardList } = useAppSelector((state) => state.boardList);
     const moveDetailPage = (boardId: string) => {
@@ -101,7 +102,15 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                     style={{ padding: 0 }}
                                 >
                                     <List.Item.Meta
-                                        avatar={<Avatar src={'/profile.png'} />}
+                                        avatar={
+                                            <Avatar
+                                                src={
+                                                    adminInfo?.imgPath
+                                                        ? fileBackUrl + adminInfo.imgPath
+                                                        : '/profile.png'
+                                                }
+                                            />
+                                        }
                                         title={
                                             <>
                                                 <span>{item.writer}</span>
@@ -118,7 +127,7 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                                         {item.title}
                                                         {item?.comments?.length ? (
                                                             <span style={{ marginLeft: '1em' }}>
-                                                                <CommentOutlined /> (
+                                                                (
                                                                 {
                                                                     item?.comments?.filter((c) => c.parent_id === null)
                                                                         .length
