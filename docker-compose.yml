@@ -10,7 +10,7 @@ services:
         container_name: app
         volumes:
             - /app/node_modules
-            - /front:/app
+            - /app/front:/app
         environment:
             - TZ=Asia/Seoul
             - LC_ALL=C.UTF-8
