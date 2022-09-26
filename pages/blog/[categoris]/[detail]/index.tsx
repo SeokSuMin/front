@@ -63,7 +63,7 @@ const TopMenuBox = styled.div`
     display: flex;
     // justify-content: space-between;
     justify-content: flex-end;
-    padding-bottom: 0.75em;
+    padding-bottom: 0.688em;
     button {
         margin-left: 0.357em;
         border: none;
@@ -258,26 +258,27 @@ const DetailBoard = () => {
     };
 
     const initPage = async () => {
-        const result = await dispatch(
-            getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: +categoriId }),
-        );
-        if (result?.payload?.boardInfo?.board_id !== router.query.detail) {
-            message.warn('존재하지 않는 게시글 입니다.');
-            window.history.back();
-        }
-        const menuResult = (await (await dispatch(getCategoriMenuThunk())).payload) as ICategoriMenus;
-        if (+categoriId === 0) {
-            setMenuTitle('전체보기');
-            setCategoriTitle('');
-        } else {
-            for (const menu of menuResult.categoriMenus) {
-                const findCategori = menu.categoris.find((c) => c?.categori_id === +categoriId);
-                if (findCategori) {
-                    setMenuTitle(menu.menu_name);
-                    setCategoriTitle(findCategori.categori_name);
-                    break;
+        try {
+            await dispatch(
+                getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: +categoriId }),
+            ).unwrap();
+            const menuResult = (await (await dispatch(getCategoriMenuThunk())).payload) as ICategoriMenus;
+            if (+categoriId === 0) {
+                setMenuTitle('전체보기');
+                setCategoriTitle('');
+            } else {
+                for (const menu of menuResult.categoriMenus) {
+                    const findCategori = menu.categoris.find((c) => c?.categori_id === +categoriId);
+                    if (findCategori) {
+                        setMenuTitle(menu.menu_name);
+                        setCategoriTitle(findCategori.categori_name);
+                        break;
+                    }
                 }
             }
+        } catch (err) {
+            message.warn('존재하지 않는 게시글 입니다.');
+            window.history.back();
         }
     };
 

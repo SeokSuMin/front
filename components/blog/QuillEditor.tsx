@@ -188,6 +188,7 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
                                                         image: `${fileBackUrl}${uuid}/${fileName}`,
                                                     }),
                                             );
+                                            (this as any).quill.setSelection(range.index + 1);
                                         }
                                         fileInput.value = '';
                                     }
@@ -198,6 +199,7 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
                     },
                     ImageResize: {
                         parchment: Quill.import('parchment'),
+                        modules: ['Resize', 'DisplaySize', 'Toolbar'],
                     },
                 }}
                 formats={formats}

@@ -69,13 +69,22 @@ const ContentBox = styled.div`
     /* min-height: 20rem; */
     display: flex;
     flex-direction: column;
-    .ql-editor {
+    .ql-container {
         height: 27rem;
-        line-height: 2em;
+        max-height: 27rem;
+        // resize: vertical;
+        //overflow: auto;
     }
+
     .ql-editor {
+        height: 100%;
+        line-height: 2em;
         overflow-y: auto;
-        resize: vertical;
+        // overflow-y: auto;
+        /* flex: 1;
+        display: flex;
+        flex-flow: column nowrap;
+        overflow: auto; */
     }
     strong {
         font-weight: 900;

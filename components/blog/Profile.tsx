@@ -15,7 +15,7 @@ import { fileBackUrl } from '../../config';
 const Wrapper = styled.div`
     width: 100%;
     border: 0.063em solid rgb(217, 217, 217);
-    margin-top: 2.324em;
+
     border-radius: 0.63em;
     /* margin-right: 3.63em; */
     padding: 0.938em;

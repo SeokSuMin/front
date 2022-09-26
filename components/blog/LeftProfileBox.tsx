@@ -6,6 +6,7 @@ import Profile from './Profile';
 
 const Wrapper = styled.div`
     width: 11.563em;
+    margin-top: 2.188em;
     //width: 18%;
     //min-width: 8.125rem;
     @media screen and (max-width: 36rem) {
