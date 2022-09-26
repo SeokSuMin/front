@@ -1,30 +1,16 @@
 version: '3'
 
 services:
-  app:
-    build:
-      context: ./01_FLASK_DOCKER
-      dockerfile: Dockerfile
-    links:
-      - "db:mysqldb"
-    ports:
-      - "80:8000"
-    container_name: appcontainer
-    depends_on:
-      - db
-
-services:
-    db:
-        image: mysql:5.7
-        restart: always
-        volumes:
-            - ./mysqldata:/var/lib/mysql
-        environment:
-            - MYSQL_ROOT_PASSWOD=funcoding
-            - MYSQL_DATABASE=fundb
-            # 환경변수 파일을 읽을 수 있음 (위 설정을 파일로 저장할 수 있음)
-            # env_file:
-            #  - ex.env
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
         ports:
-            - '3307:3306'
-        container_name: dbcontainer
+            - '3001:3001'
+        container_name: app
+        volumes:
+            - /app/node_modules
+            - /front:/app
+        environment:
+            - TZ=Asia/Seoul
+            - LC_ALL=C.UTF-8

@@ -47,8 +47,8 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
             <h2>Skill Level</h2>
             <div>
                 <Radio.Group onChange={changeSkill} value={skill}>
-                    <Radio value={1}>Front End</Radio>
-                    <Radio value={2}>Back End</Radio>
+                    <Radio value={'1'}>Front End</Radio>
+                    <Radio value={'2'}>Back End</Radio>
                 </Radio.Group>
             </div>
             <ApexChart
