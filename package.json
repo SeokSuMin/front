@@ -4,8 +4,8 @@
     "private": true,
     "scripts": {
         "dev": "next dev -p 3001",
-        "prestart": "next build",
-        "start": "next start -p 3001",
+        "prestart": "next build --max_old_space_size=4096 start",
+        "start": "next start -p 3001 --max_old_space_size=4096 start",
         "lint": "next lint"
     },
     "dependencies": {
