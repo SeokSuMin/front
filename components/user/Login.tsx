@@ -14,6 +14,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginThunk } from '../../thunk/userThunk';
 import { message } from 'antd';
+import { BackUrl } from '../../config';
 
 const Wrapper = styled.div`
     width: 80%;
@@ -249,14 +250,14 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
                         <GitHub />
                     </span>
                     <span>Login with GitHub</span>
-                    <a ref={gitLoginRef} href={'http://localhost:3005/api/user/github/login'} hidden />
+                    <a ref={gitLoginRef} href={`${BackUrl}/user/github/login`} hidden />
                 </button>
                 <button onClick={() => googleLoginRef?.current?.click()} className="google">
                     <span>
                         <Google />
                     </span>
                     <span>Login with Google</span>
-                    <a ref={googleLoginRef} href="http://localhost:3005/api/user/google/login" hidden />
+                    <a ref={googleLoginRef} href={`${BackUrl}/user/google/login`} hidden />
                 </button>
             </EtcLogin>
         </Wrapper>
