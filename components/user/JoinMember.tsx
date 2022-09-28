@@ -275,6 +275,7 @@ const JoinMember = ({ register, handleSubmit, errors, setValue, setError, moveTy
                         })}
                         type="password"
                         placeholder="비밀번호"
+                        autoComplete="off"
                     />
                     <span className="password">{errors?.password?.message}</span>
                 </div>
@@ -285,6 +286,7 @@ const JoinMember = ({ register, handleSubmit, errors, setValue, setError, moveTy
                         })}
                         type="password"
                         placeholder="비밀번호 확인"
+                        autoComplete="off"
                     />
                     <span className="password">{errors?.password1?.message}</span>
                 </div>

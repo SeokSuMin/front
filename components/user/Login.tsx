@@ -229,6 +229,7 @@ const Login = ({ register, handleSubmit, errors, setValue, setError, loginView, 
                         })}
                         type="password"
                         placeholder="비밀번호"
+                        autoComplete="off"
                     />
                     <span className="password">{errors?.password?.message}</span>
                 </div>

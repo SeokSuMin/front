@@ -397,6 +397,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                                                 })}
                                                 type="password"
                                                 placeholder="비밀번호"
+                                                autoComplete="off"
                                             />
                                             <span className="password">{errors?.password?.message}</span>
                                         </div>
@@ -408,6 +409,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                                                 })}
                                                 type="password"
                                                 placeholder="비밀번호 확인"
+                                                autoComplete="off"
                                             />
                                             <span className="password">{errors?.password1?.message}</span>
                                         </div>

@@ -199,6 +199,7 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
                         })}
                         type="password"
                         placeholder="비밀번호"
+                        autoComplete="off"
                     />
                     <span className="password">{errors?.password?.message}</span>
                     <input
@@ -207,6 +208,7 @@ const IdSearch = ({ handleSubmit, register, setValue, setError, errors, moveType
                         })}
                         type="password"
                         placeholder="비밀번호 확인"
+                        autoComplete="off"
                     />
                     <span className="password">{errors?.password1?.message}</span>
                     <button type="submit">변경하기</button>
