@@ -223,7 +223,10 @@ const NavBar = () => {
                             <Dropdown overlay={menu} placement="bottomRight" arrow>
                                 {imgPath ? (
                                     <span className="profileImg">
-                                        <img src={strategyType === 'local' ? fileBackUrl + imgPath : imgPath} />
+                                        <img
+                                            src={strategyType === 'local' ? fileBackUrl + imgPath : imgPath}
+                                            crossOrigin="use-credentials"
+                                        />
                                     </span>
                                 ) : (
                                     <Avatar size="large" icon={<UserOutlined />} />
