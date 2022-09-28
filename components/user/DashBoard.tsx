@@ -349,7 +349,7 @@ const DashBoard = ({ isVisible, scrollY }: IDashBoardProps) => {
                                                 {user.strategyType === 'local' ? (
                                                     <XToggle className="xtoggle" onClick={deleteImg}></XToggle>
                                                 ) : null}
-                                                <img src={profileImgURL as string}></img>
+                                                <img src={profileImgURL as string} crossOrigin="use-credentials" />
                                             </>
                                         ) : (
                                             <Avatar size="large" icon={<UserOutlined />} />
