@@ -225,7 +225,7 @@ const NavBar = () => {
                                     <span className="profileImg">
                                         <img
                                             src={strategyType === 'local' ? fileBackUrl + imgPath : imgPath}
-                                            crossOrigin="use-credentials"
+                                            // crossOrigin="use-credentials"
                                         />
                                     </span>
                                 ) : (
