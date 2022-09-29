@@ -202,7 +202,7 @@ const Profile = () => {
             <ProfileImgeBox>
                 <ProfileImg adminPath={adminInfo?.imgPath}></ProfileImg>
                 <span>IceMan</span>
-                <p>아이스맨 같은 개발자가 되고 싶은 사람입니다.</p>
+                <p>될 때 까지 하는 개발자 입니다.</p>
             </ProfileImgeBox>
             <CategoriBox>
                 {userId === 'iceMan' ? (
