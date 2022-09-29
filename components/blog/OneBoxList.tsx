@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import path from 'path';
 import { memo } from 'react';
 import styled from 'styled-components';
-import { fileBackUrl } from '../../config';
+import { fileBackUrl, imgExtFormat } from '../../config';
 import { IBoardData } from '../../reducer/blog/boardData';
 import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
@@ -80,15 +80,27 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                             style={{ cursor: 'pointer' }}
                                             onClick={() => moveDetailPage(item.board_id)}
                                         >
-                                            {item.board_files?.find((file) => path.extname(file.name) === '.png') ? (
+                                            {item.board_files?.find((file) =>
+                                                imgExtFormat.includes(path.extname(file.name).toLocaleLowerCase()),
+                                            ) ? (
                                                 <img
                                                     style={{ width: '8.5rem', height: '8.5rem' }}
                                                     alt="example"
-                                                    src={`${fileBackUrl}${item.board_id}/${
-                                                        item.board_files?.find(
-                                                            (file) => path.extname(file.name) === '.png',
-                                                        )?.name
-                                                    }`}
+                                                    src={
+                                                        [1].map((v) => {
+                                                            const $ = Cheerio.load(item.content);
+                                                            const firstImage = Array.from(
+                                                                $('#quillContent').find('*'),
+                                                            ).find((tag) => {
+                                                                if ($(tag).prop('tagName') === 'IMG') {
+                                                                    return true;
+                                                                } else {
+                                                                    return false;
+                                                                }
+                                                            });
+                                                            return $(firstImage).prop('src') as string;
+                                                        })[0]
+                                                    }
                                                 />
                                             ) : (
                                                 <img
