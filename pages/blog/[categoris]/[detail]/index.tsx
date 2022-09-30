@@ -174,6 +174,7 @@ const Boundary = styled.div`
 `;
 const Content = styled.div`
     width: 100%;
+    line-height: 2em;
     min-height: 25rem;
     padding-top: 1.25em;
 `;
