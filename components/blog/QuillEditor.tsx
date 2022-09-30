@@ -55,31 +55,6 @@ const toolbarOptions = [
     ['link', 'image', 'video'],
 ];
 
-const handlers = {
-    image: async function () {
-        const fileInput = document.createElement('input');
-        fileInput.setAttribute('type', 'file');
-        fileInput.setAttribute('multiple', 'multiple');
-        fileInput.setAttribute('accept', 'image/*');
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files !== null) {
-                for (const file of fileInput.files) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const range = (this as any).quill.getSelection(true);
-                        (this as any).quill.updateContents(
-                            new Delta().retain(range.index).delete(range.length).insert({ image: e?.target?.result }),
-                        );
-                    };
-                    reader.readAsDataURL(file);
-                }
-                fileInput.value = '';
-            }
-        });
-        fileInput.click();
-    },
-};
-
 // 옵션에 상응하는 포맷, 추가해주지 않으면 text editor에 적용된 스타일을 볼수 없음
 const formats = [
     'header',
@@ -106,7 +81,6 @@ const formats = [
 const modules = {
     toolbar: {
         container: toolbarOptions,
-        handlers,
     },
     ImageResize: {
         parchment: Quill.import('parchment'),
@@ -178,7 +152,7 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
 
                                         const response = await axios.post('/blog/uploadBoardFile', formData);
                                         const fileNames = response.data.fileNames as string[];
-                                        for (const fileName of fileNames.reverse()) {
+                                        for (const fileName of fileNames) {
                                             const range = (this as any).quill.getSelection(true);
                                             (this as any).quill.updateContents(
                                                 new Delta()

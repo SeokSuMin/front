@@ -1,10 +1,11 @@
 import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { BackUrl } from './config';
+import { BackUrl, fileBackUrl } from './config';
 import { IState } from './reducer/rootReducer';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { idText } from 'typescript';
+import * as Cheerio from 'cheerio';
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
@@ -45,4 +46,29 @@ const getDifferenceTime = (time: string) => {
     }
 };
 
-export { rlto, getBoardList, getDifferenceTime };
+const copyPasteImageUpload = async ($: Cheerio.CheerioAPI, boardId: string) => {
+    const allTags = Array.from($('#quillContent').find('*'));
+
+    for (const tag of allTags) {
+        if ($(tag).prop('tagName') === 'IMG') {
+            const imgSrc = $(tag).prop('src') as string;
+            if (imgSrc.includes('data:image')) {
+                const formData = new FormData();
+                const fileName =
+                    imgSrc.slice(-8).replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, '') + '.png';
+                const convertIamgeFile = await rlto(imgSrc, fileName, {
+                    type: 'image/png',
+                });
+                formData.append('boardId', boardId);
+                formData.append('file', convertIamgeFile);
+                const response = await axios.post('/blog/uploadBoardFile', formData);
+                const fileNames = response.data.fileNames as string[];
+                $(tag).prop('src', `${fileBackUrl}${boardId}/${fileNames[0]}`);
+            }
+        }
+    }
+
+    return $;
+};
+
+export { rlto, getBoardList, getDifferenceTime, copyPasteImageUpload };

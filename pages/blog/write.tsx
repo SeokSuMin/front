@@ -7,7 +7,7 @@ import WriteInput from '../../components/blog/WriteTtile';
 import FileLists from '../../components/blog/FileLists';
 import FileUpload from '../../components/blog/FileUpload';
 import * as Cheerio from 'cheerio';
-import { rlto } from '../../util';
+import { copyPasteImageUpload, rlto } from '../../util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
@@ -206,9 +206,7 @@ const Write = () => {
                 titleInputRef?.current?.input?.focus();
                 return;
             }
-            const $ = quillRef?.current?.state?.value.trim()
-                ? Cheerio.load(`<div id='quillContent'>${quillRef?.current?.state?.value}</div>`)
-                : '';
+            let $ = Cheerio.load(`<div id='quillContent'>${quillRef?.current?.state?.value}</div>`);
             const fileArr: File[] = [...files];
             const imgFileName: { board_id: string; name: string }[] = [];
             const allFileDeleteIds: number[] = [];
@@ -225,33 +223,31 @@ const Write = () => {
                     : [];
             const boardData = { board_id: uuid } as IBoardData;
 
-            // 에디터 내용이 존재하면
-            if ($) {
-                const allTags = Array.from($('#quillContent').find('*'));
-                // 이미지 변환 병렬처리
-                await Promise.all(
-                    allTags.map(async (tag) => {
-                        if ($(tag).prop('tagName') === 'IMG') {
-                            const imgSrc = $(tag).prop('src') as string;
-                            // 수정시 기존 저장된 이미지 비교후 삭제 진행, 신규 이미지는 추가
-                            if (prevBoardFileNames.find((name) => imgSrc.includes(name))) {
-                                prevBoardFileNames = prevBoardFileNames.filter((name) => !imgSrc.includes(name));
-                            } else if (!prevBoardFileNames.find((name) => imgSrc.includes(name))) {
-                                imgFileName.push({
-                                    board_id: uuid,
-                                    name: imgSrc.split('/')[imgSrc.split('/').length - 1],
-                                });
-                            }
+            $ = await copyPasteImageUpload($, uuid);
+            const allTags = Array.from($('#quillContent').find('*'));
+            // 이미지 변환 병렬처리
+            await Promise.all(
+                allTags.map(async (tag) => {
+                    if ($(tag).prop('tagName') === 'IMG') {
+                        const imgSrc = $(tag).prop('src') as string;
+                        // 수정시 기존 저장된 이미지 비교후 삭제 진행, 신규 이미지는 추가
+                        if (prevBoardFileNames.find((name) => imgSrc.includes(name))) {
+                            prevBoardFileNames = prevBoardFileNames.filter((name) => !imgSrc.includes(name));
+                        } else if (!prevBoardFileNames.find((name) => imgSrc.includes(name))) {
+                            imgFileName.push({
+                                board_id: uuid,
+                                name: imgSrc.split('/')[imgSrc.split('/').length - 1],
+                            });
                         }
-                    }),
-                );
-                for (const removeName of prevBoardFileNames) {
-                    const removeId = detailBoard?.board_files?.find((file) => file.name === removeName)?.file_id;
-                    allFileDeleteIds.push(removeId as number);
-                }
-                const content = $.html().replace('<html><head></head><body>', '').replace('</body></html>', '');
-                boardData.content = content;
+                    }
+                }),
+            );
+            for (const removeName of prevBoardFileNames) {
+                const removeId = detailBoard?.board_files?.find((file) => file.name === removeName)?.file_id;
+                allFileDeleteIds.push(removeId as number);
             }
+            const content = $.html().replace('<html><head></head><body>', '').replace('</body></html>', '');
+            boardData.content = content;
 
             boardData.title = title;
             boardData.categori_id = categoriId as number;
@@ -300,7 +296,7 @@ const Write = () => {
                 for (const menu of resultCategoris.categoriMenus) {
                     const findCategori = menu.categoris.find((c) => c?.categori_id === +categoriId);
                     if (findCategori) {
-                        console.log('findCategori', findCategori);
+                        // console.log('findCategori', findCategori);
                         setMenuId(menu.menu_id);
                         setCategoriId(+categoriId);
                         break;
