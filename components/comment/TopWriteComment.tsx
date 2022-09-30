@@ -34,7 +34,7 @@ const CommentSubmitBox = styled.div`
     text-align: right;
     button {
         border: none;
-        background-color: rgb(18, 184, 134);
+        background-color: rgb(203, 92, 222);
         color: white;
         padding: 0.5em 0.813em;
         border-radius: 0.313rem;
@@ -42,7 +42,7 @@ const CommentSubmitBox = styled.div`
         cursor: pointer;
     }
     button:hover {
-        background-color: rgb(32, 201, 151);
+        background-color: rgb(231, 154, 255);
     }
 `;
 

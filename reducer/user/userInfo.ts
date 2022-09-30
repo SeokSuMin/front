@@ -19,7 +19,16 @@ export interface IUserInfo {
 
 const userInfo = createSlice({
     name: 'userInfo',
-    initialState: { hydration: false } as IUserInfo,
+    initialState: {
+        hydration: false,
+        userId: '',
+        email: '',
+        strategyType: '',
+        imgPath: '',
+        updatedAt: '',
+        createdAt: '',
+        loading: false,
+    } as IUserInfo,
     reducers: {
         loginUserInfo: (state, action: PayloadAction<IUserInfo>) => {
             return { ...state, ...action.payload };

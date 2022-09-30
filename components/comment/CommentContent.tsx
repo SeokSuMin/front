@@ -24,11 +24,12 @@ const WriterInfo = styled.div`
         text-decoration: underline;
     }
     span:nth-child(2) {
+        font-size: 0.875rem;
         color: rgb(160, 160, 160);
         margin-left: 0.313em;
     }
     span:last-child {
-        font-size: 0.75rem;
+        font-size: 0.875rem;
         color: rgb(160, 160, 160);
         margin-left: 0.313em;
     }

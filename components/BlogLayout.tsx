@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import LeftProfileBox from './blog/LeftProfileBox';
+import { BackTop } from 'antd';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -13,6 +14,10 @@ const Wrapper = styled.div`
     padding-right: 3em;
     min-height: 100%;
     position: relative;
+    .ant-back-top {
+        right: 50px;
+        //position: absolute;
+    }
 `;
 
 const TopImageBox = styled.div`
@@ -48,6 +53,16 @@ const BodyBox = styled.div`
     position: relative;
     display: flex;
 `;
+
+const style: React.CSSProperties = {
+    height: 40,
+    width: 40,
+    lineHeight: '40px',
+    borderRadius: 4,
+    backgroundColor: 'rgb(203, 92, 222)',
+    color: '#fff',
+    textAlign: 'center',
+};
 
 interface IBlogLayoutProps {
     children?: React.ReactNode;
@@ -95,6 +110,9 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
                 <LeftProfileBox {...{ DrawerVisible, closeDrawer, visible }} />
                 {children}
             </BodyBox>
+            <BackTop>
+                <div style={style}>UP</div>
+            </BackTop>
         </Wrapper>
     );
 };

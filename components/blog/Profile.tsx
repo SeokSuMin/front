@@ -52,7 +52,7 @@ const ProfileImg = styled.div<{ adminPath: string | undefined }>`
     height: 5rem;
     background-image: url(${(props) => (props.adminPath ? fileBackUrl + props.adminPath : '/profile.png')});
     background-position: center;
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
     border-radius: 50%;
     margin-top: 0.938em;

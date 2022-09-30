@@ -105,6 +105,7 @@ const SendBox = styled.div`
 const Write = () => {
     useBeforeunload((event) => event.preventDefault());
     const router = useRouter();
+    const { userId } = useAppSelector((state) => state.userInfo);
     const { categoriMenus } = useAppSelector((state) => state.categoriMenus);
     const detailBoard = useAppSelector((state) => state.boardData);
     const { viewType } = useAppSelector((state) => state.blogToggle);
@@ -121,6 +122,9 @@ const Write = () => {
     const [files, setFiles] = useState<File[]>([]);
     const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
     const [uuid, setUuid] = useState('');
+
+    const [permissionLoading, setPermissionLoading] = useState(true);
+
     1;
     const changeMenu = (value: number) => {
         setMenuId(value);
@@ -308,6 +312,7 @@ const Write = () => {
             }
             setUuid(uuidv4().split('-').join(''));
         }
+        setPermissionLoading(false);
     };
 
     const beforeunload = (e: BeforeUnloadEvent) => {
@@ -318,48 +323,64 @@ const Write = () => {
     };
 
     useEffect(() => {
-        initPage();
-        window.addEventListener('beforeunload', beforeunload);
-        return () => {
-            window.removeEventListener('beforeunload', beforeunload);
-        };
-    }, [router.query.mode]);
+        if (!userId || userId !== 'iceMan') {
+            message.warn('권한이 없으므로 메인페이지로 돌아갑니다.');
+            router.push({
+                pathname: `/blog/categori_0`,
+                query: { page: '1', countList, type: viewType },
+            });
+        } else {
+            initPage();
+            window.addEventListener('beforeunload', beforeunload);
+            return () => {
+                window.removeEventListener('beforeunload', beforeunload);
+            };
+        }
+    }, [router.query.mode, userId]);
 
     return (
         <Wrapper>
             <Seo title="Ice Man | 블로그"></Seo>
-            <WriteBox>
-                {detailBoard.loading ? (
-                    <SpinWrapper>
-                        <Spin tip="게시글 작성하는 중..." />
-                    </SpinWrapper>
-                ) : null}
-                <WriteInput
-                    {...{
-                        titleInputRef,
-                        // menuInputRef,
-                        // categoriInputRef,
-                        menuId,
-                        categoriMenus,
-                        // categoris,
-                        categoriId,
-                        changeMenu,
-                        changeCategori,
-                    }}
-                />
-                <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
-                <FileLists {...{ deleteFile }} />
-                <ContentBox>
-                    {!detailBoard.loading ? <QuillEditor {...{ quillRef, uuid }} /> : null}
-                    {/* <CkEditors /> */}
-                </ContentBox>
-            </WriteBox>
-            <SendBox>
-                <Button onClick={() => window.history.back()}>취소</Button>
-                <Button disabled={detailBoard.loading} onClick={submit} type="primary">
-                    작성완료
-                </Button>
-            </SendBox>
+            {permissionLoading ? (
+                <SpinWrapper>
+                    <Spin tip="Loading..." />
+                </SpinWrapper>
+            ) : (
+                <>
+                    <WriteBox>
+                        {detailBoard.loading ? (
+                            <SpinWrapper>
+                                <Spin tip="게시글 작성하는 중..." />
+                            </SpinWrapper>
+                        ) : null}
+                        <WriteInput
+                            {...{
+                                titleInputRef,
+                                // menuInputRef,
+                                // categoriInputRef,
+                                menuId,
+                                categoriMenus,
+                                // categoris,
+                                categoriId,
+                                changeMenu,
+                                changeCategori,
+                            }}
+                        />
+                        <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
+                        <FileLists {...{ deleteFile }} />
+                        <ContentBox>
+                            {!detailBoard.loading ? <QuillEditor {...{ quillRef, uuid }} /> : null}
+                            {/* <CkEditors /> */}
+                        </ContentBox>
+                    </WriteBox>
+                    <SendBox>
+                        <Button onClick={() => window.history.back()}>취소</Button>
+                        <Button disabled={detailBoard.loading} onClick={submit} type="primary">
+                            작성완료
+                        </Button>
+                    </SendBox>
+                </>
+            )}
         </Wrapper>
     );
 };

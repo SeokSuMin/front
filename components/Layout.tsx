@@ -19,9 +19,9 @@ const Wrapper = styled.div`
     align-items: center;
     position: relative;
 
-    .ant-back-top {
+    /* .ant-back-top {
         right: 50px;
-    }
+    } */
 `;
 
 const IntroLayout = styled.div`
@@ -95,9 +95,9 @@ const Layout: React.FC<ILayoutProps> = ({ children }) => {
                 </a>
                 <h3>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 상단 개인 이미지 무단 복사를 금지합니다.</h3>
             </Footer>
-            <BackTop>
+            {/* <BackTop>
                 <div style={style}>UP</div>
-            </BackTop>
+            </BackTop> */}
             {loginVisible ? <UserModalView {...{ isVisible: loginVisible, scrollY: scrollY.get() }} /> : null}
             {dashBoardVisible ? <DashBoard {...{ isVisible: dashBoardVisible, scrollY: scrollY.get() }} /> : null}
         </Wrapper>

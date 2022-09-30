@@ -21,12 +21,12 @@ const ToggleBox = styled.div`
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    /* & > div {
-        padding-left: 0.625em;
-    } */
+    .ant-select-selector {
+        height: 1.5rem !important;
+    }
     svg {
-        width: 1.125em;
-        height: 1.3em;
+        width: 1.4em;
+        height: 1.5em;
         margin-right: 0.313em;
         cursor: pointer;
         margin-top: auto;
