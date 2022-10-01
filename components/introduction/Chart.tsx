@@ -28,7 +28,7 @@ const skillObj = {
     '1': [
         { x: 'HTML', y: 70 },
         { x: 'CSS', y: 55 },
-        { x: 'Js[ES6]', y: 60 },
+        { x: 'Js[ES6]', y: 65 },
         { x: 'TypeScript', y: 60 },
         { x: 'React', y: 65 },
     ],

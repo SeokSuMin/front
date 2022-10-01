@@ -6,7 +6,7 @@ import { BackTop } from 'antd';
 
 const Wrapper = styled.div`
     width: 100%;
-    max-width: 68.75rem;
+    max-width: 70.625rem;
     display: flex;
     flex-direction: column;
     padding-bottom: 11.25em;

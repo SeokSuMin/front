@@ -2,14 +2,16 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
     width: 100%;
-    height: 60vh;
-    min-height: 25rem;
+    // min-height: 25rem;
 `;
 
 const IntroBox = styled.div`
     width: 100%;
-    height: 100%;
+    height: 500px;
     background-image: url('/banner1.png');
+    // background-size: contain;
+    // background-repeat: no-repeat;
+    // background-position: center;
     // background-image: linear-gradient(135deg, #ef16f2 0%, #a5c4fc 100%);
     display: flex;
 

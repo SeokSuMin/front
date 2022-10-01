@@ -118,8 +118,8 @@ const NavBar = () => {
     const router = useRouter();
     const { scrollY } = useScroll();
     const scrollArr = router.pathname === '/' ? [400, 600] : [0, 0];
-    const backgroundColor = useTransform(scrollY, scrollArr, ['rgba(0,0,0,0)', 'rgba(255,255,255,1)']);
-    const borderBottom = useTransform(scrollY, scrollArr, ['1px solid rgba(0,0,0,0)', '1px solid rgba(217,217,217,1)']);
+    const backgroundColor = useTransform(scrollY, [0, 0], ['rgba(0,0,0,0)', 'rgba(255,255,255,1)']);
+    const borderBottom = useTransform(scrollY, [0, 0], ['1px solid rgba(0,0,0,0)', '1px solid rgba(217,217,217,1)']);
     const { userId, imgPath, strategyType } = useAppSelector((state) => state.userInfo);
     const dispatch = useAppDispatch();
 

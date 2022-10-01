@@ -42,11 +42,15 @@ const Card = styled(motion.div)`
     @media screen and (max-width: 53rem) {
         flex: 0 1 47%;
         margin-right: 6%;
+        margin-top: 18%;
         &:nth-child(2n + 0) {
             margin-right: 0;
         }
-        &:nth-child(3),
-        &:nth-child(4) {
+        &:first-child,
+        &:nth-child(2) {
+            margin-top: 0px;
+        }
+        &:nth-child(3) {
             margin-top: 18%;
         }
     }
