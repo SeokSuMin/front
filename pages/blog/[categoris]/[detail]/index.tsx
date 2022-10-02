@@ -59,7 +59,7 @@ const SpinWrapper = styled.div`
 `;
 
 const TopMenuBox = styled.div`
-    width: 98%;
+    width: 97%;
     display: flex;
     // justify-content: space-between;
     justify-content: flex-end;
@@ -75,6 +75,9 @@ const TopMenuBox = styled.div`
     }
     button:active {
         background-color: rgb(210, 210, 210);
+    }
+    @media screen and (max-width: 39.375rem) {
+        width: 100%;
     }
 `;
 const Title = styled.div`
@@ -96,12 +99,15 @@ const MoveBoardButtonBox = styled.div``;
 const ModifyBoardButtonBox = styled.div``;
 
 const BoardBox = styled.div`
-    width: 98%;
+    width: 97%;
     display: flex;
     flex-direction: column;
     border: 1px solid rgb(217, 217, 217);
     border-radius: 0.63em;
     padding: 1.563em 0.938em;
+    @media screen and (max-width: 39.375rem) {
+        width: 100%;
+    }
 `;
 
 const TitleBox = styled.div`
@@ -177,6 +183,7 @@ const Content = styled.div`
     line-height: 2em;
     min-height: 25rem;
     padding-top: 1.25em;
+    // padding: 2.031em 2.031em 2.031em 2.031em;
 `;
 
 const DetailBoard = () => {

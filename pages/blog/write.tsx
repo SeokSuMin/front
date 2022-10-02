@@ -69,9 +69,13 @@ const ContentBox = styled.div`
     /* min-height: 20rem; */
     display: flex;
     flex-direction: column;
+    .quill {
+        width: 54em;
+    }
     .ql-container {
         height: 27rem;
         max-height: 27rem;
+        // width: 52.938em;
         // resize: vertical;
         //overflow: auto;
     }
@@ -80,6 +84,7 @@ const ContentBox = styled.div`
         height: 100%;
         line-height: 2em;
         overflow-y: auto;
+
         // overflow-y: auto;
         /* flex: 1;
         display: flex;

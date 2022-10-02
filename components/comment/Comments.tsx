@@ -19,8 +19,11 @@ dayjs.locale('ko');
 const { confirm } = Modal;
 
 const Wrapper = styled.div`
-    width: 98%;
+    width: 97%;
     position: relative;
+    @media screen and (max-width: 39.375rem) {
+        width: 100%;
+    }
 `;
 
 const SpinWrapper = styled.div`

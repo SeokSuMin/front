@@ -10,6 +10,7 @@ import { fileBackUrl } from '../../config';
 import styled from 'styled-components';
 import { Input } from 'antd';
 import * as Cheerio from 'cheerio';
+import ImageCompress from 'quill-image-compress';
 
 const { Search } = Input;
 
@@ -46,6 +47,7 @@ Quill.register(Quill.import('attributors/style/size'), true);
 Quill.register(Quill.import('attributors/style/font'), true);
 Quill.register(Quill.import('attributors/style/color'), true);
 Quill.register('modules/ImageResize', ImageResize);
+Quill.register('modules/imageCompress', ImageCompress);
 
 // 사용하고 싶은 옵션, 나열 되었으면 하는 순서대로 나열
 const toolbarOptions = [
@@ -118,7 +120,7 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
         const allTags = Array.from($('html').find('*'));
         allTags.map((tag) => {
             if ($(tag).prop('tagName') === 'IMG') {
-                $(tag).prop('width', size + 'px');
+                $(tag).prop('width', (Number(size) > 819 ? '819' : size) + 'px');
                 // $(tag).css('max-width', '100%');
             }
         });
@@ -180,6 +182,9 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
                     ImageResize: {
                         parchment: Quill.import('parchment'),
                         modules: ['Resize', 'DisplaySize', 'Toolbar'],
+                    },
+                    imageCompress: {
+                        maxWidth: 819,
                     },
                 }}
                 formats={formats}
