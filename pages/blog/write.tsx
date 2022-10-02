@@ -100,6 +100,10 @@ const SendBox = styled.div`
     button:first-child {
         margin-right: 0.625em;
     }
+    button:last-child {
+        border: none;
+        background-color: rgb(30, 59, 72);
+    }
 `;
 
 const Write = () => {
@@ -239,6 +243,7 @@ const Write = () => {
                                 name: imgSrc.split('/')[imgSrc.split('/').length - 1],
                             });
                         }
+                        $(tag).css('max-width', '100%');
                     }
                 }),
             );

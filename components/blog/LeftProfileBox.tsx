@@ -1,5 +1,7 @@
 import { CaretRightOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import CategorisDrawer from './CategorisDrawer';
 import Profile from './Profile';
@@ -38,21 +40,26 @@ const LeftSideToggle = styled(motion.div)`
 
 interface ILeftProfileBox {
     DrawerVisible: () => void;
-    visible: boolean;
     closeDrawer: () => void;
+    visible: boolean;
+    detailViewVisible: boolean;
 }
 
-const LeftProfileBox = ({ DrawerVisible, visible, closeDrawer }: ILeftProfileBox) => {
+const LeftProfileBox = ({ DrawerVisible, closeDrawer, visible, detailViewVisible }: ILeftProfileBox) => {
     return (
-        <Wrapper>
-            <LeftSideToggleBox onClick={DrawerVisible}>
-                <LeftSideToggle>
-                    <CaretRightOutlined />
-                </LeftSideToggle>
-            </LeftSideToggleBox>
-            <CategorisDrawer {...{ visible, closeDrawer }} />
-            <Profile />
-        </Wrapper>
+        <>
+            {detailViewVisible ? (
+                <Wrapper>
+                    <LeftSideToggleBox onClick={DrawerVisible}>
+                        <LeftSideToggle>
+                            <CaretRightOutlined />
+                        </LeftSideToggle>
+                    </LeftSideToggleBox>
+                    <CategorisDrawer {...{ visible, closeDrawer }} />
+                    <Profile />
+                </Wrapper>
+            ) : null}
+        </>
     );
 };
 

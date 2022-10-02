@@ -59,8 +59,9 @@ const style: React.CSSProperties = {
     width: 40,
     lineHeight: '40px',
     borderRadius: 4,
-    backgroundColor: 'rgb(203, 92, 222)',
-    color: '#fff',
+    backgroundColor: 'transparent',
+    border: '1px solid black',
+    color: 'black',
     textAlign: 'center',
 };
 
@@ -71,6 +72,7 @@ interface IBlogLayoutProps {
 const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
     const router = useRouter();
     const [visible, setVisible] = useState(false);
+    const [detailViewVisible, setDetailViewVisible] = useState(true);
     const DrawerVisible = () => {
         setVisible(true);
     };
@@ -79,18 +81,31 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
         setVisible(false);
     };
 
+    const detailProfileViewVisible = (width: number) => {
+        if (router.pathname === '/blog/[categoris]/[detail]') {
+            width > 630 ? setDetailViewVisible(true) : setDetailViewVisible(false);
+        } else {
+            // 게시글 상세화면이 아니면 프로필을 무조건 보여줌
+            setDetailViewVisible(true);
+        }
+    };
+
     useEffect(() => {
+        // 화면 렌더링 첫 실행
+        detailProfileViewVisible(window.innerWidth);
         const windowResize = () => {
             if (window.innerWidth > 575) {
                 setVisible(false);
             }
+            // 브라우저 리사이즈시 작동
+            detailProfileViewVisible(window.innerWidth);
         };
         window.addEventListener(`resize`, windowResize);
 
         return () => {
             window.removeEventListener(`resize`, windowResize);
         };
-    }, []);
+    }, [router.pathname]);
 
     return (
         <Wrapper>
@@ -107,7 +122,7 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
                 </TitleBox>
             </TopImageBox>
             <BodyBox>
-                <LeftProfileBox {...{ DrawerVisible, closeDrawer, visible }} />
+                <LeftProfileBox {...{ DrawerVisible, closeDrawer, visible, detailViewVisible }} />
                 {children}
             </BodyBox>
             <BackTop>

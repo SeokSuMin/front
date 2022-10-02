@@ -23,6 +23,10 @@ const TitleBox = styled.div`
         width: 15%;
         min-width: 6.25em;
     }
+    button {
+        border: none;
+        background-color: rgb(30, 59, 72);
+    }
 `;
 
 const Lable = styled.label`
@@ -115,6 +119,7 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
         allTags.map((tag) => {
             if ($(tag).prop('tagName') === 'IMG') {
                 $(tag).prop('width', size + 'px');
+                // $(tag).css('max-width', '100%');
             }
         });
         setContent($.html());

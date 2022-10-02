@@ -33,6 +33,9 @@ const GlobalStyle = createGlobalStyle`
     html, body {
         font-size:100%;
         height: 100%;
+        /* @media screen and (max-width: 33rem) {
+            font-size: 90%;
+        } */
     }
     body {
         line-height: 1;

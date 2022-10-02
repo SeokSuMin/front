@@ -21,6 +21,7 @@ import LeftProfileBox from '../../../components/blog/LeftProfileBox';
 const Wrapper = styled.div`
     width: 100%;
     height: 100%;
+    margin-top: 0.2em;
     .ant-spin-spinning {
         width: 100%;
         height: 100%;

@@ -36,35 +36,38 @@ const IntroLayout = styled.div`
 `;
 const Footer = styled.div<{ path: string }>`
     width: 100%;
-    /* max-width: ${(props) => (props.path === '/' ? '100%' : '68.75rem')}; */
-    max-width: 100%;
+    max-width: 68.75rem;
     margin-top: auto;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    // justify-content: flex-start;
     align-items: center;
-    background: #c9d6ff; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #e2e2e2, #c9d6ff); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(
+    border-top: 1px solid rgb(128, 128, 128);
+    // background: #c9d6ff; /* fallback for old browsers */
+    // background: -webkit-linear-gradient(to right, #e2e2e2, #c9d6ff); /* Chrome 10-25, Safari 5.1-6 */
+    /* background: linear-gradient(
         to right,
         #e2e2e2,
         #c9d6ff
-    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-    h3 {
-        margin-top: 0.938em;
-        margin-bottom: 1.875em;
-        color: white;
+    );  */
+    span {
+        font-size: 0.75rem;
+        margin-top: 1.25em;
+        margin-bottom: 2.5em;
+        color: rgb(128, 128, 128);
     }
 `;
 
 const IconBox = styled.div`
     svg {
-        margin-top: 0.714em;
+        margin-top: 1.875em;
         margin-left: 0.625em;
-        width: 2.188rem;
-        height: 2.188rem;
-        fill: white;
+        width: 1.563rem;
+        height: 1.563rem;
+        fill: rgb(128, 128, 128);
+    }
+    svg:hover {
+        fill: black;
     }
 `;
 
@@ -105,7 +108,7 @@ const Layout: React.FC<ILayoutProps> = ({ children }) => {
                         <GitHub />
                     </a>
                 </IconBox>
-                <h3>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 개인 이미지 무단 복사를 금지합니다.</h3>
+                <span>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 개인 이미지 무단 복사를 금지합니다.</span>
             </Footer>
             {/* <BackTop>
                 <div style={style}>UP</div>

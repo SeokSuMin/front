@@ -22,14 +22,13 @@ const ToggleBox = styled.div`
     justify-content: flex-end;
     align-items: center;
     .ant-select-selector {
-        height: 1.5rem !important;
+        height: 1.3rem !important;
     }
     svg {
-        width: 1.4em;
-        height: 1.5em;
+        width: 1.2em;
+        height: 1.2em;
         margin-right: 0.313em;
         cursor: pointer;
-        margin-top: auto;
 
         /* fill: green; */
     }
@@ -43,7 +42,7 @@ const ToggleBox = styled.div`
 
 const Title = styled.div`
     margin-right: auto;
-    margin-top: auto;
+    /* margin-top: auto; */
     font-size: 0.875rem;
     font-weight: 900;
     /* .menu {
@@ -58,7 +57,7 @@ const Title = styled.div`
 
 const Write = styled.div`
     font-size: 0.875rem;
-    margin-top: auto;
+    // margin-top: auto;
     padding-bottom: 5px;
     position: relative;
     span:first-child {
