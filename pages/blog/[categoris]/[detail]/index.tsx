@@ -201,6 +201,10 @@ const DetailBoard = () => {
             em {
                 font-style : italic;
             }
+            a {
+                color: blue;
+                text-decoration: underline;
+            }
             .ql-syntax {
                 background-color: #23241f;
                 color: #f8f8f2;
