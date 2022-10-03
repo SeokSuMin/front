@@ -19,7 +19,7 @@ export interface IBoardData {
     writer: string;
     uploadFiles: File[];
     board_files?: IBoardFile[];
-    comments?: IComment[];
+    comment_count: number;
     prevBoardId?: string;
     nextBoardId?: string;
     createdAt?: string;

@@ -158,6 +158,13 @@ const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
                         <Option value={45}>45개씩</Option>
                     </Select>
                 </div>
+                {/* <div>
+                    <Select onChange={changeCountListValue} value={countList} style={{ width: 90, marginLeft: 5 }}>
+                        <Option value={15}>최신순</Option>
+                        <Option value={30}>오래된순</Option>
+                        <Option value={45}>댓글순</Option>
+                    </Select>
+                </div> */}
             </ToggleBox>
         </Wrapper>
     );

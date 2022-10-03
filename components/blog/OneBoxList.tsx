@@ -137,14 +137,9 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                                 <Content>
                                                     <a onClick={() => moveDetailPage(item.board_id)}>
                                                         {item.title}
-                                                        {item?.comments?.length ? (
+                                                        {item?.comment_count ? (
                                                             <span style={{ marginLeft: '1em' }}>
-                                                                (
-                                                                {
-                                                                    item?.comments?.filter((c) => c.parent_id === null)
-                                                                        .length
-                                                                }
-                                                                )
+                                                                ({item.comment_count})
                                                             </span>
                                                         ) : null}
                                                     </a>

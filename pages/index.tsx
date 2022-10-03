@@ -13,6 +13,8 @@ import Plan from '../components/introduction/Plan';
 import { checkUserloginThunk } from '../thunk/userThunk';
 import axios from 'axios';
 import Seo from '../components/Seo';
+import Rightsolid from '../public/angles-right-solid.svg';
+import { useRouter } from 'next/router';
 
 const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
 
@@ -66,8 +68,31 @@ const DetailSkillBox = styled.div`
     }
 `;
 
+const MoveBlogPageTextBox = styled.div`
+    width: 70%;
+    font-weight: bold;
+    margin: 0 auto;
+    margin-top: 9.375em;
+    display: flex;
+    justify-content: center;
+    h1 {
+        font-size: 1.25em;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+    h1:hover {
+        text-decoration: underline;
+    }
+    svg {
+        width: 1em;
+        margin-left: 0.313em;
+    }
+`;
+
 // InferGetServerSidePropsType<typeof getServerSideProps>
 export default function Home() {
+    const router = useRouter();
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const [skill, setSkill] = useState<'1' | '2'>('1');
     const { scrollYProgress } = useScroll();
@@ -99,6 +124,19 @@ export default function Home() {
                 </SkillBox>
             </CurrentUseSkillBox>
             <Plan />
+            <MoveBlogPageTextBox>
+                <h1
+                    onClick={() =>
+                        router.push({
+                            pathname: `/blog/categori_0`,
+                            query: { page: '1', countList: '15', type: 'CARD' },
+                        })
+                    }
+                >
+                    블로그 방문하기
+                    <Rightsolid />
+                </h1>
+            </MoveBlogPageTextBox>
         </Wrapper>
     );
 }

@@ -108,7 +108,7 @@ const Layout: React.FC<ILayoutProps> = ({ children }) => {
                         <GitHub />
                     </a>
                 </IconBox>
-                <span>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 개인 이미지 무단 복사를 금지합니다.</span>
+                <span>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 디자인 및 이미지 무단 복사를 금지합니다.</span>
             </Footer>
             {/* <BackTop>
                 <div style={style}>UP</div>

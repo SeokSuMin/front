@@ -287,10 +287,9 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                             <span className="registDate">
                                                 {dayjs(board.createdAt).format('YYYY MM DD HH:mm')}
                                             </span>
-                                            {board?.comments?.length ? (
+                                            {board?.comment_count ? (
                                                 <span className="comment">
-                                                    {/* <CommentOutlined /> */}(
-                                                    {board?.comments?.filter((c) => c.parent_id === null).length})
+                                                    {/* <CommentOutlined /> */}({board?.comment_count})
                                                 </span>
                                             ) : null}
                                         </WriteInfo>

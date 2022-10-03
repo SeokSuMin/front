@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface IBlogToggle {
     currentCategoriId: number;
     viewType: string;
+    order: string;
     hydration?: boolean;
 }
 
@@ -11,10 +12,10 @@ const blogToggle = createSlice({
     initialState: { hydration: false, currentCategoriId: 0, viewType: 'CARD' } as IBlogToggle,
     reducers: {
         changeCurrentCategoriId: (state, action: PayloadAction<number>) => {
-            const categoriId = action.payload;
+            const currentCategoriId = action.payload;
             return {
                 ...state,
-                currentCategoriId: categoriId,
+                currentCategoriId,
                 // hydration: true,
             };
         },
