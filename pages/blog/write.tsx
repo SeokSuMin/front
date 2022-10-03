@@ -33,7 +33,7 @@ const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), {
 
 const Wrapper = styled.div`
     width: 100%;
-    padding: 0px 1.875em 0px 1.875em;
+    padding: 0px 0px 0px 1.875em;
     margin-top: 3.74em;
     position: relative;
     z-index: 0;
@@ -59,6 +59,7 @@ const SpinWrapper = styled.div`
 `;
 
 const WriteBox = styled.div`
+    width: 100%;
     display: flex;
     flex-direction: column;
     /* margin-top: 1.56rem; */
@@ -69,27 +70,19 @@ const ContentBox = styled.div`
     /* min-height: 20rem; */
     display: flex;
     flex-direction: column;
-    .quill {
-        width: 54em;
-    }
+    /* .quill {
+        overflow-x: auto;
+    } */
     .ql-container {
         height: 27rem;
         max-height: 27rem;
-        // width: 52.938em;
-        // resize: vertical;
-        //overflow: auto;
     }
 
     .ql-editor {
         height: 100%;
         line-height: 2em;
+        padding: 0.75em;
         overflow-y: auto;
-
-        // overflow-y: auto;
-        /* flex: 1;
-        display: flex;
-        flex-flow: column nowrap;
-        overflow: auto; */
     }
     strong {
         font-weight: 900;
