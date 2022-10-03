@@ -189,19 +189,19 @@ const Content = styled.div`
 const DetailBoard = () => {
     const quillInlineStyle = `
         <style>
-            h1 {
+            #quillContent h1 {
                 font-size: 26px;
             }
-            h2 {
+            #quillContent h2 {
                 font-size: 19.5px;
             }
-            h3 {
+            #quillContent h3 {
                 font-size: 15.21px;
             }
-            em {
+            #quillContent em {
                 font-style : italic;
             }
-            a {
+            #quillContent a {
                 color: blue;
                 text-decoration: underline;
             }
