@@ -8,6 +8,7 @@ import { IBoardData } from '../reducer/blog/boardData';
 import { IBlogToggle } from '../reducer/blog/blogToggle';
 import { progress } from '../reducer/blog/fileProgress';
 import { goPage, initTotalCount, IPaging } from '../reducer/blog/paging';
+import { IblogLike } from '../reducer/blog/blogLike';
 
 axios.defaults.baseURL = BackUrl;
 axios.defaults.withCredentials = true;
@@ -210,6 +211,38 @@ export const updateCategorisThunk = createAsyncThunk(
     ) => {
         try {
             const response = await axios.patch(`/blog/categori/update`, categoriData);
+            return response.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
+        }
+    },
+);
+
+export const addLikeThunk = createAsyncThunk(
+    'ADD_LIKE',
+    async (userId: string, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.post(`/blog/like`, { userId });
+            return response.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
+        }
+    },
+);
+
+export const deleteLikeThunk = createAsyncThunk(
+    'DELETE_LIKE',
+    async (deleteInfo: IblogLike, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.delete(`/blog/like/${deleteInfo.board_id}/${deleteInfo.user_id}`);
             return response.data;
         } catch (err) {
             if (err instanceof AxiosError) {

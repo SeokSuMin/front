@@ -37,7 +37,7 @@ const Wrapper = styled.div`
 
 const ContentBox = styled.div`
     width: 100%;
-    padding-left: 1.25em;
+    padding-left: 5%;
     @media screen and (max-width: 36rem) {
         padding-left: 0px;
     }
@@ -160,6 +160,8 @@ export default Home;
 export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispatch }) => {
     return async ({ req, resolvedUrl }) => {
         const cookie = req?.headers.cookie; // req가 있다면 cookie에 요청에 담겨진 cookie를 할당한다.
+        console.log('이거 출력안됨?');
+        console.log('cookie!!', cookie);
         axios.defaults.headers.common['Cookie'] = ''; // 요청이 들어올 때마다 초기화 시켜주는 것이다. 여기는 클라이언트 서버에서 실행되므로 이전 요청이 남아있을 수 있기 때문이다
         if (req && cookie) {
             axios.defaults.headers.common['Cookie'] = cookie;
@@ -187,7 +189,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         // console.log(type);
 
         // 로그인 사용자 체크
-        // console.log('서버사이드');
+        console.log('서버사이드');
         await dispatch(checkUserloginThunk());
         await dispatch(getAdminInfoThunk());
         await dispatch(getCategoriMenuThunk());

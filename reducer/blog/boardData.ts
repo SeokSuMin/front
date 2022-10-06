@@ -19,7 +19,8 @@ export interface IBoardData {
     writer: string;
     uploadFiles: File[];
     board_files?: IBoardFile[];
-    comment_count: number;
+    comment_count?: number;
+    like_id?: number | boolean;
     prevBoardId?: string;
     nextBoardId?: string;
     createdAt?: string;

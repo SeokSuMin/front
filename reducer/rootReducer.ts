@@ -14,6 +14,7 @@ import boardList, { IBoardList } from './blog/boardList';
 import boardData, { IBoardData } from './blog/boardData';
 import comment, { IComments } from './blog/comment';
 import fileProgress, { IFileProgress } from './blog/fileProgress';
+import blogLike, { IblogLike } from './blog/blogLike';
 
 export interface IState {
     login: ILogin;
@@ -30,6 +31,7 @@ export interface IState {
     boardData: IBoardData;
     comment: IComments;
     fileProgress: IFileProgress;
+    blogLike: IblogLike;
 }
 
 const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> => {
@@ -73,6 +75,7 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
                 boardData,
                 comment,
                 fileProgress,
+                blogLike,
             });
             return reducer(state, action);
         }

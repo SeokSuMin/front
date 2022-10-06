@@ -8,9 +8,7 @@ const makeStore = () => {
         reducer: reducer as Reducer<CombinedState<IState>, AnyAction>,
         //middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
         middleware: (getDefaultMiddleware) =>
-            process.env.NODE_ENV === 'development'
-                ? getDefaultMiddleware().concat(logger)
-                : getDefaultMiddleware().concat(),
+            process.env.NODE_ENV === 'development' ? getDefaultMiddleware().concat() : getDefaultMiddleware().concat(),
         devTools: process.env.NODE_ENV === 'development',
     });
 };

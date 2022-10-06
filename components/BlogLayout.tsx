@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import LeftProfileBox from './blog/LeftProfileBox';
 import { BackTop } from 'antd';
+import LikeBox from './blog/LikeBox';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -13,7 +14,7 @@ const Wrapper = styled.div`
     padding-left: 3em;
     padding-right: 3em;
     min-height: 100%;
-    position: relative;
+    // position: relative;
     .ant-back-top {
         right: 50px;
         //position: absolute;
@@ -50,7 +51,7 @@ const TitleBox = styled.div`
 const BodyBox = styled.div`
     width: 100%;
     margin-top: 3.125em;
-    position: relative;
+    // position: relative;
     display: flex;
 `;
 
@@ -125,6 +126,7 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({ children }) => {
                 <LeftProfileBox {...{ DrawerVisible, closeDrawer, visible, detailViewVisible }} />
                 {children}
             </BodyBox>
+
             <BackTop>
                 <div style={style}>UP</div>
             </BackTop>

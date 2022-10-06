@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
     width: 100%;
-    margin-top: 7.5em;
+    margin-top: 11em;
 `;
 
 const PagingBox = styled.div`

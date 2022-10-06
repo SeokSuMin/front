@@ -1,5 +1,3 @@
-import { CommentOutlined } from '@ant-design/icons';
-import { Tag } from 'antd';
 import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/router';
@@ -7,10 +5,10 @@ import path from 'path';
 import { memo } from 'react';
 import styled from 'styled-components';
 import { fileBackUrl, imgExtFormat } from '../../config';
-import { IBoardData } from '../../reducer/blog/boardData';
-import { IComment, IComments } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
 import * as Cheerio from 'cheerio';
+import Heart from '../../public/heart.svg';
+import Comment from '../../public/comment.svg';
 
 const CardBox = styled(motion.div)`
     width: 100%;
@@ -23,6 +21,7 @@ const Card = styled(motion.div)`
     flex: 0 1 30%;
     margin-right: 5%;
     margin-top: 12%;
+
     position: relative;
     &::after {
         display: block;
@@ -34,12 +33,12 @@ const Card = styled(motion.div)`
     &:nth-child(3) {
         margin-top: 0px;
     }
-    @media screen and (min-width: 53rem) {
+    @media screen and (min-width: 53.1rem) {
         &:nth-child(3n + 0) {
             margin-right: 0;
         }
     }
-    @media screen and (max-width: 53rem) {
+    @media screen and (max-width: 53.1rem) {
         flex: 0 1 47%;
         margin-right: 6%;
         margin-top: 18%;
@@ -59,6 +58,9 @@ const Card = styled(motion.div)`
 const CardContent = styled(motion.div)`
     width: 100%;
     height: 125%;
+    border: 0.063rem solid rgb(230, 230, 230);
+    border-radius: 0.63em;
+    overflow: hidden;
     /* @media screen and (max-width: 53rem) {
         height: 115%;
     } */
@@ -74,9 +76,9 @@ const CardContent = styled(motion.div)`
 
 const ThumImg = styled(motion.div)`
     width: 100%;
-    height: 55%;
-    border: 0.063rem solid rgb(230, 230, 230);
+    height: 50%;
     display: flex;
+    border-bottom: 0.063rem solid rgb(230, 230, 230);
     justify-content: center;
     align-items: center;
     img {
@@ -87,10 +89,9 @@ const ThumImg = styled(motion.div)`
 `;
 const Content = styled(motion.div)`
     width: 100%;
-    height: 45%;
-    border: 0.063rem solid rgb(230, 230, 230);
+    height: 50%;
     border-top: none;
-    padding: 0.313em 0em 0.625em 0.625em;
+    padding: 0.75em;
     display: flex;
     flex-direction: column;
 `;
@@ -100,6 +101,7 @@ const Title = styled.div`
     align-items: center;
     h2 {
         width: 100%;
+        margin-bottom: auto;
         font-size: 0.813rem;
         font-weight: 900;
         line-height: 1.2rem;
@@ -107,32 +109,10 @@ const Title = styled.div`
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         overflow: hidden;
-        @media screen and (max-width: 55rem) and (min-width: 53rem) {
+        @media screen and (max-width: 61.875rem) and (min-width: 53.125rem) {
             -webkit-line-clamp: 1;
         }
         @media screen and (max-width: 46rem) {
-            -webkit-line-clamp: 1;
-        }
-    }
-`;
-const Description = styled.div`
-    height: 35%;
-    display: flex;
-    align-items: flex-end;
-    span {
-        color: gray;
-        width: 100%;
-        font-size: 0.75rem;
-        line-height: 1.2em;
-        width: 100%;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-        @media screen and (max-width: 55rem) and (min-width: 53rem) {
-            -webkit-line-clamp: 1;
-        }
-        @media screen and (max-width: 40rem) {
             -webkit-line-clamp: 1;
         }
     }
@@ -145,15 +125,16 @@ const Description = styled.div`
 
 const WriteInfo = styled.div`
     width: 100%;
-    height: 35%;
+    height: 25%;
     display: flex;
     align-items: center;
+    // margin-top: 0.625em;
     color: gray;
-    font-size: 0.813rem;
+    font-size: 0.75rem;
     .registDate {
+        margin-top: 0.091em;
         color: gray;
-        width: 40%;
-        font-size: 0.75rem;
+        font-size: 0.688rem;
         line-height: 1.2em;
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -166,29 +147,80 @@ const WriteInfo = styled.div`
             -webkit-line-clamp: 1;
         }
     }
-    .comment {
+    .heart {
+        margin-left: auto;
+        margin-right: 5px;
         display: flex;
         align-items: center;
-        margin-left: 0.313em;
-        margin-right: 0.813em;
-        cursor: pointer;
+        font-size: 0.688rem;
+        span {
+            margin-left: 0.125em;
+            @media screen and (max-width: 610px) {
+                display: none;
+            }
+        }
         svg {
-            fill: black;
-            margin-right: 0.313em;
+            width: 1em;
+            height: 1em;
+            fill: rgb(195, 0, 16);
+        }
+    }
+    .comment {
+        margin-right: 3px;
+        display: flex;
+        align-items: center;
+        font-size: 0.688rem;
+        span {
+            margin-left: 0.125em;
+            @media screen and (max-width: 610px) {
+                display: none;
+            }
+        }
+        svg {
+            width: 1em;
+            height: 1em;
+            fill: gray;
         }
     }
 `;
 
 const ProfileImg = styled.div<{ adminPath: string | undefined }>`
-    width: 1.7rem;
-    height: 1.7rem;
+    width: 12%;
+    height: 75%;
     flex-shrink: 0;
-    background-image: url(${(props) => (props.adminPath ? fileBackUrl + props.adminPath : '/profile.png')});
+    background-image: url('http://localhost:3005/iceMan/1662020755665oA2Q.jpg');
+    //url(${(props) => (props.adminPath ? fileBackUrl + props.adminPath : '/profile.png')});
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 50%;
     margin-right: 0.55em;
+`;
+
+const Description = styled.div`
+    height: 45%;
+    display: flex;
+    align-items: flex-end;
+    span {
+        color: gray;
+        width: 100%;
+        font-size: 0.688rem;
+        line-height: 1.5em;
+        width: 100%;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        @media screen and (max-width: 62.5rem) and (min-width: 53.125rem) {
+            -webkit-line-clamp: 2;
+        }
+        @media screen and (max-width: 46rem) {
+            -webkit-line-clamp: 2;
+        }
+        @media screen and (max-width: 38.125rem) and (min-width: 36.063rem) {
+            -webkit-line-clamp: 1;
+        }
+    }
 `;
 
 const fourBox = {
@@ -283,20 +315,23 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                         <WriteInfo>
                                             <ProfileImg adminPath={adminInfo?.imgPath} />
                                             <span>{board.writer}</span>
-                                            <div style={{ width: '10%', textAlign: 'center' }}>|</div>
+                                            <div style={{ width: '5%', textAlign: 'center' }}>|</div>
                                             <span className="registDate">
-                                                {dayjs(board.createdAt).format('YYYY MM DD HH:mm')}
+                                                {dayjs(board.createdAt).format('YYYY MM DD')}
                                             </span>
-                                            {board?.comment_count ? (
-                                                <span className="comment">
-                                                    {/* <CommentOutlined /> */}({board?.comment_count})
-                                                </span>
-                                            ) : null}
+                                            <span className="heart">
+                                                <Heart />
+                                                <span>0</span>
+                                            </span>
+                                            <span className="comment">
+                                                <Comment />
+                                                <span>{board.comment_count ? board.comment_count : 0}</span>
+                                            </span>
                                         </WriteInfo>
                                         <Description>
                                             <span>
                                                 {Cheerio.load(board.content).text().length
-                                                    ? Cheerio.load(board.content).text().slice(0, 50)
+                                                    ? Cheerio.load(board.content).text().slice(0, 100)
                                                     : '(내용없음)'}
                                             </span>
                                         </Description>

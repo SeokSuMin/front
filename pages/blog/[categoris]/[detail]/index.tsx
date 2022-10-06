@@ -1,5 +1,5 @@
-import { CommentOutlined, ExclamationCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { message, Modal, Spin, Tag } from 'antd';
+import { ExclamationCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { message, Modal, Spin } from 'antd';
 import styled from 'styled-components';
 import { deleteBoardThunk, getCategoriMenuThunk, getDetailBoardThunk } from '../../../../thunk/blogThunk';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../../../thunk/userThunk';
@@ -10,13 +10,13 @@ import dayjs from 'dayjs';
 import parse from 'html-react-parser';
 import { fileBackUrl, imgExtFormat } from '../../../../config';
 import path from 'path';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Comments from '../../../../components/comment/Comments';
 import Seo from '../../../../components/Seo';
 import { goPage, initTotalCount } from '../../../../reducer/blog/paging';
-import LeftProfileBox from '../../../../components/blog/LeftProfileBox';
 import { ICategoriMenus } from '../../../../reducer/blog/categoriMenus';
+import LikeBox from '../../../../components/blog/LikeBox';
 
 const { confirm } = Modal;
 
@@ -104,7 +104,8 @@ const BoardBox = styled.div`
     flex-direction: column;
     border: 1px solid rgb(217, 217, 217);
     border-radius: 0.63em;
-    padding: 1.563em 0.938em;
+    padding: 1.563em 2.813em 2.813em 2.813em;
+    position: relative;
     @media screen and (max-width: 39.375rem) {
         width: 100%;
     }
@@ -223,7 +224,6 @@ const DetailBoard = () => {
     const commentDivRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     const detailBoard = useAppSelector((state) => state.boardData);
-    const { comments } = useAppSelector((state) => state.comment);
     const { userId } = useAppSelector((state) => state.userInfo);
     const { viewType } = useAppSelector((state) => state.blogToggle);
     const { page, countList, totalCount } = useAppSelector((state) => state.paging);
@@ -231,6 +231,8 @@ const DetailBoard = () => {
     const [categoriId, setCategoriId] = useState((router.query.categoris as string).split('_')[1]);
     const [menuTitle, setMenuTitle] = useState('');
     const [categoriTitle, setCategoriTitle] = useState('');
+    const [checkLikeTime, setCheckLikeTime] = useState(true);
+    const [like, setLike] = useState(!!detailBoard?.like_id);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
@@ -269,6 +271,29 @@ const DetailBoard = () => {
         });
     };
 
+    const likeToggle = (type: string) => {
+        if (!userId) {
+            message.warn('로그인 후 이용하실 수 있습니다.');
+            return;
+        }
+        if (checkLikeTime) {
+            if (type === 'like') {
+                setCheckLikeTime(false);
+                setLike(true);
+                // 좋아요 누를경우 10초뒤 다시 누르게 시간지정
+                setTimeout(() => {
+                    setCheckLikeTime(true);
+                }, 10000);
+            }
+        } else {
+            if (type === 'unlike') {
+                setLike(false);
+                return;
+            }
+            message.warn('좋아요는 10초마다 한 번만 클릭할 수 있습니다.');
+        }
+    };
+
     const initPage = async () => {
         try {
             await dispatch(
@@ -293,6 +318,10 @@ const DetailBoard = () => {
             window.history.back();
         }
     };
+
+    useEffect(() => {
+        console.log('checkLikeTime', checkLikeTime);
+    }, [checkLikeTime]);
 
     useEffect(() => {
         if (deleteFlag) {
@@ -420,7 +449,9 @@ const DetailBoard = () => {
                         </TitleBox>
                         <Boundary />
                         <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
+                        <LikeBox {...{ likeToggle, like }} />
                     </BoardBox>
+
                     <Comments divRef={commentDivRef} />
                 </>
             )}
