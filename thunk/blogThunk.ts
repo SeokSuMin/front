@@ -29,6 +29,7 @@ export const getCategoriMenuThunk = createAsyncThunk(
     },
 );
 
+// 조건이 많아서 get 대신 post 요청
 export const getBoardListThunk = createAsyncThunk(
     'GET_BOARD_LIST',
     async (
@@ -38,7 +39,8 @@ export const getBoardListThunk = createAsyncThunk(
         try {
             const offset = (condition.page - 1) * condition.countList;
             const limit = condition.countList;
-            const response = await axios.get(`/blog/${offset}/${limit}/${condition.categoriId}`);
+            const params = { offset, limit, categoriId: condition.categoriId, where: [], order: 'createdAt desc' };
+            const response = await axios.post(`/blog`, params);
             return response.data;
         } catch (err) {
             if (err instanceof AxiosError) {
@@ -224,9 +226,9 @@ export const updateCategorisThunk = createAsyncThunk(
 
 export const addLikeThunk = createAsyncThunk(
     'ADD_LIKE',
-    async (userId: string, { getState, requestId, rejectWithValue }) => {
+    async (boardId: string, { getState, requestId, rejectWithValue }) => {
         try {
-            const response = await axios.post(`/blog/like`, { userId });
+            const response = await axios.post(`/blog/like/${boardId}`);
             return response.data;
         } catch (err) {
             if (err instanceof AxiosError) {
@@ -240,9 +242,9 @@ export const addLikeThunk = createAsyncThunk(
 
 export const deleteLikeThunk = createAsyncThunk(
     'DELETE_LIKE',
-    async (deleteInfo: IblogLike, { getState, requestId, rejectWithValue }) => {
+    async (boardId: string, { getState, requestId, rejectWithValue }) => {
         try {
-            const response = await axios.delete(`/blog/like/${deleteInfo.board_id}/${deleteInfo.user_id}`);
+            const response = await axios.delete(`/blog/like/${boardId}`);
             return response.data;
         } catch (err) {
             if (err instanceof AxiosError) {

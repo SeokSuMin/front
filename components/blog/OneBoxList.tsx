@@ -80,9 +80,13 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                             style={{ cursor: 'pointer' }}
                                             onClick={() => moveDetailPage(item.board_id)}
                                         >
-                                            {item.board_files?.find((file) =>
-                                                imgExtFormat.includes(path.extname(file.name).toLocaleLowerCase()),
-                                            ) ? (
+                                            {item.board_files?.find((file) => {
+                                                if (file) {
+                                                    return imgExtFormat.includes(
+                                                        path.extname(file?.name).toLocaleLowerCase(),
+                                                    );
+                                                }
+                                            }) ? (
                                                 <img
                                                     style={{ width: '8.5rem', height: '8.5rem' }}
                                                     alt="example"

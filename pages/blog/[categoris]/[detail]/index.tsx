@@ -1,7 +1,13 @@
 import { ExclamationCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { message, Modal, Spin } from 'antd';
 import styled from 'styled-components';
-import { deleteBoardThunk, getCategoriMenuThunk, getDetailBoardThunk } from '../../../../thunk/blogThunk';
+import {
+    addLikeThunk,
+    deleteBoardThunk,
+    getCategoriMenuThunk,
+    getDetailBoardThunk,
+    deleteLikeThunk,
+} from '../../../../thunk/blogThunk';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../../../thunk/userThunk';
 import wrapper from '../../../../store/configStore';
 import axios from 'axios';
@@ -17,6 +23,7 @@ import Seo from '../../../../components/Seo';
 import { goPage, initTotalCount } from '../../../../reducer/blog/paging';
 import { ICategoriMenus } from '../../../../reducer/blog/categoriMenus';
 import LikeBox from '../../../../components/blog/LikeBox';
+import { IBoardData } from '../../../../reducer/blog/boardData';
 
 const { confirm } = Modal;
 
@@ -232,7 +239,8 @@ const DetailBoard = () => {
     const [menuTitle, setMenuTitle] = useState('');
     const [categoriTitle, setCategoriTitle] = useState('');
     const [checkLikeTime, setCheckLikeTime] = useState(true);
-    const [like, setLike] = useState(!!detailBoard?.like_id);
+    const [like, setLike] = useState(true);
+    const [likeCount, setLikeCount] = useState(0);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
@@ -271,34 +279,53 @@ const DetailBoard = () => {
         });
     };
 
-    const likeToggle = (type: string) => {
-        if (!userId) {
-            message.warn('로그인 후 이용하실 수 있습니다.');
-            return;
-        }
-        if (checkLikeTime) {
-            if (type === 'like') {
-                setCheckLikeTime(false);
-                setLike(true);
-                // 좋아요 누를경우 10초뒤 다시 누르게 시간지정
-                setTimeout(() => {
-                    setCheckLikeTime(true);
-                }, 10000);
-            }
-        } else {
-            if (type === 'unlike') {
-                setLike(false);
+    const likeToggle = async (type: string) => {
+        try {
+            if (!userId) {
+                message.warn('로그인 후 이용하실 수 있습니다.');
                 return;
             }
-            message.warn('좋아요는 10초마다 한 번만 클릭할 수 있습니다.');
+            if (checkLikeTime) {
+                if (type === 'like') {
+                    setCheckLikeTime(false);
+                    setLike(true);
+                    setLikeCount((prevCount) => prevCount + 1);
+                    await dispatch(addLikeThunk(detailBoard.board_id)).unwrap();
+                    // 좋아요 누를경우 10초뒤 다시 누르게 시간지정
+                    setTimeout(() => {
+                        setCheckLikeTime(true);
+                    }, 10000);
+                } else {
+                    setLike(false);
+                    setLikeCount((prevCount) => prevCount - 1);
+                    await dispatch(deleteLikeThunk(detailBoard.board_id)).unwrap();
+                }
+            } else {
+                if (type === 'unlike') {
+                    setLike(false);
+                    setLikeCount((prevCount) => prevCount - 1);
+                    await dispatch(deleteLikeThunk(detailBoard.board_id)).unwrap();
+                    return;
+                }
+                message.warn('좋아요는 10초마다 한 번만 클릭할 수 있습니다.');
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
         }
     };
 
     const initPage = async () => {
         try {
-            await dispatch(
+            const response = await dispatch(
                 getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: +categoriId }),
             ).unwrap();
+            setLike(!!response.boardInfo.like_id);
+            setLikeCount(+response.boardInfo.like_count);
             const menuResult = (await (await dispatch(getCategoriMenuThunk())).payload) as ICategoriMenus;
             if (+categoriId === 0) {
                 setMenuTitle('전체보기');
@@ -315,13 +342,12 @@ const DetailBoard = () => {
             }
         } catch (err) {
             message.warn('존재하지 않는 게시글 입니다.');
-            window.history.back();
+            router.push({
+                pathname: `/blog/categori_${categoriId}`,
+                query: { page, countList, type: viewType },
+            });
         }
     };
-
-    useEffect(() => {
-        console.log('checkLikeTime', checkLikeTime);
-    }, [checkLikeTime]);
 
     useEffect(() => {
         if (deleteFlag) {
@@ -449,7 +475,7 @@ const DetailBoard = () => {
                         </TitleBox>
                         <Boundary />
                         <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
-                        <LikeBox {...{ likeToggle, like }} />
+                        <LikeBox {...{ likeToggle, like, likeCount }} />
                     </BoardBox>
 
                     <Comments divRef={commentDivRef} />

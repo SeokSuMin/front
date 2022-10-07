@@ -9,6 +9,8 @@ import { useAppSelector } from '../../store/hooks';
 import * as Cheerio from 'cheerio';
 import Heart from '../../public/heart.svg';
 import Comment from '../../public/comment.svg';
+import HeartSolid from '../../public/heart-solid.svg';
+import CommentSolid from '../../public/comment-solid.svg';
 
 const CardBox = styled(motion.div)`
     width: 100%;
@@ -257,6 +259,7 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
     const moveDetailPage = (boardId: string) => {
         router.push(`/blog/categori_${currentCategoriId}/${boardId}`);
     };
+
     return (
         <AnimatePresence initial={false}>
             {viewType === 'CARD' ? (
@@ -273,9 +276,13 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                     transition={{ type: 'tween', duration: 0.2 }}
                                 >
                                     <ThumImg>
-                                        {board.board_files?.find((file) =>
-                                            imgExtFormat.includes(path.extname(file.name).toLocaleLowerCase()),
-                                        ) ? (
+                                        {board.board_files?.find((file) => {
+                                            if (file) {
+                                                return imgExtFormat.includes(
+                                                    path.extname(file?.name).toLocaleLowerCase(),
+                                                );
+                                            }
+                                        }) ? (
                                             <img
                                                 alt="example"
                                                 src={
@@ -320,11 +327,11 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                                 {dayjs(board.createdAt).format('YYYY MM DD')}
                                             </span>
                                             <span className="heart">
-                                                <Heart />
-                                                <span>0</span>
+                                                {board.like_id ? <HeartSolid /> : <Heart />}
+                                                <span>{board.like_count ? board.like_count : 0}</span>
                                             </span>
                                             <span className="comment">
-                                                <Comment />
+                                                {board.comment_id ? <CommentSolid /> : <Comment />}
                                                 <span>{board.comment_count ? board.comment_count : 0}</span>
                                             </span>
                                         </WriteInfo>

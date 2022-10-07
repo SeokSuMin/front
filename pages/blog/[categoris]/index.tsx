@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import FourBoxList from '../../../components/blog/FourBoxList';
 import OneBoxList from '../../../components/blog/OneBoxList';
@@ -8,15 +8,12 @@ import axios from 'axios';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../../thunk/userThunk';
 import { getBoardListThunk, getCategoriMenuThunk } from '../../../thunk/blogThunk';
 import Paging from '../../../components/blog/Paging';
-import { useQuery } from 'react-query';
-import { BackTop, Empty, message, Spin } from 'antd';
+import { Empty, message } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { getBoardList } from '../../../util';
 import { changeCountList, goPage, initTotalCount } from '../../../reducer/blog/paging';
 import { useRouter } from 'next/router';
 import { changeCurrentCategoriId, changeBoardViewType } from '../../../reducer/blog/blogToggle';
 import Seo from '../../../components/Seo';
-import LeftProfileBox from '../../../components/blog/LeftProfileBox';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -52,7 +49,10 @@ const Home = () => {
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
     const { countList, page } = useAppSelector((state) => state.paging);
     const [leaving, setLeaving] = useState(false);
-
+    const [order, setOrder] = useState('createdAt desc');
+    const [like, setLike] = useState(false);
+    const [comment, setComment] = useState(false);
+    const dispatch = useAppDispatch();
     // const [categoris, setCategoris] = useState(0);
     // const [pageNumber, setPageNumber] = useState(0);
     // const [countLists, setCountLists] = useState(0);
@@ -135,11 +135,29 @@ const Home = () => {
     //     }
     // };
 
+    const changeBoardOrder = async (order: string) => {
+        try {
+            // getBoardListThunk({ page: page as number, countList: countList as number, categoriId }),
+            const page = router.query.page;
+            const countList = router.query.countList;
+            const categoriId = (router.query.categoris as string).split('_')[1];
+            // await dispatch(getBoardListThunk())
+            setOrder(order);
+        } catch (err) {
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
+        }
+    };
+
     return (
         <Wrapper>
             <Seo title="Ice Man | 블로그"></Seo>
             <ContentBox>
-                <TopMenu {...{ viewType, changeListView, scrollRef }} />
+                <TopMenu {...{ viewType, changeListView, scrollRef, order, changeBoardOrder, like, comment }} />
                 {boardList?.length ? (
                     <>
                         <FourBoxList {...{ leaving, toggleLeaving }} />
@@ -160,8 +178,7 @@ export default Home;
 export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispatch }) => {
     return async ({ req, resolvedUrl }) => {
         const cookie = req?.headers.cookie; // req가 있다면 cookie에 요청에 담겨진 cookie를 할당한다.
-        console.log('이거 출력안됨?');
-        console.log('cookie!!', cookie);
+        // console.log('cookie!!', cookie);
         axios.defaults.headers.common['Cookie'] = ''; // 요청이 들어올 때마다 초기화 시켜주는 것이다. 여기는 클라이언트 서버에서 실행되므로 이전 요청이 남아있을 수 있기 때문이다
         if (req && cookie) {
             axios.defaults.headers.common['Cookie'] = cookie;
@@ -189,7 +206,6 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         // console.log(type);
 
         // 로그인 사용자 체크
-        console.log('서버사이드');
         await dispatch(checkUserloginThunk());
         await dispatch(getAdminInfoThunk());
         await dispatch(getCategoriMenuThunk());

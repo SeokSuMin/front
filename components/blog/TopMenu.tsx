@@ -5,8 +5,11 @@ import { memo, MutableRefObject } from 'react';
 import styled from 'styled-components';
 import TwoSquareToggle from '../../public/2-squares.svg';
 import FourSquareToggle from '../../public/4-squares.svg';
-import BasicListToggle from '../../public/BasicList.svg';
-import { changeCountList } from '../../reducer/blog/paging';
+import Heart from '../../public/heart.svg';
+import HeartSolid from '../../public/heart-solid.svg';
+import CommentSolid from '../../public/comment-solid.svg';
+import Comment from '../../public/comment.svg';
+
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const { Option } = Select;
@@ -75,13 +78,31 @@ const Write = styled.div`
     }
 `;
 
+const HeartCommentBox = styled.div`
+    margin-left: 0.313em;
+    svg {
+        width: 1em;
+        height: 1em;
+        fill: rgb(195, 0, 16);
+    }
+    svg:last-child {
+        width: 1em;
+        height: 1em;
+        fill: gray;
+    }
+`;
+
 interface ITopMenuProps {
     viewType: string;
     changeListView: (type: string) => void;
     scrollRef: MutableRefObject<HTMLDivElement | null>;
+    order: string;
+    changeBoardOrder: (order: string) => void;
+    like: boolean;
+    comment: boolean;
 }
 
-const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
+const TopMenu = ({ viewType, changeListView, scrollRef, order, changeBoardOrder, like, comment }: ITopMenuProps) => {
     const dispath = useAppDispatch();
     const router = useRouter();
     const { userId } = useAppSelector((state) => state.userInfo);
@@ -158,13 +179,18 @@ const TopMenu = ({ viewType, changeListView, scrollRef }: ITopMenuProps) => {
                         <Option value={45}>45개씩</Option>
                     </Select>
                 </div>
-                {/* <div>
-                    <Select onChange={changeCountListValue} value={countList} style={{ width: 90, marginLeft: 5 }}>
-                        <Option value={15}>최신순</Option>
-                        <Option value={30}>오래된순</Option>
-                        <Option value={45}>댓글순</Option>
+                <div>
+                    <Select onChange={changeBoardOrder} value={order} style={{ width: 90, marginLeft: 5 }}>
+                        <Option value="createdAt desc">최신순</Option>
+                        <Option value="createdAt asc">오래된순</Option>
+                        <Option value="like_count dasc">좋아요순</Option>
+                        <Option value="comment_count asc">댓글순</Option>
                     </Select>
-                </div> */}
+                </div>
+                <HeartCommentBox>
+                    {like ? <HeartSolid /> : <Heart />}
+                    {comment ? <CommentSolid /> : <Comment />}
+                </HeartCommentBox>
             </ToggleBox>
         </Wrapper>
     );

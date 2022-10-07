@@ -22,9 +22,10 @@ const Wrapper = styled.div`
 interface LikeBoxProps {
     likeToggle: (type: string) => void;
     like: boolean;
+    likeCount: number;
 }
 
-const LikeBox = ({ likeToggle, like }: LikeBoxProps) => {
+const LikeBox = ({ likeToggle, like, likeCount }: LikeBoxProps) => {
     return (
         <Wrapper>
             <motion.div
@@ -39,7 +40,7 @@ const LikeBox = ({ likeToggle, like }: LikeBoxProps) => {
                     <Heart onClick={() => likeToggle('like')} />
                 )}
             </motion.div>
-            <span>Like 12</span>
+            <span>Like {likeCount}</span>
         </Wrapper>
     );
 };

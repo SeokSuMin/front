@@ -13,14 +13,16 @@ interface IBoardFile {
 export interface IBoardData {
     board_id: string;
     categori_id: number;
-    categoris: { categori_name: string };
+    // categoris: { categori_name: string };
     title: string;
     content: string;
     writer: string;
     uploadFiles: File[];
     board_files?: IBoardFile[];
+    like_count?: number;
     comment_count?: number;
     like_id?: number | boolean;
+    comment_id?: number | boolean;
     prevBoardId?: string;
     nextBoardId?: string;
     createdAt?: string;
