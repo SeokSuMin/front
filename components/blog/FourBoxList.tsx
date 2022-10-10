@@ -190,8 +190,7 @@ const ProfileImg = styled.div<{ adminPath: string | undefined }>`
     width: 12%;
     height: 75%;
     flex-shrink: 0;
-    background-image: url('http://localhost:3005/iceMan/1662020755665oA2Q.jpg');
-    //url(${(props) => (props.adminPath ? fileBackUrl + props.adminPath : '/profile.png')});
+    background-image: url(${(props) => (props.adminPath ? fileBackUrl + props.adminPath : '/profile.png')});
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -253,7 +252,7 @@ interface IFourBoxListProps {
 
 const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
     const router = useRouter();
-    const { adminInfo } = useAppSelector((state) => state.userInfo);
+    const { adminInfo, userId } = useAppSelector((state) => state.userInfo);
     const { viewType, currentCategoriId } = useAppSelector((state) => state.blogToggle);
     const { boardList } = useAppSelector((state) => state.boardList);
     const moveDetailPage = (boardId: string) => {
@@ -327,11 +326,11 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                                 {dayjs(board.createdAt).format('YYYY MM DD')}
                                             </span>
                                             <span className="heart">
-                                                {board.like_id ? <HeartSolid /> : <Heart />}
+                                                {board.like_id && userId ? <HeartSolid /> : <Heart />}
                                                 <span>{board.like_count ? board.like_count : 0}</span>
                                             </span>
                                             <span className="comment">
-                                                {board.comment_id ? <CommentSolid /> : <Comment />}
+                                                {board.comment_id && userId ? <CommentSolid /> : <Comment />}
                                                 <span>{board.comment_count ? board.comment_count : 0}</span>
                                             </span>
                                         </WriteInfo>

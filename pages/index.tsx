@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import wrapper from '../store/configStore';
 import dynamic from 'next/dynamic';
-import { useRef, useState } from 'react';
-import { RadioChangeEvent, Rate } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { RadioChangeEvent } from 'antd';
 import Skill from '../components/introduction/Skill';
 import { motion, useScroll } from 'framer-motion';
 import Library from '../components/introduction/Library';
@@ -15,6 +15,7 @@ import axios from 'axios';
 import Seo from '../components/Seo';
 import Rightsolid from '../public/angles-right-solid.svg';
 import { useRouter } from 'next/router';
+import { useCookies } from 'react-cookie';
 
 const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
 
@@ -93,6 +94,7 @@ const MoveBlogPageTextBox = styled.div`
 // InferGetServerSidePropsType<typeof getServerSideProps>
 export default function Home() {
     const router = useRouter();
+    const [cookies, setCookie, removeCookie] = useCookies(['order', 'myLike', 'myComment']);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const [skill, setSkill] = useState<'1' | '2'>('1');
     const { scrollYProgress } = useScroll();
@@ -103,6 +105,13 @@ export default function Home() {
     const changeSkill = (e: RadioChangeEvent) => {
         setSkill(e.target.value);
     };
+
+    // 초기페이지 오면 쿠키 초기화
+    useEffect(() => {
+        removeCookie('order', { path: '/' });
+        removeCookie('myLike', { path: '/' });
+        removeCookie('myComment', { path: '/' });
+    }, []);
 
     return (
         <Wrapper>

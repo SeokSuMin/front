@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import wrapper from '../store/configStore';
 import Layout from '../components/Layout';
 import GlobalStyle from '../styles/glovbalStyle';
-
+import { CookiesProvider } from 'react-cookie';
 import '../styles/globals.css';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '../styles/theme';
@@ -14,15 +14,17 @@ function MyApp({ Component, pageProps }: AppProps) {
     // console.log('pageProps', pageProps);
     const queryClient = new QueryClient();
     return (
-        <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={true} />
-            <ThemeProvider theme={theme}>
-                <GlobalStyle />
-                <Layout>
-                    <Component {...pageProps} />
-                </Layout>
-            </ThemeProvider>
-        </QueryClientProvider>
+        <CookiesProvider>
+            <QueryClientProvider client={queryClient}>
+                <ReactQueryDevtools initialIsOpen={true} />
+                <ThemeProvider theme={theme}>
+                    <GlobalStyle />
+                    <Layout>
+                        <Component {...pageProps} />
+                    </Layout>
+                </ThemeProvider>
+            </QueryClientProvider>
+        </CookiesProvider>
     );
 }
 

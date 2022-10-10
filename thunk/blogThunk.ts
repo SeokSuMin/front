@@ -33,13 +33,19 @@ export const getCategoriMenuThunk = createAsyncThunk(
 export const getBoardListThunk = createAsyncThunk(
     'GET_BOARD_LIST',
     async (
-        condition: { page: number; countList: number; categoriId: number },
+        condition: { page: number; countList: number; categoriId: number; where: string[]; order: string },
         { getState, requestId, rejectWithValue },
     ) => {
         try {
             const offset = (condition.page - 1) * condition.countList;
             const limit = condition.countList;
-            const params = { offset, limit, categoriId: condition.categoriId, where: [], order: 'createdAt desc' };
+            const params = {
+                offset,
+                limit,
+                categoriId: condition.categoriId,
+                where: condition.where,
+                order: condition.order,
+            };
             const response = await axios.post(`/blog`, params);
             return response.data;
         } catch (err) {

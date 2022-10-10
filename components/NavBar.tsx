@@ -1,9 +1,8 @@
 import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Menu, message, Modal } from 'antd';
+import { Avatar, Dropdown, Menu, message, Modal } from 'antd';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import styled from 'styled-components';
 import { fileBackUrl } from '../config';
 import { togglDashBoard, togglLogin } from '../reducer/user/userToggle';

@@ -241,6 +241,7 @@ const DetailBoard = () => {
     const [checkLikeTime, setCheckLikeTime] = useState(true);
     const [like, setLike] = useState(true);
     const [likeCount, setLikeCount] = useState(0);
+    const [initRander, setInitRander] = useState(true);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
@@ -350,6 +351,17 @@ const DetailBoard = () => {
     };
 
     useEffect(() => {
+        //(첫 랜더링은 X)
+        if (!initRander) {
+            if (userId) {
+                initPage();
+            } else {
+                setLike(false);
+            }
+        }
+    }, [userId]);
+
+    useEffect(() => {
         if (deleteFlag) {
             router.push({
                 pathname: `/blog/categori_${categoriId}`,
@@ -357,6 +369,7 @@ const DetailBoard = () => {
             });
         } else {
             initPage();
+            setInitRander(false);
         }
     }, [router.query.detail, deleteFlag]);
 

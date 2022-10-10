@@ -98,11 +98,23 @@ interface ITopMenuProps {
     scrollRef: MutableRefObject<HTMLDivElement | null>;
     order: string;
     changeBoardOrder: (order: string) => void;
-    like: boolean;
-    comment: boolean;
+    myLike: string;
+    myComment: string;
+    toggleMyHeart: (type: string) => void;
+    toggleMyComment: (type: string) => void;
 }
 
-const TopMenu = ({ viewType, changeListView, scrollRef, order, changeBoardOrder, like, comment }: ITopMenuProps) => {
+const TopMenu = ({
+    viewType,
+    changeListView,
+    scrollRef,
+    order,
+    changeBoardOrder,
+    myLike,
+    myComment,
+    toggleMyHeart,
+    toggleMyComment,
+}: ITopMenuProps) => {
     const dispath = useAppDispatch();
     const router = useRouter();
     const { userId } = useAppSelector((state) => state.userInfo);
@@ -183,14 +195,24 @@ const TopMenu = ({ viewType, changeListView, scrollRef, order, changeBoardOrder,
                     <Select onChange={changeBoardOrder} value={order} style={{ width: 90, marginLeft: 5 }}>
                         <Option value="createdAt desc">최신순</Option>
                         <Option value="createdAt asc">오래된순</Option>
-                        <Option value="like_count dasc">좋아요순</Option>
-                        <Option value="comment_count asc">댓글순</Option>
+                        <Option value="like_count desc">좋아요순</Option>
+                        <Option value="comment_count desc">댓글순</Option>
                     </Select>
                 </div>
-                <HeartCommentBox>
-                    {like ? <HeartSolid /> : <Heart />}
-                    {comment ? <CommentSolid /> : <Comment />}
-                </HeartCommentBox>
+                {userId ? (
+                    <HeartCommentBox>
+                        {myLike === 'like' ? (
+                            <HeartSolid onClick={() => toggleMyHeart('unlike')} />
+                        ) : (
+                            <Heart onClick={() => toggleMyHeart('like')} />
+                        )}
+                        {myComment === 'comment' ? (
+                            <CommentSolid onClick={() => toggleMyComment('uncomment')} />
+                        ) : (
+                            <Comment onClick={() => toggleMyComment('comment')} />
+                        )}
+                    </HeartCommentBox>
+                ) : null}
             </ToggleBox>
         </Wrapper>
     );

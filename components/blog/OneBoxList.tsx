@@ -1,4 +1,3 @@
-import { CommentOutlined, MessageOutlined } from '@ant-design/icons';
 import { Avatar, List } from 'antd';
 import dayjs from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -7,10 +6,12 @@ import path from 'path';
 import { memo } from 'react';
 import styled from 'styled-components';
 import { fileBackUrl, imgExtFormat } from '../../config';
-import { IBoardData } from '../../reducer/blog/boardData';
-import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';
 import * as Cheerio from 'cheerio';
+import Heart from '../../public/heart.svg';
+import Comment from '../../public/comment.svg';
+import HeartSolid from '../../public/heart-solid.svg';
+import CommentSolid from '../../public/comment-solid.svg';
 
 const Content = styled.div`
     font-size: 0.938rem;
@@ -23,6 +24,41 @@ const Description = styled.div`
     margin-left: 3.692em;
     margin-top: 1.538em;
     color: gray;
+`;
+
+const TitleBox = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const HeartIcon = styled.span`
+    margin-left: 10px;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 0.688rem;
+    span {
+        margin-left: 2px;
+    }
+    svg {
+        width: 1em;
+        height: 1em;
+        fill: rgb(195, 0, 16);
+    }
+`;
+const CommentIcon = styled.span`
+    margin-right: 3px;
+    display: flex;
+    align-items: center;
+    font-size: 0.688rem;
+    span {
+        margin-left: 2px;
+    }
+    svg {
+        width: 1em;
+        height: 1em;
+        fill: gray;
+    }
 `;
 
 const oneBox = {
@@ -53,7 +89,7 @@ interface IOneBoxListProps {
 
 const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
     const router = useRouter();
-    const { adminInfo } = useAppSelector((state) => state.userInfo);
+    const { adminInfo, userId } = useAppSelector((state) => state.userInfo);
     const { viewType, currentCategoriId } = useAppSelector((state) => state.blogToggle);
     const { boardList } = useAppSelector((state) => state.boardList);
     const moveDetailPage = (boardId: string) => {
@@ -128,13 +164,21 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                             />
                                         }
                                         title={
-                                            <>
+                                            <TitleBox>
                                                 <span>{item.writer}</span>
                                                 <span style={{ fontSize: '0.750rem' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
                                                 <span style={{ fontSize: '0.750rem', color: 'gray' }}>
-                                                    {dayjs(item.createdAt).format('YYYY MM DD HH:mm')}
+                                                    {dayjs(item.createdAt).format('YYYY MM DD')}
                                                 </span>
-                                            </>
+                                                <HeartIcon className="heart">
+                                                    {item.like_id && userId ? <HeartSolid /> : <Heart />}
+                                                    <span>{item.like_count ? item.like_count : 0}</span>
+                                                </HeartIcon>
+                                                <CommentIcon className="comment">
+                                                    {item.comment_id && userId ? <CommentSolid /> : <Comment />}
+                                                    <span>{item.comment_count ? item.comment_count : 0}</span>
+                                                </CommentIcon>
+                                            </TitleBox>
                                         }
                                         description={
                                             <>
