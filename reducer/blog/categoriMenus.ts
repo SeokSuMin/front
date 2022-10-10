@@ -31,7 +31,7 @@ const categoriMenus = createSlice({
                     ...state,
                     categoriMenus: action.payload.categoriMenus,
                     categoriTotal: totalCount,
-                    hydration: true,
+                    // hydration: true,
                     loading: false,
                 };
             })

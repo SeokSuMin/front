@@ -1,49 +1,49 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { addLikeThunk, deleteLikeThunk } from '../../thunk/blogThunk';
+import { addfavoriteThunk, addLikeThunk, deletefavoriteThunk, deleteLikeThunk } from '../../thunk/blogThunk';
 
-export interface IblogLike {
+export interface IBlogFavorite {
     board_id: string;
     loading?: boolean;
     hydration?: boolean;
 }
 
-const blogLike = createSlice({
+const blogFavorite = createSlice({
     name: 'blogLike',
-    initialState: {} as IblogLike,
+    initialState: {} as IBlogFavorite,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(addLikeThunk.pending, (state, action) => {
+            .addCase(addfavoriteThunk.pending, (state, action) => {
                 return {
                     ...state,
                     loading: true,
                 };
             })
-            .addCase(addLikeThunk.fulfilled, (state, action) => {
+            .addCase(addfavoriteThunk.fulfilled, (state, action) => {
                 return {
                     ...state,
                     loading: false,
                 };
             })
-            .addCase(addLikeThunk.rejected, (state, action) => {
+            .addCase(addfavoriteThunk.rejected, (state, action) => {
                 return {
                     ...state,
                     loading: false,
                 };
             })
-            .addCase(deleteLikeThunk.pending, (state, action) => {
+            .addCase(deletefavoriteThunk.pending, (state, action) => {
                 return {
                     ...state,
                     loading: true,
                 };
             })
-            .addCase(deleteLikeThunk.fulfilled, (state, action) => {
+            .addCase(deletefavoriteThunk.fulfilled, (state, action) => {
                 return {
                     ...state,
                     loading: false,
                 };
             })
-            .addCase(deleteLikeThunk.rejected, (state, action) => {
+            .addCase(deletefavoriteThunk.rejected, (state, action) => {
                 return {
                     ...state,
                     loading: false,
@@ -53,4 +53,4 @@ const blogLike = createSlice({
 });
 
 // export const { getComments } = commblogLikeent.actions;
-export default blogLike.reducer;
+export default blogFavorite.reducer;

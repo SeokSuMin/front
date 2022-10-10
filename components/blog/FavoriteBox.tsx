@@ -1,16 +1,16 @@
 import styled from 'styled-components';
-import Heart from '../../public/heart.svg';
-import HeartSolid from '../../public/heart-solid.svg';
+import Star from '../../public/star.svg';
+import StarSolid from '../../public/star-solid.svg';
 import { motion } from 'framer-motion';
-import { useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
+    margin-left: 0.63em;
     margin-top: 2.5em;
     display: flex;
     align-items: center;
     svg {
         width: 1.2em;
-        fill: rgb(195, 0, 16);
+        fill: rgb(250, 225, 0);
         cursor: pointer;
     }
     span {
@@ -19,13 +19,12 @@ const Wrapper = styled.div`
     }
 `;
 
-interface ILikeBoxProps {
-    likeToggle: (type: string) => void;
-    like: boolean;
-    likeCount: number;
+interface IFavoriteBoxProps {
+    favoriteToggle: (type: string) => void;
+    favorite: boolean;
 }
 
-const LikeBox = ({ likeToggle, like, likeCount }: ILikeBoxProps) => {
+const FavoriteBox = ({ favoriteToggle, favorite }: IFavoriteBoxProps) => {
     return (
         <Wrapper>
             <motion.div
@@ -34,14 +33,14 @@ const LikeBox = ({ likeToggle, like, likeCount }: ILikeBoxProps) => {
                     //scaleX: 1.01,
                 }}
             >
-                {like ? (
-                    <HeartSolid onClick={() => likeToggle('unlike')} />
+                {favorite ? (
+                    <StarSolid onClick={() => favoriteToggle('unfavorite')} />
                 ) : (
-                    <Heart onClick={() => likeToggle('like')} />
+                    <Star onClick={() => favoriteToggle('favorite')} />
                 )}
             </motion.div>
-            <span>Like {likeCount}</span>
+            <span>Favorite</span>
         </Wrapper>
     );
 };
-export default LikeBox;
+export default FavoriteBox;

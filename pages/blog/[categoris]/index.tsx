@@ -174,7 +174,7 @@ const Home = () => {
     const reloadBoardList = async () => {
         const page = router.query?.page ? +router.query.page : 1;
         const countList = router.query?.countList ? +router.query.countList : 15;
-        const categoriId = +(router.query.categoris as string).split('_')[1];
+        const categoriId = (router.query.categoris as string).split('_')[1];
         const where: string[] = [myLike, myComment];
         await dispatch(getBoardListThunk({ page, countList, categoriId, where, order }));
     };
@@ -246,7 +246,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         }
         const url = resolvedUrl;
         const query = url.split('/blog/')[1];
-        let categoriId = +query.split('?')[0].split('_')[1];
+        let categoriId = query.split('?')[0].split('_')[1];
         const querys = query.split('?')[1];
         const params = new URLSearchParams(querys);
 
@@ -257,8 +257,8 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         if (isNaN(page as number)) {
             page = 1;
         }
-        if (isNaN(categoriId)) {
-            categoriId = 0;
+        if (categoriId !== 'favorite' && isNaN(+categoriId)) {
+            categoriId = '0';
         }
         if (isNaN(countList as number)) {
             countList = 15;
@@ -282,7 +282,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         dispatch(changeCountList(+countList));
         dispatch(changeCurrentCategoriId(+categoriId));
         dispatch(changeBoardViewType(type));
-
+        console.log(getState().userInfo);
         return {
             props: {},
         };

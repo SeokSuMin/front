@@ -326,11 +326,13 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                                 {dayjs(board.createdAt).format('YYYY MM DD')}
                                             </span>
                                             <span className="heart">
-                                                {board.like_id && userId ? <HeartSolid /> : <Heart />}
+                                                {/* {board.like_id && userId ? <HeartSolid /> : <Heart />} */}
+                                                <Heart />
                                                 <span>{board.like_count ? board.like_count : 0}</span>
                                             </span>
                                             <span className="comment">
-                                                {board.comment_id && userId ? <CommentSolid /> : <Comment />}
+                                                {/* {board.comment_id && userId ? <CommentSolid /> : <Comment />} */}
+                                                <Comment />
                                                 <span>{board.comment_count ? board.comment_count : 0}</span>
                                             </span>
                                         </WriteInfo>

@@ -199,7 +199,7 @@ const TopMenu = ({
                         <Option value="comment_count desc">댓글순</Option>
                     </Select>
                 </div>
-                {userId ? (
+                {/* {userId ? (
                     <HeartCommentBox>
                         {myLike === 'like' ? (
                             <HeartSolid onClick={() => toggleMyHeart('unlike')} />
@@ -212,7 +212,7 @@ const TopMenu = ({
                             <Comment onClick={() => toggleMyComment('comment')} />
                         )}
                     </HeartCommentBox>
-                ) : null}
+                ) : null} */}
             </ToggleBox>
         </Wrapper>
     );

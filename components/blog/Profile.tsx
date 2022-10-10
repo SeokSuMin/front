@@ -2,13 +2,11 @@ import { Dropdown, Menu, Tag } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import PencilToggle from '../../public/pencil-solid.svg';
 import GitHub from '../../public/github.svg';
 import FaceBook from '../../public/facebook.svg';
 import Instagram from '../../public/instagram.svg';
 import Mail from '../../public/mail.svg';
 import EllipsisDot from '../../public/ellipsis-dot.svg';
-import { EditOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fileBackUrl } from '../../config';
 

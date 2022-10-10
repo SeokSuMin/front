@@ -171,11 +171,13 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                                     {dayjs(item.createdAt).format('YYYY MM DD')}
                                                 </span>
                                                 <HeartIcon className="heart">
-                                                    {item.like_id && userId ? <HeartSolid /> : <Heart />}
+                                                    {/* {item.like_id && userId ? <HeartSolid /> : <Heart />} */}
+                                                    <Heart />
                                                     <span>{item.like_count ? item.like_count : 0}</span>
                                                 </HeartIcon>
                                                 <CommentIcon className="comment">
-                                                    {item.comment_id && userId ? <CommentSolid /> : <Comment />}
+                                                    {/* {item.comment_id && userId ? <CommentSolid /> : <Comment />} */}
+                                                    <Comment />
                                                     <span>{item.comment_count ? item.comment_count : 0}</span>
                                                 </CommentIcon>
                                             </TitleBox>

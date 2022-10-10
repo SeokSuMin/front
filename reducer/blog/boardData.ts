@@ -23,6 +23,7 @@ export interface IBoardData {
     comment_count?: number;
     like_id?: number | boolean;
     comment_id?: number | boolean;
+    favorite_id?: number | boolean;
     prevBoardId?: string;
     nextBoardId?: string;
     createdAt?: string;

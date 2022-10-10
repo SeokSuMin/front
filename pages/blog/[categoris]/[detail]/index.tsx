@@ -7,6 +7,8 @@ import {
     getCategoriMenuThunk,
     getDetailBoardThunk,
     deleteLikeThunk,
+    addfavoriteThunk,
+    deletefavoriteThunk,
 } from '../../../../thunk/blogThunk';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../../../thunk/userThunk';
 import wrapper from '../../../../store/configStore';
@@ -24,6 +26,7 @@ import { goPage, initTotalCount } from '../../../../reducer/blog/paging';
 import { ICategoriMenus } from '../../../../reducer/blog/categoriMenus';
 import LikeBox from '../../../../components/blog/LikeBox';
 import { IBoardData } from '../../../../reducer/blog/boardData';
+import FavoriteBox from '../../../../components/blog/FavoriteBox';
 
 const { confirm } = Modal;
 
@@ -194,6 +197,11 @@ const Content = styled.div`
     // padding: 2.031em 2.031em 2.031em 2.031em;
 `;
 
+const ToggleBox = styled.div`
+    width: 100%;
+    display: flex;
+`;
+
 const DetailBoard = () => {
     const quillInlineStyle = `
         <style>
@@ -239,9 +247,11 @@ const DetailBoard = () => {
     const [menuTitle, setMenuTitle] = useState('');
     const [categoriTitle, setCategoriTitle] = useState('');
     const [checkLikeTime, setCheckLikeTime] = useState(true);
-    const [like, setLike] = useState(true);
+    const [checkFavoriteTime, setCheckFavoriteTime] = useState(true);
+    const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
     const [initRander, setInitRander] = useState(true);
+    const [favorite, setFavorite] = useState(false);
     const dispatch = useAppDispatch();
 
     const moveDetailBoard = async (boardId: string) => {
@@ -320,6 +330,43 @@ const DetailBoard = () => {
         }
     };
 
+    const favoriteToggle = async (type: string) => {
+        try {
+            if (!userId) {
+                message.warn('로그인 후 이용하실 수 있습니다.');
+                return;
+            }
+            if (checkFavoriteTime) {
+                if (type === 'favorite') {
+                    setCheckFavoriteTime(false);
+                    setFavorite(true);
+                    await dispatch(addfavoriteThunk(detailBoard.board_id)).unwrap();
+                    // 즐겨찾기 누를경우 10초뒤 다시 누르게 시간지정
+                    setTimeout(() => {
+                        setCheckFavoriteTime(true);
+                    }, 10000);
+                } else {
+                    setFavorite(false);
+                    await dispatch(deletefavoriteThunk(detailBoard.board_id)).unwrap();
+                }
+            } else {
+                if (type === 'unfavorite') {
+                    setFavorite(false);
+                    await dispatch(deletefavoriteThunk(detailBoard.board_id)).unwrap();
+                    return;
+                }
+                message.warn('즐겨찾기는 10초마다 한 번만 클릭할 수 있습니다.');
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                console.log(err.message);
+                message.error(err.message);
+            } else {
+                message.error(err as string);
+            }
+        }
+    };
+
     const initPage = async () => {
         try {
             const response = await dispatch(
@@ -327,6 +374,7 @@ const DetailBoard = () => {
             ).unwrap();
             setLike(!!response.boardInfo.like_id);
             setLikeCount(+response.boardInfo.like_count);
+            setFavorite(!!response.boardInfo.favorite_id);
             const menuResult = (await (await dispatch(getCategoriMenuThunk())).payload) as ICategoriMenus;
             if (+categoriId === 0) {
                 setMenuTitle('전체보기');
@@ -356,6 +404,7 @@ const DetailBoard = () => {
             if (userId) {
                 initPage();
             } else {
+                setFavorite(false);
                 setLike(false);
             }
         }
@@ -488,7 +537,10 @@ const DetailBoard = () => {
                         </TitleBox>
                         <Boundary />
                         <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
-                        <LikeBox {...{ likeToggle, like, likeCount }} />
+                        <ToggleBox>
+                            <LikeBox {...{ likeToggle, like, likeCount }} />
+                            <FavoriteBox {...{ favoriteToggle, favorite }} />
+                        </ToggleBox>
                     </BoardBox>
 
                     <Comments divRef={commentDivRef} />

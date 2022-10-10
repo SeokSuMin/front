@@ -33,7 +33,7 @@ export const getCategoriMenuThunk = createAsyncThunk(
 export const getBoardListThunk = createAsyncThunk(
     'GET_BOARD_LIST',
     async (
-        condition: { page: number; countList: number; categoriId: number; where: string[]; order: string },
+        condition: { page: number; countList: number; categoriId: string; where: string[]; order: string },
         { getState, requestId, rejectWithValue },
     ) => {
         try {
@@ -251,6 +251,38 @@ export const deleteLikeThunk = createAsyncThunk(
     async (boardId: string, { getState, requestId, rejectWithValue }) => {
         try {
             const response = await axios.delete(`/blog/like/${boardId}`);
+            return response.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
+        }
+    },
+);
+
+export const addfavoriteThunk = createAsyncThunk(
+    'ADD_FAVORITE',
+    async (boardId: string, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.post(`/blog/favorite/${boardId}`);
+            return response.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
+        }
+    },
+);
+
+export const deletefavoriteThunk = createAsyncThunk(
+    'DELETE_FAVORITE',
+    async (boardId: string, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.delete(`/blog/favorite/${boardId}`);
             return response.data;
         } catch (err) {
             if (err instanceof AxiosError) {
