@@ -180,6 +180,16 @@ const Home = () => {
     };
 
     useEffect(() => {
+        if (router.query.categoris === 'categori_favorite' && !userId) {
+            message.warn('권한이 없거나 없는 페이지 입니다.');
+            router.push({
+                pathname: `/blog/categori_0`,
+                query: { page: '1', countList: '15', type: 'CARD' },
+            });
+        }
+    }, [router.query.categoris]);
+
+    useEffect(() => {
         //(첫 랜더링은 X)
         if (!initRander) {
             reloadBoardList();
@@ -189,6 +199,13 @@ const Home = () => {
     useEffect(() => {
         // 사용자가 로그인 또는 로그아웃 하면 리스트정보 갱신 (첫 랜더링은 X)
         if (initRander) {
+            if (router.query.categoris === 'categori_favorite' && !userId) {
+                message.warn('권한이 없거나 없는 페이지 입니다.');
+                router.push({
+                    pathname: `/blog/categori_0`,
+                    query: { page: '1', countList: '15', type: 'CARD' },
+                });
+            }
             setInitRander(false);
         } else {
             if (userId) {
