@@ -9,6 +9,7 @@ import {
     deleteLikeThunk,
     addfavoriteThunk,
     deletefavoriteThunk,
+    getFavoriteBoardIdList,
 } from '../../../../thunk/blogThunk';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../../../thunk/userThunk';
 import wrapper from '../../../../store/configStore';
@@ -27,6 +28,7 @@ import { ICategoriMenus } from '../../../../reducer/blog/categoriMenus';
 import LikeBox from '../../../../components/blog/LikeBox';
 import { IBoardData } from '../../../../reducer/blog/boardData';
 import FavoriteBox from '../../../../components/blog/FavoriteBox';
+import { useCookies } from 'react-cookie';
 
 const { confirm } = Modal;
 
@@ -238,9 +240,11 @@ const DetailBoard = () => {
     `;
     const commentDivRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
+    const [cookies, setCookie, removeCookie] = useCookies(['order']);
     const detailBoard = useAppSelector((state) => state.boardData);
     const { userId } = useAppSelector((state) => state.userInfo);
     const { viewType } = useAppSelector((state) => state.blogToggle);
+    const { board_ids } = useAppSelector((state) => state.blogFavorite);
     const { page, countList, totalCount } = useAppSelector((state) => state.paging);
     const [deleteFlag, setDeleteFlag] = useState(false);
     const [categoriId, setCategoriId] = useState((router.query.categoris as string).split('_')[1]);
@@ -369,15 +373,19 @@ const DetailBoard = () => {
 
     const initPage = async () => {
         try {
+            const order = cookies.order ? cookies.order : 'createdAt desc';
             const response = await dispatch(
-                getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: +categoriId }),
+                getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: categoriId, order }),
             ).unwrap();
             setLike(!!response.boardInfo.like_id);
             setLikeCount(+response.boardInfo.like_count);
             setFavorite(!!response.boardInfo.favorite_id);
             const menuResult = (await (await dispatch(getCategoriMenuThunk())).payload) as ICategoriMenus;
-            if (+categoriId === 0) {
+            if (categoriId === '0') {
                 setMenuTitle('전체보기');
+                setCategoriTitle('');
+            } else if (categoriId === 'favorite') {
+                setMenuTitle('즐겨찾기');
                 setCategoriTitle('');
             } else {
                 for (const menu of menuResult.categoriMenus) {
@@ -417,6 +425,13 @@ const DetailBoard = () => {
                 query: { page, countList, type: viewType },
             });
         } else {
+            if (router.query.categoris === 'categori_favorite' && !board_ids.includes(router.query.detail as string)) {
+                message.warn('권한이 없거나 없는 페이지 입니다.');
+                router.push({
+                    pathname: `/blog/categori_0`,
+                    query: { page: '1', countList: '15', type: 'CARD' },
+                });
+            }
             initPage();
             setInitRander(false);
         }
@@ -434,7 +449,7 @@ const DetailBoard = () => {
                     <TopMenuBox>
                         <Title>
                             <span className="menu">{menuTitle}</span>
-                            {+categoriId !== 0 ? (
+                            {+categoriId !== 0 && categoriId !== 'favorite' ? (
                                 <>
                                     <span>, </span>
                                     <span className="categori">{categoriTitle}</span>
@@ -565,6 +580,10 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         await dispatch(getAdminInfoThunk());
         // await dispatch(getCategoriMenu());
         // await dispatch(getDetailBoard(boardId));
+        const userId = getState().userInfo.userId;
+        if (userId) {
+            await dispatch(getFavoriteBoardIdList());
+        }
 
         return {
             props: {},

@@ -29,6 +29,22 @@ export const getCategoriMenuThunk = createAsyncThunk(
     },
 );
 
+export const getFavoriteBoardIdList = createAsyncThunk(
+    'GET_FAVORITE_BOARD_ID_LIST',
+    async (_, { getState, requestId, rejectWithValue }) => {
+        try {
+            const response = await axios.get(`/blog/favorite`);
+            return response.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                return rejectWithValue(err.response?.data);
+            } else {
+                return rejectWithValue(err);
+            }
+        }
+    },
+);
+
 // 조건이 많아서 get 대신 post 요청
 export const getBoardListThunk = createAsyncThunk(
     'GET_BOARD_LIST',
@@ -60,10 +76,13 @@ export const getBoardListThunk = createAsyncThunk(
 
 export const getDetailBoardThunk = createAsyncThunk(
     'GET_DETAIL_BOARD',
-    async (condition: { boardId: string; categoriId: number }, { dispatch, getState, requestId, rejectWithValue }) => {
+    async (
+        condition: { boardId: string; categoriId: string; order: string },
+        { dispatch, getState, requestId, rejectWithValue },
+    ) => {
         try {
             // const { blogToggle } = getState() as { blogToggle: IBlogToggle };
-            const response = await axios.get(`/blog/${condition.boardId}/${condition.categoriId}`);
+            const response = await axios.get(`/blog/${condition.boardId}/${condition.categoriId}/${condition.order}`);
             const comments = response.data.boardInfo.comments;
             dispatch(getComments({ comments }));
             delete response.data.boardInfo.comments;

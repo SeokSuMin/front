@@ -132,6 +132,13 @@ const NavBar = () => {
         try {
             await dispatch(logoutThunk()).unwrap();
             message.success('로그아웃 되었습니다.');
+            if (router.pathname === '/blog/[categoris]' || router.pathname === '/blog/[categoris]/[detail]') {
+                router.query.categoris === 'categori_favorite' &&
+                    router.push({
+                        pathname: `/blog/categori_0`,
+                        query: { page: '1', countList: '15', type: 'CARD' },
+                    });
+            }
         } catch (err) {
             if (err instanceof Error) {
                 console.log(err.message);

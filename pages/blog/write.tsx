@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../thunk/userThunk';
-import { getCategoriMenuThunk, getDetailBoardThunk, isnertBoard } from '../../thunk/blogThunk';
+import { getCategoriMenuThunk, getDetailBoardThunk, getFavoriteBoardIdList, isnertBoard } from '../../thunk/blogThunk';
 import path from 'path';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -281,7 +281,13 @@ const Write = () => {
         const resultCategoris = result.payload as ICategoriMenus;
         if (router?.query?.mode === 'modify') {
             const boardResult = await (
-                await dispatch(getDetailBoardThunk({ boardId: router.query.detail as string, categoriId: -1 }))
+                await dispatch(
+                    getDetailBoardThunk({
+                        boardId: router.query.detail as string,
+                        categoriId: '-1',
+                        order: 'notOrder',
+                    }),
+                )
             ).payload;
             for (const menu of resultCategoris.categoriMenus) {
                 const findC = menu.categoris.find((childC) => childC.categori_id === boardResult.boardInfo.categori_id);
@@ -396,7 +402,10 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         // 로그인 사용자 체크
         await dispatch(checkUserloginThunk());
         await dispatch(getAdminInfoThunk());
-
+        const userId = getState().userInfo.userId;
+        if (userId) {
+            await dispatch(getFavoriteBoardIdList());
+        }
         return {
             props: {},
         };

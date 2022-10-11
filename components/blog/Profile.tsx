@@ -7,8 +7,10 @@ import FaceBook from '../../public/facebook.svg';
 import Instagram from '../../public/instagram.svg';
 import Mail from '../../public/mail.svg';
 import EllipsisDot from '../../public/ellipsis-dot.svg';
+import StarSolid from '../../public/star-solid.svg';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fileBackUrl } from '../../config';
+import { getFavoriteBoardIdList } from '../../thunk/blogThunk';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -57,11 +59,39 @@ const ProfileImg = styled.div<{ adminPath: string | undefined }>`
     margin-bottom: 0.938em;
 `;
 
-const CategoriBox = styled.div`
+const FavoriteListBox = styled.div`
     width: 100%;
-    margin-top: 1.25em;
     border-top: 0.063em solid rgb(217, 217, 217);
+    border-bottom: 0.063em solid rgb(217, 217, 217);
+    margin-top: 1.245em;
+    padding: 1em 1em 1em 0.63em;
     display: flex;
+    align-items: center;
+    span {
+        font-size: 0.75rem;
+        margin-top: 0.083em;
+        margin-left: 0.167em;
+        cursor: pointer;
+    }
+    span:hover {
+        text-decoration: underline;
+    }
+    .active {
+        text-decoration: underline;
+        font-weight: bold;
+    }
+    svg {
+        width: 0.9em;
+        fill: rgb(250, 225, 0);
+        cursor: pointer;
+    }
+`;
+
+const CategoriBox = styled.div<{ userId: string }>`
+    width: 100%;
+    display: flex;
+    border-top: ${(props) => (props.userId ? 'none' : '0.063em solid rgb(217, 217, 217)')};
+    margin-top: ${(props) => (props.userId ? '0px' : '1.245em')};
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
@@ -143,6 +173,7 @@ const Profile = () => {
     const { userId, adminInfo } = useAppSelector((state) => state.userInfo);
     const { viewType } = useAppSelector((state) => state.blogToggle);
     const { categoriMenus, categoriTotal } = useAppSelector((state) => state.categoriMenus);
+    const { board_ids } = useAppSelector((state) => state.blogFavorite);
     const { countList } = useAppSelector((state) => state.paging);
     const [categoriId, setCategoriId] = useState<string>('');
     const dispatch = useAppDispatch();
@@ -157,7 +188,7 @@ const Profile = () => {
         );
     };
 
-    const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
+    const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number | string) => {
         if (router.pathname !== '/blog' || currentCategoriId !== newCategoriId) {
             // dispatch(changeCurrentCategoriId(newCategoriId));
             // if (router.pathname !== '/blog/[categoris]') {
@@ -172,6 +203,12 @@ const Profile = () => {
             });
         }
     };
+
+    useEffect(() => {
+        if (userId && !board_ids.length) {
+            dispatch(getFavoriteBoardIdList());
+        }
+    }, [userId]);
 
     useEffect(() => {
         if (router?.query?.categoris) {
@@ -203,7 +240,21 @@ const Profile = () => {
                 <span>IceMan</span>
                 <p>될 때 까지 하는 개발자 입니다.</p>
             </ProfileImgeBox>
-            <CategoriBox>
+
+            {userId ? (
+                <FavoriteListBox>
+                    <StarSolid />
+                    <span
+                        className={categoriId === 'favorite' ? 'active' : ''}
+                        onClick={() => moveCategoriBoards(+categoriId, 'favorite')}
+                    >
+                        Favorite ({board_ids.length})
+                    </span>
+                    {/* <span>({favoriteTotal ? favoriteTotal : 0})</span> */}
+                </FavoriteListBox>
+            ) : null}
+
+            <CategoriBox userId={userId}>
                 {userId === 'iceMan' ? (
                     <div className="writeBox">
                         <span>

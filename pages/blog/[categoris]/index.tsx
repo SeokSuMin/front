@@ -6,7 +6,7 @@ import OneBoxList from '../../../components/blog/OneBoxList';
 import wrapper from '../../../store/configStore';
 import axios from 'axios';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../../thunk/userThunk';
-import { getBoardListThunk, getCategoriMenuThunk } from '../../../thunk/blogThunk';
+import { getBoardListThunk, getCategoriMenuThunk, getFavoriteBoardIdList } from '../../../thunk/blogThunk';
 import Paging from '../../../components/blog/Paging';
 import { Empty, message } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -192,7 +192,8 @@ const Home = () => {
             setInitRander(false);
         } else {
             if (userId) {
-                reloadBoardList();
+                // 임시로 주석처리 (좋아요, 댓글 표시)
+                // reloadBoardList();
             } else {
                 //로그아웃하면 쿠키 초기화
                 removeCookie('myLike', { path: '/' });
@@ -280,9 +281,14 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         dispatch(initTotalCount(result.payload.totalCount));
         dispatch(goPage(+page));
         dispatch(changeCountList(+countList));
-        dispatch(changeCurrentCategoriId(+categoriId));
+        dispatch(changeCurrentCategoriId(categoriId === 'favorite' ? categoriId : +categoriId));
         dispatch(changeBoardViewType(type));
-        console.log(getState().userInfo);
+
+        const userId = getState().userInfo.userId;
+        if (userId) {
+            await dispatch(getFavoriteBoardIdList());
+        }
+
         return {
             props: {},
         };

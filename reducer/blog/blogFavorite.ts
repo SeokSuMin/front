@@ -1,51 +1,31 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { addfavoriteThunk, addLikeThunk, deletefavoriteThunk, deleteLikeThunk } from '../../thunk/blogThunk';
+import { createSlice } from '@reduxjs/toolkit';
+import { getFavoriteBoardIdList } from '../../thunk/blogThunk';
 
 export interface IBlogFavorite {
-    board_id: string;
+    board_ids: string[];
     loading?: boolean;
     hydration?: boolean;
 }
 
 const blogFavorite = createSlice({
     name: 'blogLike',
-    initialState: {} as IBlogFavorite,
+    initialState: { board_ids: [] } as IBlogFavorite,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(addfavoriteThunk.pending, (state, action) => {
+            .addCase(getFavoriteBoardIdList.pending, (state, action) => {
                 return {
                     ...state,
                     loading: true,
                 };
             })
-            .addCase(addfavoriteThunk.fulfilled, (state, action) => {
+            .addCase(getFavoriteBoardIdList.fulfilled, (state, action) => {
+                const board_ids: string[] = action.payload.favoriteBoardList.map(
+                    (v: { board_id: string }) => v.board_id,
+                );
                 return {
                     ...state,
-                    loading: false,
-                };
-            })
-            .addCase(addfavoriteThunk.rejected, (state, action) => {
-                return {
-                    ...state,
-                    loading: false,
-                };
-            })
-            .addCase(deletefavoriteThunk.pending, (state, action) => {
-                return {
-                    ...state,
-                    loading: true,
-                };
-            })
-            .addCase(deletefavoriteThunk.fulfilled, (state, action) => {
-                return {
-                    ...state,
-                    loading: false,
-                };
-            })
-            .addCase(deletefavoriteThunk.rejected, (state, action) => {
-                return {
-                    ...state,
+                    board_ids,
                     loading: false,
                 };
             });

@@ -145,6 +145,9 @@ const TopMenu = ({
         if (currentCategoriId === 0) {
             setMenuTitle('전체보기');
             setCategoriTitle('');
+        } else if (currentCategoriId === 'favorite') {
+            setMenuTitle('즐겨찾기');
+            setCategoriTitle('');
         } else {
             for (const menu of categoriMenus) {
                 const findCategori = menu.categoris.find((c) => c?.categori_id === currentCategoriId);
@@ -162,14 +165,14 @@ const TopMenu = ({
             <ToggleBox>
                 <Title>
                     <span className="menu">{menuTitle}</span>
-                    {currentCategoriId !== 0 ? (
+                    {currentCategoriId !== 0 && currentCategoriId !== 'favorite' ? (
                         <>
                             <span>, </span>
                             <span className="categori">{categoriTitle}</span>
                         </>
                     ) : null}
                 </Title>
-                {userId === 'iceMan' ? (
+                {userId === 'iceMan' && router.query.categoris !== 'categori_favorite' ? (
                     <Write>
                         <span onClick={moveWritePage}>글쓰기</span>
                         <span>|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
