@@ -141,6 +141,16 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
                 defaultValue={content as string}
                 theme="snow"
                 modules={{
+                    keyboard: {
+                        bindings: {
+                            tab: {
+                                key: 9,
+                                handler: function (range: any, context: any) {
+                                    return true;
+                                },
+                            },
+                        },
+                    },
                     toolbar: {
                         container: toolbarOptions,
                         handlers: {

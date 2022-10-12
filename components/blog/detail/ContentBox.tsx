@@ -141,13 +141,15 @@ const ContentBox = ({
                 background-color: #23241f;
                 color: #f8f8f2;
                 overflow: visible;
-                white-space: pre-line;
-                word-break: break-all;
+                white-space: pre-wrap;
+                // word-break: break-all;
                 margin-bottom: 5px;
                 margin-top: 5px;
                 padding: 5px 10px;
             }
             #quillContent {
+                white-space: pre-wrap;
+                
                 overflow-y: hidden;
                 overflow-x: auto;
             }

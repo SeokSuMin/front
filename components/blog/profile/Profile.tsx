@@ -179,13 +179,21 @@ const Profile = () => {
     const dispatch = useAppDispatch();
 
     const moveWritePage = () => {
-        router.push(
-            {
-                pathname: '/blog/write',
-                query: { mode: 'write' },
-            },
-            // '/blog/write',
-        );
+        if (router.query.mode === 'modify' || router.pathname !== '/blog/write') {
+            router.push(
+                {
+                    pathname: '/blog/write',
+                    query: { mode: 'write' },
+                },
+                // '/blog/write',
+            );
+        }
+    };
+
+    const movemenuManager = () => {
+        if (router.pathname !== '/blog/menuManager') {
+            router.push('/blog/menuManager');
+        }
     };
 
     const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number | string) => {
@@ -227,7 +235,7 @@ const Profile = () => {
                 },
                 {
                     key: '2',
-                    label: <div onClick={() => router.push('/blog/menuManager')}>메뉴관리</div>,
+                    label: <div onClick={movemenuManager}>메뉴관리</div>,
                 },
             ]}
         />

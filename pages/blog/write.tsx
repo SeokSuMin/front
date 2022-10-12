@@ -80,6 +80,7 @@ const ContentBox = styled.div`
         line-height: 2em;
         padding: 0.75em;
         overflow-y: auto;
+        white-space: normal !important;
     }
     strong {
         font-weight: 900;
