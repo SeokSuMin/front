@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { fileBackUrl } from '../config';
+import { deleteFavoriteBoardIdList } from '../reducer/blog/blogFavorite';
 import { togglDashBoard, togglLogin } from '../reducer/user/userToggle';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteMemberThunk, logoutThunk } from '../thunk/userThunk';
@@ -131,6 +132,7 @@ const NavBar = () => {
     const userLogout = async () => {
         try {
             await dispatch(logoutThunk()).unwrap();
+            dispatch(deleteFavoriteBoardIdList());
             message.success('로그아웃 되었습니다.');
             if (router.pathname === '/blog/[categoris]' || router.pathname === '/blog/[categoris]/[detail]') {
                 router.query.categoris === 'categori_favorite' &&

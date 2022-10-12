@@ -10,7 +10,16 @@ export interface IBlogFavorite {
 const blogFavorite = createSlice({
     name: 'blogLike',
     initialState: { board_ids: [] } as IBlogFavorite,
-    reducers: {},
+    reducers: {
+        deleteFavoriteBoardIdList: (state) => {
+            const board_ids: string[] = [];
+            return {
+                ...state,
+                board_ids,
+                // hydration: true,
+            };
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getFavoriteBoardIdList.pending, (state, action) => {
@@ -32,5 +41,5 @@ const blogFavorite = createSlice({
     },
 });
 
-// export const { getComments } = commblogLikeent.actions;
+export const { deleteFavoriteBoardIdList } = blogFavorite.actions;
 export default blogFavorite.reducer;
