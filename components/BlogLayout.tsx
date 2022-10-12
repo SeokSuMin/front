@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import LeftProfileBox from './blog/LeftProfileBox';
+import LeftProfileBox from './blog/profile/LeftProfileBox';
 import { BackTop } from 'antd';
-import LikeBox from './blog/LikeBox';
 
 const Wrapper = styled.div`
     width: 100%;

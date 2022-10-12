@@ -1,7 +1,5 @@
 import { CaretRightOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import styled from 'styled-components';
 import CategorisDrawer from './CategorisDrawer';
 import Profile from './Profile';

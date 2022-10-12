@@ -1,6 +1,6 @@
-import { Alert, Avatar, Button, message, Spin } from 'antd';
+import { Avatar, Button, message, Spin } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { fileBackUrl } from '../../config';

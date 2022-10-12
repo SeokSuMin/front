@@ -1,36 +1,18 @@
-import { ExclamationCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { message, Modal, Spin } from 'antd';
 import styled from 'styled-components';
-import {
-    addLikeThunk,
-    deleteBoardThunk,
-    getCategoriMenuThunk,
-    getDetailBoardThunk,
-    deleteLikeThunk,
-    addfavoriteThunk,
-    deletefavoriteThunk,
-    getFavoriteBoardIdList,
-} from '../../../../thunk/blogThunk';
+import { getCategoriMenuThunk, getDetailBoardThunk, getFavoriteBoardIdList } from '../../../../thunk/blogThunk';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../../../thunk/userThunk';
 import wrapper from '../../../../store/configStore';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import dayjs from 'dayjs';
-import parse from 'html-react-parser';
-import { fileBackUrl, imgExtFormat } from '../../../../config';
-import path from 'path';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Comments from '../../../../components/comment/Comments';
 import Seo from '../../../../components/Seo';
-import { goPage, initTotalCount } from '../../../../reducer/blog/paging';
 import { ICategoriMenus } from '../../../../reducer/blog/categoriMenus';
-import LikeBox from '../../../../components/blog/LikeBox';
-import { IBoardData } from '../../../../reducer/blog/boardData';
-import FavoriteBox from '../../../../components/blog/FavoriteBox';
 import { useCookies } from 'react-cookie';
-
-const { confirm } = Modal;
+import TopMenu from '../../../../components/blog/detail/TopMenu';
+import ContentBox from '../../../../components/blog/detail/ContentBox';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -97,14 +79,6 @@ const Title = styled.div`
     margin-top: auto;
     font-size: 0.875rem;
     font-weight: 900;
-    /* .menu {
-        font-size: 0.875rem;
-        font-weight: 900;
-    } */
-    /* .categori {
-        color: gray;
-        font-size: 0.75rem;
-    } */
 `;
 
 const MoveBoardButtonBox = styled.div``;
@@ -154,19 +128,6 @@ const WriterInfoBox = styled.div`
         svg {
             margin-right: 0.313em;
         }
-    }
-`;
-
-const TagBox = styled.div`
-    width: 100%;
-    margin-top: 1.25em;
-    .ant-tag {
-        border-radius: 0.313em;
-        color: gray;
-        background-color: rgb(245, 245, 245);
-        border: none;
-        font-size: 0.938rem;
-        padding: 5px;
     }
 `;
 
@@ -245,7 +206,7 @@ const DetailBoard = () => {
     const { userId } = useAppSelector((state) => state.userInfo);
     const { viewType } = useAppSelector((state) => state.blogToggle);
     const { board_ids } = useAppSelector((state) => state.blogFavorite);
-    const { page, countList, totalCount } = useAppSelector((state) => state.paging);
+    const { page, countList } = useAppSelector((state) => state.paging);
     const [deleteFlag, setDeleteFlag] = useState(false);
     const [categoriId, setCategoriId] = useState((router.query.categoris as string).split('_')[1]);
     const [menuTitle, setMenuTitle] = useState('');
@@ -257,119 +218,6 @@ const DetailBoard = () => {
     const [initRander, setInitRander] = useState(true);
     const [favorite, setFavorite] = useState(false);
     const dispatch = useAppDispatch();
-
-    const moveDetailBoard = async (boardId: string) => {
-        router.push(`/blog/categori_${categoriId}/${boardId}`);
-    };
-
-    const deletefirm = (boardId: string) => {
-        confirm({
-            icon: <ExclamationCircleOutlined />,
-            title: '게시글 삭제',
-            content: <p>해당 게시글 및 파일이 모두 삭제됩니다.</p>,
-            okText: '삭제',
-            cancelText: '취소',
-            async onOk() {
-                try {
-                    await dispatch(deleteBoardThunk(boardId)).unwrap();
-                    dispatch(initTotalCount(totalCount - 1));
-                    dispatch(goPage(page));
-                    setDeleteFlag(true);
-                    // router.push({
-                    //     pathname: `/blog/categori_${currentCategoriId}`,
-                    //     query: { page, countList, type: viewType },
-                    // });
-                } catch (err) {
-                    if (err instanceof Error) {
-                        console.log(err.message);
-                        message.error(err.message);
-                    } else {
-                        message.error(err as string);
-                    }
-                }
-            },
-            onCancel() {
-                // Modal.destroyAll();
-            },
-        });
-    };
-
-    const likeToggle = async (type: string) => {
-        try {
-            if (!userId) {
-                message.warn('로그인 후 이용하실 수 있습니다.');
-                return;
-            }
-            if (checkLikeTime) {
-                if (type === 'like') {
-                    setCheckLikeTime(false);
-                    setLike(true);
-                    setLikeCount((prevCount) => prevCount + 1);
-                    await dispatch(addLikeThunk(detailBoard.board_id)).unwrap();
-                    // 좋아요 누를경우 10초뒤 다시 누르게 시간지정
-                    setTimeout(() => {
-                        setCheckLikeTime(true);
-                    }, 10000);
-                } else {
-                    setLike(false);
-                    setLikeCount((prevCount) => prevCount - 1);
-                    await dispatch(deleteLikeThunk(detailBoard.board_id)).unwrap();
-                }
-            } else {
-                if (type === 'unlike') {
-                    setLike(false);
-                    setLikeCount((prevCount) => prevCount - 1);
-                    await dispatch(deleteLikeThunk(detailBoard.board_id)).unwrap();
-                    return;
-                }
-                message.warn('좋아요는 10초마다 한 번만 클릭할 수 있습니다.');
-            }
-        } catch (err) {
-            if (err instanceof Error) {
-                console.log(err.message);
-                message.error(err.message);
-            } else {
-                message.error(err as string);
-            }
-        }
-    };
-
-    const favoriteToggle = async (type: string) => {
-        try {
-            if (!userId) {
-                message.warn('로그인 후 이용하실 수 있습니다.');
-                return;
-            }
-            if (checkFavoriteTime) {
-                if (type === 'favorite') {
-                    setCheckFavoriteTime(false);
-                    setFavorite(true);
-                    await dispatch(addfavoriteThunk(detailBoard.board_id)).unwrap();
-                    // 즐겨찾기 누를경우 10초뒤 다시 누르게 시간지정
-                    setTimeout(() => {
-                        setCheckFavoriteTime(true);
-                    }, 10000);
-                } else {
-                    setFavorite(false);
-                    await dispatch(deletefavoriteThunk(detailBoard.board_id)).unwrap();
-                }
-            } else {
-                if (type === 'unfavorite') {
-                    setFavorite(false);
-                    await dispatch(deletefavoriteThunk(detailBoard.board_id)).unwrap();
-                    return;
-                }
-                message.warn('즐겨찾기는 10초마다 한 번만 클릭할 수 있습니다.');
-            }
-        } catch (err) {
-            if (err instanceof Error) {
-                console.log(err.message);
-                message.error(err.message);
-            } else {
-                message.error(err as string);
-            }
-        }
-    };
 
     const initPage = async () => {
         try {
@@ -446,118 +294,21 @@ const DetailBoard = () => {
                 </SpinWrapper>
             ) : (
                 <>
-                    <TopMenuBox>
-                        <Title>
-                            <span className="menu">{menuTitle}</span>
-                            {+categoriId !== 0 && categoriId !== 'favorite' ? (
-                                <>
-                                    <span>, </span>
-                                    <span className="categori">{categoriTitle}</span>
-                                </>
-                            ) : null}
-                        </Title>
-                        <ModifyBoardButtonBox>
-                            {userId === 'iceMan' ? (
-                                <>
-                                    <button
-                                        onClick={() =>
-                                            router.push(
-                                                {
-                                                    pathname: '/blog/write',
-                                                    query: {
-                                                        mode: 'modify',
-                                                        categoriId,
-                                                        detail: router.query.detail as string,
-                                                    },
-                                                },
-                                                '/blog/write',
-                                            )
-                                        }
-                                    >
-                                        수정
-                                    </button>
-                                    <button onClick={() => deletefirm(detailBoard.board_id)}>삭제</button>
-                                </>
-                            ) : null}
-                        </ModifyBoardButtonBox>
-                        <button onClick={() => commentDivRef?.current?.scrollIntoView({ behavior: 'smooth' })}>
-                            댓글 ▼
-                        </button>
-                        <MoveBoardButtonBox>
-                            {detailBoard?.prevBoardId ? (
-                                <button onClick={() => moveDetailBoard(detailBoard.prevBoardId as string)}>
-                                    이전글
-                                </button>
-                            ) : null}
-                            {detailBoard?.nextBoardId ? (
-                                <button onClick={() => moveDetailBoard(detailBoard.nextBoardId as string)}>
-                                    다음글
-                                </button>
-                            ) : null}
-                            <button
-                                onClick={() =>
-                                    router.push({
-                                        pathname: `/blog/categori_${categoriId}`,
-                                        query: { page, countList, type: viewType },
-                                    })
-                                }
-                            >
-                                목록
-                            </button>
-                        </MoveBoardButtonBox>
-                    </TopMenuBox>
-                    <BoardBox>
-                        <TitleBox>
-                            <h1>{detailBoard?.title}</h1>
-                            <WriterInfoBox>
-                                <span>
-                                    {detailBoard?.writer} <span className="blogManage">[블로그 관리자]</span>
-                                </span>
-                                <span>·</span>
-                                <span>{dayjs(detailBoard?.createdAt).format('YYYY-MM-DD HH:mm')}</span>
-                                {/* {comments?.length ? (
-                                    <span
-                                        onClick={() => commentDivRef?.current?.scrollIntoView({ behavior: 'smooth' })}
-                                        className="comment"
-                                    >
-                                        <CommentOutlined /> 댓글 ({comments.length})
-                                    </span>
-                                ) : null} */}
-                            </WriterInfoBox>
-                            {/* <TagBox>
-                                <Tag>{detailBoard?.categoris?.categori_name}</Tag>
-                            </TagBox> */}
-                            <FileList>
-                                {detailBoard?.board_files?.map((file) => {
-                                    const extName = path.extname(file.name);
-                                    if (!imgExtFormat.includes(extName.toLocaleLowerCase())) {
-                                        return (
-                                            <Files key={file.file_id}>
-                                                <a
-                                                    href={`${fileBackUrl}${file.board_id}/${file.name}`}
-                                                    target="_self"
-                                                    download
-                                                    rel="noreferrer"
-                                                >
-                                                    <span>
-                                                        <PaperClipOutlined />
-                                                        {file.name}
-                                                    </span>
-                                                </a>
-                                            </Files>
-                                        );
-                                    }
-                                })}
-                            </FileList>
-                        </TitleBox>
-                        <Boundary />
-                        <Content>{parse(detailBoard ? quillInlineStyle + detailBoard?.content : '')}</Content>
-                        <ToggleBox>
-                            <LikeBox {...{ likeToggle, like, likeCount }} />
-                            <FavoriteBox {...{ favoriteToggle, favorite }} />
-                        </ToggleBox>
-                    </BoardBox>
-
+                    <TopMenu {...{ menuTitle, categoriId, categoriTitle, setDeleteFlag, commentDivRef }} />
+                    <ContentBox
+                        {...{
+                            checkLikeTime,
+                            setCheckLikeTime,
+                            like,
+                            setLike,
+                            likeCount,
+                            setLikeCount,
+                            checkFavoriteTime,
+                            setCheckFavoriteTime,
+                            favorite,
+                            setFavorite,
+                        }}
+                    />
                     <Comments divRef={commentDivRef} />
                 </>
             )}

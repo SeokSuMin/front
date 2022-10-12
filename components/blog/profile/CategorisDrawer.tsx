@@ -1,9 +1,7 @@
-import { Drawer, Tag } from 'antd';
+import { Drawer } from 'antd';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { changeCurrentCategoriId } from '../../reducer/blog/blogToggle';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import XToggle from '../public/x-Toggle.svg';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -55,7 +53,7 @@ const CategorisDrawer = ({ visible, closeDrawer }: ICategorisDrawerProps) => {
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
     const dispatch = useAppDispatch();
 
-    const moveCategoriBoards = (currentCategoriId: number, newCategoriId: number) => {
+    const moveCategoriBoards = (currentCategoriId: number | string, newCategoriId: number) => {
         // if (router.pathname !== '/blog' || currentCategoriId !== newCategoriId) {
         //     closeDrawer();
         //     dispatch(changeCurrentCategoriId(newCategoriId));

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -37,7 +37,6 @@ const PagingItem = styled.li`
 
 const Paging = () => {
     const router = useRouter();
-    const dispath = useAppDispatch();
     const paging = useAppSelector((state) => state.paging);
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
     const movePageFunc = (prevPageNum: number, newPageNum: number) => {

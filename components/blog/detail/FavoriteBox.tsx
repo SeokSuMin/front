@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import Star from '../../public/star.svg';
-import StarSolid from '../../public/star-solid.svg';
+import Star from '../../../public/star.svg';
+import StarSolid from '../../../public/star-solid.svg';
 import { motion } from 'framer-motion';
 
 const Wrapper = styled.div`

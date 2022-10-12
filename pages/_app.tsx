@@ -20,6 +20,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <ThemeProvider theme={theme}>
                     <GlobalStyle />
                     <Layout>
+                        {/* <Head>
+                            <link rel="shortcut icon" href="/favicon.ico" />
+                        </Head> */}
                         <Component {...pageProps} />
                     </Layout>
                 </ThemeProvider>

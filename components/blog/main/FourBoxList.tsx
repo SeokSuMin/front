@@ -4,13 +4,13 @@ import { useRouter } from 'next/router';
 import path from 'path';
 import { memo } from 'react';
 import styled from 'styled-components';
-import { fileBackUrl, imgExtFormat } from '../../config';
-import { useAppSelector } from '../../store/hooks';
+import { fileBackUrl, imgExtFormat } from '../../../config';
+import { useAppSelector } from '../../../store/hooks';
 import * as Cheerio from 'cheerio';
-import Heart from '../../public/heart.svg';
-import Comment from '../../public/comment.svg';
-import HeartSolid from '../../public/heart-solid.svg';
-import CommentSolid from '../../public/comment-solid.svg';
+import Heart from '../../../public/heart.svg';
+import Comment from '../../../public/comment.svg';
+// import HeartSolid from '../../../public/heart-solid.svg';
+// import CommentSolid from '../../../public/comment-solid.svg';
 
 const CardBox = styled(motion.div)`
     width: 100%;
@@ -299,22 +299,12 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                                         return $(firstImage).prop('src') as string;
                                                     })[0]
                                                 }
-                                                // src={`${fileBackUrl}${board.board_id}/${
-                                                //     board.board_files?.find((file) =>
-                                                //         imgExtFormat.includes(
-                                                //             path.extname(file.name).toLocaleLowerCase(),
-                                                //         ),
-                                                //     )?.name
-                                                // }`}
                                             />
                                         ) : (
                                             <img alt="example" src="../../no-image.JPG" />
                                         )}
                                     </ThumImg>
                                     <Content>
-                                        {/* <TagInfo>
-                                            <Tag color="blue">{board.categoris.categori_name}</Tag>
-                                        </TagInfo> */}
                                         <Title>
                                             <h2>{board.title}</h2>
                                         </Title>

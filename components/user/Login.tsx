@@ -10,7 +10,7 @@ import {
     UseFormSetValue,
 } from 'react-hook-form';
 import { ILoginInfo } from './UserModalView';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginThunk } from '../../thunk/userThunk';
 import { message } from 'antd';

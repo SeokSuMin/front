@@ -1,25 +1,22 @@
-import { Button, Form, Input, InputRef, message, Modal, Spin } from 'antd';
+import { Button, InputRef, message, Spin } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
-import WriteInput from '../../components/blog/WriteTtile';
-import FileLists from '../../components/blog/FileLists';
-import FileUpload from '../../components/blog/FileUpload';
+import WriteInput from '../../components/blog/write/WriteTtile';
+import FileLists from '../../components/blog/write/FileLists';
+import FileUpload from '../../components/blog/write/FileUpload';
 import * as Cheerio from 'cheerio';
-import { copyPasteImageUpload, rlto } from '../../util';
+import { copyPasteImageUpload } from '../../util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
 import { checkUserloginThunk, getAdminInfoThunk } from '../../thunk/userThunk';
 import { getCategoriMenuThunk, getDetailBoardThunk, getFavoriteBoardIdList, isnertBoard } from '../../thunk/blogThunk';
 import path from 'path';
-
 import { v4 as uuidv4 } from 'uuid';
-import { fileBackUrl, imgExtFormat } from '../../config';
-import { constants } from 'fs';
-import Router, { useRouter } from 'next/router';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { imgExtFormat } from '../../config';
+import { useRouter } from 'next/router';
 import { addUploadFiles, deleteUploadFile } from '../../reducer/blog/fileProgress';
 import { deleteBoardFiles, IBoardData } from '../../reducer/blog/boardData';
 import { ICategoriMenus } from '../../reducer/blog/categoriMenus';
@@ -28,11 +25,11 @@ import { useBeforeunload } from 'react-beforeunload';
 
 dayjs().format();
 
-const QuillEditor = dynamic(() => import('../../components/blog/QuillEditor'), { ssr: false });
+const QuillEditor = dynamic(() => import('../../components/blog/write/QuillEditor'), { ssr: false });
 // const CkEditors = dynamic(() => import('../../components/blog/CkEditors'), { ssr: false });
 
 const Wrapper = styled.div`
-    width: 100%;
+    width: 80%;
     padding: 0px 0px 0px 1.875em;
     margin-top: 3.74em;
     position: relative;

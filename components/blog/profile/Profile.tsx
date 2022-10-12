@@ -1,16 +1,16 @@
-import { Dropdown, Menu, Tag } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import GitHub from '../../public/github.svg';
-import FaceBook from '../../public/facebook.svg';
-import Instagram from '../../public/instagram.svg';
-import Mail from '../../public/mail.svg';
-import EllipsisDot from '../../public/ellipsis-dot.svg';
-import StarSolid from '../../public/star-solid.svg';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { fileBackUrl } from '../../config';
-import { getFavoriteBoardIdList } from '../../thunk/blogThunk';
+import GitHub from '../../../public/github.svg';
+import FaceBook from '../../../public/facebook.svg';
+import Instagram from '../../../public/instagram.svg';
+import Mail from '../../../public/mail.svg';
+import EllipsisDot from '../../../public/ellipsis-dot.svg';
+import StarSolid from '../../../public/star-solid.svg';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { fileBackUrl } from '../../../config';
+import { getFavoriteBoardIdList } from '../../../thunk/blogThunk';
 
 const Wrapper = styled.div`
     width: 100%;

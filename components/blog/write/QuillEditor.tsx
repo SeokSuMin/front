@@ -1,12 +1,11 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize';
-import dayjs from 'dayjs';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from '../../../store/hooks';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { fileBackUrl } from '../../config';
+import { fileBackUrl } from '../../../config';
 import styled from 'styled-components';
 import { Input } from 'antd';
 import * as Cheerio from 'cheerio';
@@ -120,7 +119,7 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
         const allTags = Array.from($('html').find('*'));
         allTags.map((tag) => {
             if ($(tag).prop('tagName') === 'IMG') {
-                $(tag).prop('width', (Number(size) > 819 ? '819' : size) + 'px');
+                $(tag).prop('width', (Number(size) > 760 ? '760' : size) + 'px');
                 // $(tag).css('max-width', '100%');
             }
         });
@@ -183,9 +182,9 @@ const QuillEditor = ({ quillRef, uuid }: IQuillEditorProps) => {
                         parchment: Quill.import('parchment'),
                         modules: ['Resize', 'DisplaySize', 'Toolbar'],
                     },
-                    imageCompress: {
-                        maxWidth: 819,
-                    },
+                    // imageCompress: {
+                    //     maxWidth: 819,
+                    // },
                 }}
                 formats={formats}
                 // onChange={(content, delta, source, editor) => setContent(editor.getHTML())}

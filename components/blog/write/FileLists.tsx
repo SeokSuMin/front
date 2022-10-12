@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import path from 'path';
 import React from 'react';
 import styled from 'styled-components';
-import { imgExtFormat } from '../../config';
-import { useAppSelector } from '../../store/hooks';
+import { imgExtFormat } from '../../../config';
+import { useAppSelector } from '../../../store/hooks';
 
 const Lable = styled.label`
     width: 11%;

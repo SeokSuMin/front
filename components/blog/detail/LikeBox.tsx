@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import Heart from '../../public/heart.svg';
-import HeartSolid from '../../public/heart-solid.svg';
+import Heart from '../../../public/heart.svg';
+import HeartSolid from '../../../public/heart-solid.svg';
 import { motion } from 'framer-motion';
-import { useAppSelector } from '../../store/hooks';
 
 const Wrapper = styled.div`
     margin-top: 2.5em;

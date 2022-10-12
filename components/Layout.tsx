@@ -1,4 +1,3 @@
-import { BackTop } from 'antd';
 import { useScroll } from 'framer-motion';
 import { useRouter } from 'next/router';
 import React from 'react';

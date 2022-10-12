@@ -5,13 +5,13 @@ import { useRouter } from 'next/router';
 import path from 'path';
 import { memo } from 'react';
 import styled from 'styled-components';
-import { fileBackUrl, imgExtFormat } from '../../config';
-import { useAppSelector } from '../../store/hooks';
+import { fileBackUrl, imgExtFormat } from '../../../config';
+import { useAppSelector } from '../../../store/hooks';
 import * as Cheerio from 'cheerio';
-import Heart from '../../public/heart.svg';
-import Comment from '../../public/comment.svg';
-import HeartSolid from '../../public/heart-solid.svg';
-import CommentSolid from '../../public/comment-solid.svg';
+import Heart from '../../../public/heart.svg';
+import Comment from '../../../public/comment.svg';
+// import HeartSolid from '../../../public/heart-solid.svg';
+// import CommentSolid from '../../../public/comment-solid.svg';
 
 const Content = styled.div`
     font-size: 0.938rem;

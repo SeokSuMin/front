@@ -3,14 +3,14 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { memo, MutableRefObject } from 'react';
 import styled from 'styled-components';
-import TwoSquareToggle from '../../public/2-squares.svg';
-import FourSquareToggle from '../../public/4-squares.svg';
-import Heart from '../../public/heart.svg';
-import HeartSolid from '../../public/heart-solid.svg';
-import CommentSolid from '../../public/comment-solid.svg';
-import Comment from '../../public/comment.svg';
+import TwoSquareToggle from '../../../public/2-squares.svg';
+import FourSquareToggle from '../../../public/4-squares.svg';
+// import Heart from '../../../public/heart.svg';
+// import HeartSolid from '../../../public/heart-solid.svg';
+// import CommentSolid from '../../../public/comment-solid.svg';
+// import Comment from '../../../public/comment.svg';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 const { Option } = Select;
 
@@ -187,21 +187,20 @@ const TopMenu = ({
                     className={viewType === 'CARD' ? 'active' : ''}
                     onClick={() => changeListView('CARD')}
                 />
-                <div>
-                    <Select onChange={changeCountListValue} value={countList} style={{ width: 80 }}>
-                        <Option value={15}>15개씩</Option>
-                        <Option value={30}>30개씩</Option>
-                        <Option value={45}>45개씩</Option>
-                    </Select>
-                </div>
-                <div>
-                    <Select onChange={changeBoardOrder} value={order} style={{ width: 90, marginLeft: 5 }}>
-                        <Option value="createdAt desc">최신순</Option>
-                        <Option value="createdAt asc">오래된순</Option>
-                        <Option value="like_count desc">좋아요순</Option>
-                        <Option value="comment_count desc">댓글순</Option>
-                    </Select>
-                </div>
+
+                <Select onChange={changeCountListValue} value={countList} style={{ width: 80 }}>
+                    <Option value={15}>15개씩</Option>
+                    <Option value={30}>30개씩</Option>
+                    <Option value={45}>45개씩</Option>
+                </Select>
+
+                <Select onChange={changeBoardOrder} value={order} style={{ width: 90, marginLeft: 5 }}>
+                    <Option value="createdAt desc">최신순</Option>
+                    <Option value="createdAt asc">오래된순</Option>
+                    <Option value="like_count desc">좋아요순</Option>
+                    <Option value="comment_count desc">댓글순</Option>
+                </Select>
+
                 {/* {userId ? (
                     <HeartCommentBox>
                         {myLike === 'like' ? (

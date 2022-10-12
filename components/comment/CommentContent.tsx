@@ -1,4 +1,3 @@
-import { Tag } from 'antd';
 import styled from 'styled-components';
 import { IComment } from '../../reducer/blog/comment';
 import { useAppSelector } from '../../store/hooks';

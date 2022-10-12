@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import FourBoxList from '../../../components/blog/FourBoxList';
-import OneBoxList from '../../../components/blog/OneBoxList';
+import FourBoxList from '../../../components/blog/main/FourBoxList';
+import OneBoxList from '../../../components/blog/main/OneBoxList';
 // import TopMenu from '../../../components/blog/TopMenu';
 import wrapper from '../../../store/configStore';
 import axios from 'axios';
@@ -17,7 +17,8 @@ import { useCookies } from 'react-cookie';
 import Seo from '../../../components/Seo';
 import dynamic from 'next/dynamic';
 
-const TopMenu = dynamic(() => import('../../../components/blog/TopMenu'), { ssr: false });
+// 쿠키 사용을 위한 ssr로딩안함
+const TopMenu = dynamic(() => import('../../../components/blog/main/TopMenu'), { ssr: false });
 
 const Wrapper = styled.div`
     width: 100%;
@@ -59,36 +60,6 @@ const Home = () => {
     const [myComment, setMyComment] = useState(cookies.myComment ? cookies.myComment : '');
     const [initRander, setInitRander] = useState(true);
     const dispatch = useAppDispatch();
-    // const [categoris, setCategoris] = useState(0);
-    // const [pageNumber, setPageNumber] = useState(0);
-    // const [countLists, setCountLists] = useState(0);
-    // const [type, setType] = useState('');
-    // const [queryEnabled, setQueryEnabled] = useState(false);
-
-    // const { isLoading, isError, data, error } = useQuery(
-    //     ['boardList', pageNumber, countLists, categoris, type],
-    //     () => getBoardList(pageNumber, countLists, categoris),
-    //     {
-    //         refetchOnWindowFocus: false,
-    //         onSuccess: (data) => {
-    //             console.log('data 실행됨', data);
-    //             if (data.boardList?.length) {
-    //                 dispatch(initTotalCount(data.totalCount));
-    //                 dispatch(goPage(pageNumber));
-    //                 dispatch(changeCurrentCategoriId(categoris));
-    //                 dispatch(changeBoardViewType(type));
-    //                 window.scrollTo({
-    //                     top: 0,
-    //                     behavior: 'smooth',
-    //                 });
-    //             }
-    //         },
-    //         onError: (err: Error) => {
-    //             message.error(err.message);
-    //         },
-    //         enabled: queryEnabled,
-    //     },
-    // );
 
     const changeListView = (type: string) => {
         if (type === viewType) {
@@ -97,8 +68,6 @@ const Home = () => {
         if (leaving) {
             return;
         }
-
-        // dispatch(changeBoardViewType(type));
         router.push({
             pathname: `/blog/categori_${currentCategoriId}`,
             query: { page, countList, type },
@@ -111,35 +80,6 @@ const Home = () => {
     const toggleLeaving = () => {
         setLeaving((prev) => !prev);
     };
-    // const initPage = async () => {
-    //     try {
-    //         // const numberRegExp = /[0-9]/;
-    //         let page = router?.query?.page ? router?.query?.page : 1;
-    //         let categoriNumber = router?.query?.categoris ? (router?.query?.categoris as string).split('_')[1] : 0;
-    //         if (isNaN(page as number)) {
-    //             page = 1;
-    //         }
-    //         if (isNaN(categoriNumber as number)) {
-    //             categoriNumber = 0;
-    //         }
-    //         setCategoris(+categoriNumber);
-    //         setPageNumber(+page);
-    //         setType(router?.query?.type as string);
-    //         setCountLists(15);
-    //         setQueryEnabled(true);
-    //         // dispatch(goPage(+pageNumber));
-    //         // dispatch(changeCurrentCategoriId(+categoriNumber));
-    //         // dispatch(changeBoardViewType(router?.query?.type as string));
-    //         await dispatch(getCategoriMenuThunk());
-    //     } catch (err) {
-    //         if (err instanceof Error) {
-    //             console.log(err.message);
-    //             message.error(err.message);
-    //         } else {
-    //             message.error(err as string);
-    //         }
-    //     }
-    // };
 
     const changeBoardOrder = async (order: string) => {
         setCookie('order', order, {
