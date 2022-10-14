@@ -108,6 +108,7 @@ export const isnertBoard = createAsyncThunk(
         { dispatch, getState, requestId, rejectWithValue },
     ) => {
         try {
+            // 이미지를 제외한 파일 업로드
             for (const file of insertData.boardData.uploadFiles) {
                 const formData = new FormData();
                 formData.append('boardId', insertData.boardData.board_id);

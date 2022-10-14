@@ -19,16 +19,18 @@ const PagingList = styled.ul`
 
 const PagingItem = styled.li`
     margin-left: 0.313em;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
     cursor: pointer;
     div {
-        padding: 5px;
+        padding: 0.313em;
         // border: 1px solid rgb(217, 217, 217);
-        border-radius: 3px;
+        border-radius: 0.188em;
     }
     .active {
         font-weight: bold;
+        font-size: 1rem;
         /* color: white;
         border: 1px solid rgb(24, 144, 255);
         background-color: rgb(24, 144, 255); */

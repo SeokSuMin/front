@@ -125,7 +125,6 @@ const Write = () => {
 
     const [permissionLoading, setPermissionLoading] = useState(true);
 
-    1;
     const changeMenu = (value: number) => {
         setMenuId(value);
         // setCategoris(categoriMenus?.find((cData) => cData.menu_name === value).categoris);
