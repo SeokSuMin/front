@@ -127,7 +127,7 @@ const TopMenu = ({
         // dispath(changeCountList(value));
         router.push({
             pathname: `/blog/categori_${currentCategoriId}`,
-            query: { page, countList: value, type: viewType },
+            query: { page: 1, countList: value, type: viewType },
         });
     };
 

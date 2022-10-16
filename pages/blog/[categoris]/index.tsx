@@ -236,8 +236,8 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
             getBoardListThunk({ page: page as number, countList: countList as number, categoriId, where, order }),
         );
         dispatch(initTotalCount(result.payload.totalCount));
-        dispatch(goPage(+page));
         dispatch(changeCountList(+countList));
+        dispatch(goPage(+page));
         dispatch(changeCurrentCategoriId(categoriId === 'favorite' ? categoriId : +categoriId));
         dispatch(changeBoardViewType(type));
 
