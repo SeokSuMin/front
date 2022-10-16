@@ -94,7 +94,7 @@ const MoveBlogPageTextBox = styled.div`
 // InferGetServerSidePropsType<typeof getServerSideProps>
 export default function Home() {
     const router = useRouter();
-    const [cookies, setCookie, removeCookie] = useCookies(['order', 'myLike', 'myComment']);
+    const [cookies, setCookie, removeCookie] = useCookies(['order', 'myLike', 'myComment', 'viewType']);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const [skill, setSkill] = useState<'1' | '2'>('1');
     const { scrollYProgress } = useScroll();
@@ -111,6 +111,7 @@ export default function Home() {
         removeCookie('order', { path: '/' });
         removeCookie('myLike', { path: '/' });
         removeCookie('myComment', { path: '/' });
+        removeCookie('viewType', { path: '/' });
     }, []);
 
     return (

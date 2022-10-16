@@ -93,6 +93,13 @@ const TopMenu = ({ menuTitle, categoriId, categoriTitle, setDeleteFlag, commentD
         });
     };
 
+    const moveMainPage = () => {
+        router.push({
+            pathname: `/blog/categori_${categoriId}`,
+            query: { page, countList, type: viewType },
+        });
+    };
+
     return (
         <Wrapper>
             <Title>
@@ -136,16 +143,7 @@ const TopMenu = ({ menuTitle, categoriId, categoriTitle, setDeleteFlag, commentD
                 {detailBoard?.nextBoardId ? (
                     <button onClick={() => moveDetailBoard(detailBoard.nextBoardId as string)}>다음글</button>
                 ) : null}
-                <button
-                    onClick={() =>
-                        router.push({
-                            pathname: `/blog/categori_${categoriId}`,
-                            query: { page, countList, type: viewType },
-                        })
-                    }
-                >
-                    목록
-                </button>
+                <button onClick={moveMainPage}>목록</button>
             </MoveBoardButtonBox>
         </Wrapper>
     );

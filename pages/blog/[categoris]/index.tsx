@@ -49,7 +49,7 @@ const ContentBox = styled.div`
 const Home = () => {
     const router = useRouter();
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const [cookies, setCookie, removeCookie] = useCookies(['order', 'myLike', 'myComment']);
+    const [cookies, setCookie, removeCookie] = useCookies(['order', 'myLike', 'myComment', 'viewType']);
     const { userId } = useAppSelector((state) => state.userInfo);
     const { boardList } = useAppSelector((state) => state.boardList);
     const { currentCategoriId, viewType } = useAppSelector((state) => state.blogToggle);
@@ -62,6 +62,7 @@ const Home = () => {
     const dispatch = useAppDispatch();
 
     const changeListView = (type: string) => {
+        setCookie('viewType', type);
         if (type === viewType) {
             return;
         }
@@ -226,6 +227,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         const order = req.cookies['order'] ? req.cookies['order'] : 'createdAt desc';
         const myLike = req.cookies['myLike'] ? req.cookies['myLike'] : '';
         const myComment = req.cookies['myComment'] ? req.cookies['myComment'] : '';
+        const viewType = req.cookies['viewType'] ? req.cookies['viewType'] : type;
         const where: string[] = [myLike, myComment];
 
         // 로그인 사용자 체크
@@ -239,7 +241,7 @@ export const getServerSideProps = wrapper.getServerSideProps(({ getState, dispat
         dispatch(changeCountList(+countList));
         dispatch(goPage(+page));
         dispatch(changeCurrentCategoriId(categoriId === 'favorite' ? categoriId : +categoriId));
-        dispatch(changeBoardViewType(type));
+        dispatch(changeBoardViewType(viewType));
 
         const userId = getState().userInfo.userId;
         if (userId) {
