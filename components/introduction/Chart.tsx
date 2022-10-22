@@ -3,7 +3,8 @@ import { Radio, RadioChangeEvent } from 'antd';
 import styled from 'styled-components';
 
 const ChartBox = styled.div`
-    width: 70%;
+    width: 55%;
+    max-width: 900px;
     margin: 0 auto;
     margin-top: 12.5em;
     padding: 0.938em;

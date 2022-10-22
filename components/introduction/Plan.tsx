@@ -2,7 +2,7 @@ import { Rate } from 'antd';
 import styled from 'styled-components';
 
 const PlanBox = styled.div`
-    width: 70%;
+    width: 60%;
     margin: 0 auto;
     margin-top: 12.5em;
     padding: 0.938em;

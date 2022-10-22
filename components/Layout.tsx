@@ -29,7 +29,7 @@ const Wrapper = styled.div`
 
 const IntroLayout = styled.div`
     width: 100%;
-    max-width: 68.75rem;
+    // max-width: 68.75rem;
     min-height: 100%;
     padding-bottom: 11.25em;
 `;

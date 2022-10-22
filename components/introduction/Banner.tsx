@@ -7,14 +7,13 @@ const Wrapper = styled.div`
 
 const IntroBox = styled.div`
     width: 100%;
-    height: 500px;
-    background-image: url('/banner1.png');
-    // background-size: contain;
-    // background-repeat: no-repeat;
+    height: 40.625rem;
+    background-image: url('/banner2.png');
+    background-size: cover;
+    background-repeat: no-repeat;
     // background-position: center;
     // background-image: linear-gradient(135deg, #ef16f2 0%, #a5c4fc 100%);
     display: flex;
-
     align-items: center;
 `;
 
@@ -38,14 +37,27 @@ const ProfileImage = styled.div`
 `;
 
 const IntroText = styled.div`
-    color: white;
-    font-size: 1.125rem;
     font-weight: bold;
     text-align: center;
-    margin-top: 1.875em;
-    p:first-child {
-        font-size: 1.875rem;
-        line-height: 2.3rem;
+    margin-top: 2.5em;
+    h1 {
+        font-size: 4.063rem;
+        color: white;
+        display: flex;
+        justify-content: flex-start;
+    }
+    div {
+        width: 50%;
+        border-top: 0.188rem solid white;
+        margin-top: 5em;
+        margin-bottom: 2.5em;
+    }
+    p {
+        font-size: 1.125rem;
+        color: white;
+        line-height: 2.222rem;
+        display: flex;
+        justify-content: flex-start;
     }
 `;
 
@@ -61,26 +73,28 @@ const ViewBtn = styled.button`
     cursor: pointer;
 `;
 
-interface IIntro {
+interface IBannerProps {
     contactBtn: () => void;
 }
 
-const Intro = ({ contactBtn }: IIntro) => {
+const Banner = ({ contactBtn }: IBannerProps) => {
     return (
         <Wrapper>
             <IntroBox>
                 <ProfileBox>
-                    <ProfileImage />
                     <IntroText>
-                        <p>2년차 풀스택 프론트엔드 개발자 입니다.</p>
-                        <br />
-                        <p>주력은 리액트이며 서버는 노드를 사용하고 있습니다.</p>
+                        <h1>웹 개발자 포트폴리오</h1>
+                        <div></div>
+                        <p>안녕하세요.</p>
+                        <p>프론트엔드 개발자 석수민 입니다.</p>
+                        <p>늦게 시작했지만 누구보다 큰 꿈과 목표가 있습니다.</p>
+                        <p>변화를 두려워하지 않고 무엇이든 공부할 자세가 되어있습니다.</p>
                     </IntroText>
-                    <ViewBtn onClick={contactBtn}>contact me</ViewBtn>
+                    {/* <ViewBtn onClick={contactBtn}>contact me</ViewBtn> */}
                 </ProfileBox>
             </IntroBox>
         </Wrapper>
     );
 };
 
-export default Intro;
+export default Banner;

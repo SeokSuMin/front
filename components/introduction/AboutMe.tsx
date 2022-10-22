@@ -1,14 +1,16 @@
 import { MutableRefObject } from 'react';
 import styled from 'styled-components';
 
-const CareerBox = styled.div`
-    width: 70%;
+const Wrapper = styled.div`
+    width: 60%;
+    /* max-width: 56.25rem; */
     margin: 0 auto;
-    margin-top: 9.375em;
-    padding: 0.938em;
+    margin-top: 6.25em;
+    // padding: 0.938em;
+    //padding-top: 6.25em;
     font-weight: bold;
     @media screen and (max-width: 31.25rem) {
-        width: 80%;
+        // width: 80%;
     }
 `;
 
@@ -60,14 +62,89 @@ const CareerIcon = styled.svg`
     fill: rgb(105, 160, 199);
 `;
 
+const TitleBox = styled.div`
+    text-align: center;
+    font-size: 3.125rem;
+    margin-bottom: 100px;
+`;
+
+const ContentBox = styled.div`
+    width: 100%;
+    display: flex;
+`;
+
+const MyPhotoBox = styled.div`
+    width: 45%;
+    margin-right: 5%;
+    display: flex;
+    justify-content: center;
+`;
+
+const ProfileImage = styled.div`
+    width: 200px;
+    height: 200px;
+    background-image: url('/profile.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    border: 0.125em solid white;
+`;
+
+const MyProfileBox = styled.div`
+    width: 50%;
+    min-width: 280px;
+    label {
+        display: inline-block;
+        width: 120px;
+        color: rgb(0, 41, 122);
+        text-shadow: 0.062rem 0.062rem rgb(133, 139, 151);
+        font-size: 25px;
+    }
+`;
+
+const ProfileText = styled.div`
+    margin-bottom: 30px;
+`;
+
 interface ICareer {
     scrollRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-const Career = ({ scrollRef }: ICareer) => {
+const AboutMe = ({ scrollRef }: ICareer) => {
     return (
-        <CareerBox ref={scrollRef}>
-            <CareerText>
+        <Wrapper ref={scrollRef}>
+            <TitleBox>
+                <h1>ABOUT ME</h1>
+            </TitleBox>
+            <ContentBox>
+                <MyPhotoBox>
+                    <ProfileImage />
+                </MyPhotoBox>
+                <MyProfileBox>
+                    <ProfileText>
+                        <label>이름</label>
+                        <span>석수민</span>
+                    </ProfileText>
+                    <ProfileText>
+                        <label>생년월일</label>
+                        <span>1992.01.18 (만30세)</span>
+                    </ProfileText>
+                    <ProfileText>
+                        <label>연락처</label>
+                        <span>010-7280-5999</span>
+                    </ProfileText>
+                    <ProfileText>
+                        <label>이메일</label>
+                        <span>yahoo2344@naver.com</span>
+                    </ProfileText>
+                    <ProfileText>
+                        <label>개발경력</label>
+                        <span>2년</span>
+                    </ProfileText>
+                </MyProfileBox>
+            </ContentBox>
+            {/* <CareerText>
                 <h2>About me</h2>
                 <p>2년간 사내 웹 서비스, 웹 크롤링, 외부 API 수집 관련 업무를 진행했습니다.</p>
                 <p>프론트는 리액트, 서버는 노드와 AWS를 사용하여 구성하였습니다.</p>
@@ -88,9 +165,9 @@ const Career = ({ scrollRef }: ICareer) => {
                     <h2>Back end</h2>
                     <h3>JavaScript, Node JS, Rest Api, Postgresql, AWS</h3>
                 </CareerView>
-            </Careers>
-        </CareerBox>
+            </Careers> */}
+        </Wrapper>
     );
 };
 
-export default Career;
+export default AboutMe;

@@ -6,8 +6,8 @@ import { RadioChangeEvent } from 'antd';
 import Skill from '../components/introduction/Skill';
 import { motion, useScroll } from 'framer-motion';
 import Library from '../components/introduction/Library';
-import Intro from '../components/introduction/Intro';
-import Career from '../components/introduction/Career';
+import Banner from '../components/introduction/Banner';
+import AboutMe from '../components/introduction/AboutMe';
 import Progress from '../components/animation/Progress';
 import Plan from '../components/introduction/Plan';
 import { checkUserloginThunk } from '../thunk/userThunk';
@@ -16,6 +16,7 @@ import Seo from '../components/Seo';
 import Rightsolid from '../public/angles-right-solid.svg';
 import { useRouter } from 'next/router';
 import { useCookies } from 'react-cookie';
+import Skills from '../components/introduction/Skills';
 
 const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
 
@@ -24,7 +25,8 @@ const Wrapper = styled(motion.div)`
 `;
 
 const CurrentUseSkillBox = styled(motion.div)`
-    width: 70%;
+    width: 55%;
+    max-width: 900px;
     margin: 0 auto;
     margin-top: 12.5em;
     padding: 0.938em;
@@ -70,7 +72,7 @@ const DetailSkillBox = styled.div`
 `;
 
 const MoveBlogPageTextBox = styled.div`
-    width: 70%;
+    width: 60%;
     font-weight: bold;
     margin: 0 auto;
     margin-top: 9.375em;
@@ -89,6 +91,29 @@ const MoveBlogPageTextBox = styled.div`
         width: 1em;
         margin-left: 0.313em;
     }
+`;
+
+const BannerImgBox = styled.div`
+    width: 100%;
+    background-image: url('/banner2.jpg');
+    // max-width: 1300px;
+    // min-width: 700px;
+    height: 700px;
+    img {
+        width: 100%;
+        height: 100%;
+    }
+`;
+
+const ProfileImage = styled.div`
+    width: 9.375rem;
+    height: 9.375rem;
+    background-image: url('/profile.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    border: 0.125em solid white;
 `;
 
 // InferGetServerSidePropsType<typeof getServerSideProps>
@@ -118,10 +143,11 @@ export default function Home() {
         <Wrapper>
             <Seo title="Ice Man | 소개페이지"></Seo>
             <Progress scrollYProgress={scrollYProgress} />
-            <Intro contactBtn={contactBtn} />
-            <Career scrollRef={scrollRef} />
-            <Chart skill={skill} changeSkill={changeSkill} />
-            <CurrentUseSkillBox>
+            <Banner contactBtn={contactBtn} />
+            <AboutMe scrollRef={scrollRef} />
+            <Skills />
+            {/* <Chart skill={skill} changeSkill={changeSkill} /> */}
+            {/* <CurrentUseSkillBox>
                 <h2>Current App Use Skill</h2>
                 <p>아이콘을 움직여 보세요!</p>
                 <SkillBox>
@@ -132,7 +158,7 @@ export default function Home() {
                         <Library />
                     </DetailSkillBox>
                 </SkillBox>
-            </CurrentUseSkillBox>
+            </CurrentUseSkillBox> */}
             <Plan />
             <MoveBlogPageTextBox>
                 <h1
