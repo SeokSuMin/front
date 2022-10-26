@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// const withFonts = require('next-fonts');
 
 const API_KIE = '9fc49939685eaa1b8f3c3b7a8005d5aa';
 const BASE_URL = 'https://api.themoviedb.org/3/';
@@ -29,10 +30,22 @@ const nextConfig = {
         ];
     },
     webpack: (config) => {
-        config.module.rules.push({
-            test: /\.svg$/,
-            use: ['@svgr/webpack'],
-        });
+        config.module.rules.push(
+            {
+                test: /\.svg$/,
+                use: ['@svgr/webpack'],
+            },
+            {
+                test: /\.(ttf)$/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        limit: 100000,
+                        name: '[name].[ext]',
+                    },
+                },
+            },
+        );
         return config;
     },
 };

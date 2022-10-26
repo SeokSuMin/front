@@ -9,6 +9,9 @@ import '../styles/globals.css';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '../styles/theme';
 import 'antd/dist/antd.css';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { Fonts } from '../styles/fonts/font';
 
 function MyApp({ Component, pageProps }: AppProps) {
     // console.log('pageProps', pageProps);
@@ -19,10 +22,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <ReactQueryDevtools initialIsOpen={true} />
                 <ThemeProvider theme={theme}>
                     <GlobalStyle />
+                    {/* <Fonts /> */}
                     <Layout>
-                        {/* <Head>
-                            <link rel="shortcut icon" href="/favicon.ico" />
-                        </Head> */}
                         <Component {...pageProps} />
                     </Layout>
                 </ThemeProvider>

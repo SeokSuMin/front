@@ -17,6 +17,8 @@ import Rightsolid from '../public/angles-right-solid.svg';
 import { useRouter } from 'next/router';
 import { useCookies } from 'react-cookie';
 import Skills from '../components/introduction/Skills';
+import SkillLevel from '../components/introduction/SkillLevel';
+import PortfolioIntro from '../components/introduction/PortfolioIntro';
 
 const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
 
@@ -75,7 +77,6 @@ const MoveBlogPageTextBox = styled.div`
     width: 60%;
     font-weight: bold;
     margin: 0 auto;
-    margin-top: 9.375em;
     display: flex;
     justify-content: center;
     h1 {
@@ -146,6 +147,8 @@ export default function Home() {
             <Banner contactBtn={contactBtn} />
             <AboutMe scrollRef={scrollRef} />
             <Skills />
+            <SkillLevel skill={skill} changeSkill={changeSkill} />
+            <PortfolioIntro />
             {/* <Chart skill={skill} changeSkill={changeSkill} /> */}
             {/* <CurrentUseSkillBox>
                 <h2>Current App Use Skill</h2>

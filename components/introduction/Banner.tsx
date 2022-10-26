@@ -11,8 +11,6 @@ const IntroBox = styled.div`
     background-image: url('/banner2.png');
     background-size: cover;
     background-repeat: no-repeat;
-    // background-position: center;
-    // background-image: linear-gradient(135deg, #ef16f2 0%, #a5c4fc 100%);
     display: flex;
     align-items: center;
 `;
@@ -40,11 +38,16 @@ const IntroText = styled.div`
     font-weight: bold;
     text-align: center;
     margin-top: 2.5em;
+    /* padding: 0.625em; */
     h1 {
         font-size: 4.063rem;
         color: white;
         display: flex;
         justify-content: flex-start;
+        font-family: 'NanumSquareRoundEB', sans-serif;
+        @media screen and (max-width: 37.625rem) {
+            font-size: 3.125rem;
+        }
     }
     div {
         width: 50%;
@@ -58,6 +61,7 @@ const IntroText = styled.div`
         line-height: 2.222rem;
         display: flex;
         justify-content: flex-start;
+        font-family: 'NanumSquareRoundB', sans-serif;
     }
 `;
 

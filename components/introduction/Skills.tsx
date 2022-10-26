@@ -20,36 +20,44 @@ import { motion } from 'framer-motion';
 
 const Wrapper = styled.div`
     width: 100%;
-    margin-top: 6.25em;
-    padding: 120px 0px 120px 0px;
-    background-color: rgb(0, 41, 122);
+    // margin-top: 6.25em;
+    padding: 7.5em 0px 7.5em 0px;
+    background-color: rgb(112, 48, 160);
 `;
 
 const TitleBox = styled.div`
     text-align: center;
     font-size: 3.125rem;
-    margin-bottom: 100px;
+    margin-bottom: 2em;
     h1 {
         color: white;
+        font-family: 'Black Han Sans', sans-serif;
     }
 `;
 
 const SkillBox = styled.div`
     width: 50rem;
-    height: 502px;
     margin: 0 auto;
     display: flex;
     justify-content: center;
     /* align-items: flex-start; */
+    @media screen and (max-width: 51.125rem) {
+        width: 25rem;
+        flex-direction: column;
+    }
 `;
 
 const MainSkillBox = styled.div`
     width: 25rem;
-    /* height: 100%; */
     margin-right: 5em;
     padding: 1.25em;
     background-color: white;
     border-radius: 1.25rem;
+    @media screen and (max-width: 51.125rem) {
+        margin-right: 0px;
+        height: 31.375rem;
+        margin-bottom: 1.875em;
+    }
 `;
 
 const MainSkillContent = styled(motion.div)`
@@ -94,6 +102,7 @@ const SubSkillContent = styled(motion.div)`
 const IconBox = styled.div`
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 1.25em;
     div {
         width: 28%;

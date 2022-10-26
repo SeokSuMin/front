@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+// import NanumSquareRoundEB from '/fonts/NanumSquareRoundEB.ttf';
 
 const GlobalStyle = createGlobalStyle`
     html, body, div, span, applet, object, iframe,
@@ -63,6 +64,7 @@ const GlobalStyle = createGlobalStyle`
         text-decoration: none;
         color:inherit
     }
+
     #__next {
         display: flex;
         flex-direction: column;

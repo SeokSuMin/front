@@ -2,87 +2,49 @@ import { MutableRefObject } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-    width: 60%;
-    /* max-width: 56.25rem; */
+    width: 55%;
+    max-width: 59.375rem;
+    min-width: 37.5rem;
     margin: 0 auto;
-    margin-top: 6.25em;
+    padding: 7.5em 0px 7.5em 0px;
     // padding: 0.938em;
     //padding-top: 6.25em;
     font-weight: bold;
-    @media screen and (max-width: 31.25rem) {
-        // width: 80%;
+    @media screen and (max-width: 38.75rem) {
+        min-width: 25rem;
     }
-`;
-
-const CareerText = styled.div`
-    text-align: center;
-    h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1.25em;
-    }
-    P {
-        font-size: 1.25rem;
-        line-height: 1.7rem;
-        margin-top: 1.25em;
-    }
-`;
-
-const Careers = styled.div`
-    display: flex;
-    justify-content: space-around;
-    margin-top: 3.125em;
-
-    @media screen and (max-width: 31.25rem) {
-        flex-direction: column;
-    }
-`;
-
-const CareerView = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    h2 {
-        font-size: 1.875rem;
-        margin-top: 0.333em;
-    }
-    h3 {
-        margin-top: 0.313em;
-    }
-    @media screen and (max-width: 31.25rem) {
-        &:nth-child(2) {
-            margin-top: 3.125em;
-        }
-    }
-`;
-
-const CareerIcon = styled.svg`
-    width: 6.875rem;
-    height: 6.875rem;
-    fill: rgb(105, 160, 199);
 `;
 
 const TitleBox = styled.div`
     text-align: center;
     font-size: 3.125rem;
-    margin-bottom: 100px;
+    margin-bottom: 2em;
+    font-family: 'Black Han Sans', sans-serif;
 `;
 
 const ContentBox = styled.div`
     width: 100%;
     display: flex;
+    @media screen and (max-width: 38.75rem) {
+        flex-direction: column;
+        align-items: center;
+    }
 `;
 
 const MyPhotoBox = styled.div`
     width: 45%;
-    margin-right: 5%;
+    // margin-right: 5%;
     display: flex;
     justify-content: center;
+    @media screen and (max-width: 38.75rem) {
+        width: 100%;
+        margin-bottom: 3.215em;
+    }
 `;
 
 const ProfileImage = styled.div`
-    width: 200px;
-    height: 200px;
+    width: 12.5rem;
+    height: 12.5rem;
     background-image: url('/profile.png');
     background-repeat: no-repeat;
     background-size: cover;
@@ -93,18 +55,26 @@ const ProfileImage = styled.div`
 
 const MyProfileBox = styled.div`
     width: 50%;
-    min-width: 280px;
+    min-width: 21.875rem;
     label {
         display: inline-block;
-        width: 120px;
+        width: 9rem;
         color: rgb(0, 41, 122);
-        text-shadow: 0.062rem 0.062rem rgb(133, 139, 151);
-        font-size: 25px;
+        // text-shadow: 0.062rem 0.062rem rgb(133, 139, 151);
+        font-size: 1.563rem;
+    }
+    span {
+        font-size: 1.3rem;
+    }
+    @media screen and (max-width: 38.75rem) {
+        width: 90%;
     }
 `;
 
 const ProfileText = styled.div`
-    margin-bottom: 30px;
+    margin-bottom: 1.875em;
+    display: flex;
+    align-items: center;
 `;
 
 interface ICareer {
@@ -128,13 +98,13 @@ const AboutMe = ({ scrollRef }: ICareer) => {
                     </ProfileText>
                     <ProfileText>
                         <label>생년월일</label>
-                        <span>1992.01.18 (만30세)</span>
+                        <span>1992.01.18</span>
                     </ProfileText>
                     <ProfileText>
                         <label>연락처</label>
                         <span>010-7280-5999</span>
                     </ProfileText>
-                    <ProfileText>
+                    <ProfileText style={{ alignItems: 'flex-start' }}>
                         <label>이메일</label>
                         <span>yahoo2344@naver.com</span>
                     </ProfileText>

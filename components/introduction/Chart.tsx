@@ -4,10 +4,9 @@ import styled from 'styled-components';
 
 const ChartBox = styled.div`
     width: 55%;
-    max-width: 900px;
+    max-width: 56.25rem;
+    min-width: 25rem;
     margin: 0 auto;
-    margin-top: 12.5em;
-    padding: 0.938em;
     text-align: center;
     h2 {
         font-size: 2.5rem;
@@ -45,7 +44,6 @@ const skillObj = {
 const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
     return (
         <ChartBox>
-            <h2>Skill Level</h2>
             <div>
                 <Radio.Group onChange={changeSkill} value={skill}>
                     <Radio value={'1'}>Front End</Radio>
@@ -97,7 +95,7 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                         offsetX: -10,
                         style: {
                             fontSize: '13px',
-                            colors: ['#fff'],
+                            colors: ['black'],
                         },
                         formatter: function (val) {
                             return val + '%';
@@ -110,6 +108,11 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                             formatter: function (val) {
                                 return val + '%';
                             },
+                            style: {
+                                fontSize: '12px',
+                                fontWeight: 'bold',
+                                colors: ['black'],
+                            },
                         },
                     },
                     yaxis: {
@@ -121,6 +124,7 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                             style: {
                                 fontSize: '12px',
                                 fontWeight: 'bold',
+                                colors: ['black'],
                             },
                         },
                     },

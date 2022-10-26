@@ -1,12 +1,11 @@
 import { Rate } from 'antd';
 import styled from 'styled-components';
 
-const PlanBox = styled.div`
+const Wrapper = styled.div`
     width: 60%;
     margin: 0 auto;
-    margin-top: 12.5em;
-    padding: 0.938em;
-    text-align: center;
+    padding: 120px 0px 120px 0px;
+
     h2 {
         font-size: 2.5rem;
         font-weight: bold;
@@ -14,6 +13,16 @@ const PlanBox = styled.div`
     }
     @media screen and (max-width: 40.625rem) {
         width: 80%;
+    }
+`;
+
+const TitleBox = styled.div`
+    text-align: center;
+    font-size: 3.125rem;
+    margin-bottom: 2em;
+    h1 {
+        color: black;
+        font-family: 'Black Han Sans', sans-serif;
     }
 `;
 
@@ -73,8 +82,10 @@ const PlanItem = styled.li`
 
 const Plan = () => {
     return (
-        <PlanBox>
-            <h2>다음 계획 및 하고싶은 일</h2>
+        <Wrapper>
+            <TitleBox>
+                <h1>NEXT PLAN</h1>
+            </TitleBox>
             <TotalListBox>
                 <PlanList>
                     <PlanItem>
@@ -141,7 +152,7 @@ const Plan = () => {
                     </PlanItem>
                 </PlanList>
             </TotalListBox>
-        </PlanBox>
+        </Wrapper>
     );
 };
 
