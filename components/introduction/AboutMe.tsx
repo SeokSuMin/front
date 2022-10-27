@@ -4,13 +4,13 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
     width: 55%;
     max-width: 59.375rem;
-    min-width: 37.5rem;
+    min-width: 40.625rem;
     margin: 0 auto;
     padding: 7.5em 0px 7.5em 0px;
     // padding: 0.938em;
     //padding-top: 6.25em;
     font-weight: bold;
-    @media screen and (max-width: 38.75rem) {
+    @media screen and (max-width: 41.875rem) {
         min-width: 25rem;
     }
 `;
@@ -25,7 +25,7 @@ const TitleBox = styled.div`
 const ContentBox = styled.div`
     width: 100%;
     display: flex;
-    @media screen and (max-width: 38.75rem) {
+    @media screen and (max-width: 41.875rem) {
         flex-direction: column;
         align-items: center;
     }
@@ -36,7 +36,7 @@ const MyPhotoBox = styled.div`
     // margin-right: 5%;
     display: flex;
     justify-content: center;
-    @media screen and (max-width: 38.75rem) {
+    @media screen and (max-width: 41.875rem) {
         width: 100%;
         margin-bottom: 3.215em;
     }
@@ -55,7 +55,8 @@ const ProfileImage = styled.div`
 
 const MyProfileBox = styled.div`
     width: 50%;
-    min-width: 21.875rem;
+    min-width: 390px;
+    font-family: 'NanumSquareRoundEB', sans-serif;
     label {
         display: inline-block;
         width: 9rem;
@@ -66,7 +67,7 @@ const MyProfileBox = styled.div`
     span {
         font-size: 1.3rem;
     }
-    @media screen and (max-width: 38.75rem) {
+    @media screen and (max-width: 41.875rem) {
         width: 90%;
     }
 `;

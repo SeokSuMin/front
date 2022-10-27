@@ -59,6 +59,7 @@ const PlanItem = styled.li`
         font-weight: bold;
         text-align: left;
         margin-bottom: 1em;
+        font-family: 'NanumSquareRoundEB', sans-serif;
     }
     &:not(:first-of-type) {
         color: rgb(85, 94, 109);
@@ -70,6 +71,7 @@ const PlanItem = styled.li`
         font-size: 0.938em;
         display: flex;
         flex-direction: column;
+        font-family: 'NanumSquareRoundB', sans-serif;
     }
     span:nth-child(2) {
         text-align: right;

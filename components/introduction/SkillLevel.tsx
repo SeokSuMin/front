@@ -5,7 +5,7 @@ const Chart = dynamic(() => import('./Chart'), { ssr: false });
 
 const Wrapper = styled.div`
     width: 100%;
-    /* margin-top: 6.25em; */
+    height: 800px;
     padding: 7.5em 0px 7.5em 0px;
     background-image: url('/skillLevel.jpg');
 `;

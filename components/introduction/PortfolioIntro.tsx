@@ -9,16 +9,19 @@ const Wrapper = styled.div`
 `;
 
 const IntroBackgroundBox = styled.div`
-    width: 80%;
+    width: 75%;
+    // 590
+    min-width: 59.375rem;
     margin: 0 auto;
-    padding: 100px 0 100px 0;
-    min-width: 900px;
+    padding: 6.25em 0px 6.25em 0px;
+    // max-height: 800px;
     //max-width: 59.375rem;
     background-color: rgb(41, 131, 59);
     border-radius: 5rem;
-    @media screen and (max-width: 57.313em) {
-        width: 95%;
+    @media screen and (max-width: 60.625rem) {
+        width: 90%;
         min-width: 0px;
+        // max-height: 0px;
         // flex-direction: column;
     }
 `;
@@ -38,7 +41,7 @@ const TitleBox = styled.div`
 `;
 
 const IntroBox = styled.div`
-    width: 80%;
+    width: 85%;
     background-color: white;
     margin: 0 auto;
     padding: 0.938em;
@@ -49,13 +52,15 @@ const IntroBox = styled.div`
         border-bottom: 0.0625rem solid gray;
         margin-bottom: 0.625em;
     }
-    @media screen and (max-width: 51.125rem) {
+    @media screen and (max-width: 60.625rem) {
         flex-direction: column;
+        min-width: 0px;
     }
 `;
 
 const ImgBox = styled.div`
     width: 60%;
+    height: 100%;
     position: relative;
     p {
         margin-bottom: 0.625em;
@@ -70,13 +75,19 @@ const ImgBox = styled.div`
     /* 이전, 다음 화살표 */
     .slick-prev,
     .slick-next {
-        top: 98%;
+        top: 98.5%;
     }
     .slick-prev {
-        left: 0%;
+        left: 35%;
+        @media screen and (max-width: 37.5rem) {
+            left: 30%;
+        }
     }
     .slick-next {
-        right: 0%;
+        right: 35%;
+        @media screen and (max-width: 37.5rem) {
+            right: 30%;
+        }
     }
 
     .slick-prev:before,
@@ -87,7 +98,11 @@ const ImgBox = styled.div`
     .slick-dots li {
         margin: 0px;
     }
-    @media screen and (max-width: 51.125rem) {
+    img {
+        max-height: 37.5rem;
+        min-height: 34.375rem;
+    }
+    @media screen and (max-width: 60.625rem) {
         width: 100%;
     }
 `;
@@ -98,7 +113,7 @@ const ContentBox = styled.div`
     margin-top: 2.188em;
     display: flex;
     flex-direction: column;
-    @media screen and (max-width: 51.125rem) {
+    @media screen and (max-width: 60.625rem) {
         width: 100%;
     }
 `;
@@ -106,6 +121,7 @@ const ContentBox = styled.div`
 const UseDescriptionBox = styled.div`
     padding-bottom: 0.625em;
     p {
+        font-family: 'NanumSquareRoundB', sans-serif;
         line-height: 1.256rem;
         font-size: 0.813rem;
     }
@@ -116,9 +132,11 @@ const UseSkillcriptionBox = styled.div`
     display: flex;
     flex-direction: column;
     label {
+        font-family: 'NanumSquareRoundEB', sans-serif;
         font-weight: bold;
     }
     span {
+        font-family: 'NanumSquareRoundB', sans-serif;
         font-size: 0.875rem;
     }
 `;
@@ -144,19 +162,19 @@ const PortfolioIntro = () => {
                         <div className="boundary"></div>
                         <Slider {...settings}>
                             <div>
-                                <img src="/mainView.png" />
+                                <img src="/mainView1.jpg" />
                             </div>
                             <div>
-                                <img src="/mainView2.png" />
+                                <img src="/mainView2.jpg" />
                             </div>
                             <div>
-                                <img src="/detailView.png" />
+                                <img src="/detailView.jpg" />
                             </div>
                             <div>
-                                <img src="/login.png" />
+                                <img src="/login.jpg" />
                             </div>
                             <div>
-                                <img src="/write.png" />
+                                <img src="/write.jpg" />
                             </div>
                         </Slider>
                     </ImgBox>

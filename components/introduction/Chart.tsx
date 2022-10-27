@@ -46,8 +46,12 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
         <ChartBox>
             <div>
                 <Radio.Group onChange={changeSkill} value={skill}>
-                    <Radio value={'1'}>Front End</Radio>
-                    <Radio value={'2'}>Back End</Radio>
+                    <Radio style={{ color: 'rgb(70, 35, 0)', fontFamily: 'NanumSquareRoundB, sans-serif' }} value={'1'}>
+                        Front End
+                    </Radio>
+                    <Radio style={{ color: 'rgb(70, 35, 0)', fontFamily: 'NanumSquareRoundB, sans-serif' }} value={'2'}>
+                        Back End
+                    </Radio>
                 </Radio.Group>
             </div>
             <ApexChart
@@ -94,8 +98,9 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                         enabled: true,
                         offsetX: -10,
                         style: {
-                            fontSize: '13px',
-                            colors: ['black'],
+                            fontSize: '14px',
+                            colors: ['rgb(70, 35, 0)'],
+                            fontFamily: 'NanumSquareRoundEB',
                         },
                         formatter: function (val) {
                             return val + '%';
@@ -109,9 +114,10 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                                 return val + '%';
                             },
                             style: {
-                                fontSize: '12px',
+                                fontSize: '13px',
                                 fontWeight: 'bold',
-                                colors: ['black'],
+                                colors: ['rgb(70, 35, 0)'],
+                                // fontFamily: 'NanumSquareRoundB',
                             },
                         },
                     },
@@ -122,14 +128,15 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
 
                         labels: {
                             style: {
-                                fontSize: '12px',
+                                fontSize: '14px',
                                 fontWeight: 'bold',
-                                colors: ['black'],
+                                colors: ['rgb(70, 35, 0)'],
+                                fontFamily: 'NanumSquareRoundEB, sans-serif',
                             },
                         },
                     },
                 }}
-                height={300}
+                height={400}
             />
         </ChartBox>
     );

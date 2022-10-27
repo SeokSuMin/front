@@ -84,6 +84,7 @@ const MoveBlogPageTextBox = styled.div`
         cursor: pointer;
         display: flex;
         align-items: center;
+        font-family: 'NanumSquareRoundEB', sans-serif;
     }
     h1:hover {
         text-decoration: underline;

@@ -65,16 +65,17 @@ const MainSkillContent = styled(motion.div)`
     height: 90%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
 `;
 
 const SkillTitle = styled.div`
-    width: 15.875rem;
+    width: 100%;
     color: rgb(255, 102, 0);
     font-weight: bold;
     font-size: 1.563rem;
     border-bottom: 0.125rem solid rgb(161, 161, 161);
-    padding: 0.2em 0px 0.2em 0px;
+    padding: 0.2em 0px 0.4em 0px;
+    font-family: 'NanumSquareRoundEB', sans-serif;
 `;
 
 const SubSkillBox = styled.div`
