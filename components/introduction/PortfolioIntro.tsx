@@ -64,6 +64,8 @@ const ImgBox = styled.div`
     position: relative;
     p {
         margin-bottom: 0.625em;
+        color: rgb(64, 64, 64);
+        font-family: 'NanumSquareRoundEB', sans-serif;
     }
     img {
         width: 100%;
@@ -113,6 +115,7 @@ const ContentBox = styled.div`
     margin-top: 2.188em;
     display: flex;
     flex-direction: column;
+    color: rgb(64, 64, 64);
     @media screen and (max-width: 60.625rem) {
         width: 100%;
     }

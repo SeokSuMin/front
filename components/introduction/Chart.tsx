@@ -44,7 +44,7 @@ const skillObj = {
 const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
     return (
         <ChartBox>
-            <div>
+            <div style={{ marginBottom: 30 }}>
                 <Radio.Group onChange={changeSkill} value={skill}>
                     <Radio style={{ color: 'rgb(70, 35, 0)', fontFamily: 'NanumSquareRoundB, sans-serif' }} value={'1'}>
                         Front End
@@ -84,7 +84,7 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                             },
                         },
                     },
-                    colors: skill === '1' ? ['#26A0FC'] : ['#26e7a6'],
+                    colors: skill === '1' ? ['rgb(75, 172, 198)'] : ['rgb(69, 226, 145)'],
                     plotOptions: {
                         bar: {
                             borderRadius: 5,
@@ -128,7 +128,7 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
 
                         labels: {
                             style: {
-                                fontSize: '14px',
+                                fontSize: '16px',
                                 fontWeight: 'bold',
                                 colors: ['rgb(70, 35, 0)'],
                                 fontFamily: 'NanumSquareRoundEB, sans-serif',
@@ -136,7 +136,7 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                         },
                     },
                 }}
-                height={400}
+                height={380}
             />
         </ChartBox>
     );

@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 const TitleBox = styled.div`
     text-align: center;
     font-size: 3.125rem;
-    margin-bottom: 2em;
+    margin-bottom: 1.8em;
     h1 {
         color: rgb(70, 35, 0);
         font-family: 'Black Han Sans', sans-serif;

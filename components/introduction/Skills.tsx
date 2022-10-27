@@ -35,6 +35,19 @@ const TitleBox = styled.div`
     }
 `;
 
+const IconMoveTitleBox = styled.div`
+    width: 50rem;
+    margin: 0 auto;
+    color: white;
+    margin-bottom: 15px;
+    font-size: 16px;
+    text-align: right;
+    font-family: 'NanumSquareRoundEB', sans-serif;
+    span {
+        margin-right: 7px;
+    }
+`;
+
 const SkillBox = styled.div`
     width: 50rem;
     margin: 0 auto;
@@ -72,9 +85,9 @@ const SkillTitle = styled.div`
     width: 100%;
     color: rgb(255, 102, 0);
     font-weight: bold;
-    font-size: 1.563rem;
+    font-size: 1.25rem;
     border-bottom: 0.125rem solid rgb(161, 161, 161);
-    padding: 0.2em 0px 0.4em 0px;
+    padding: 0.2em 0px 0.6em 0px;
     font-family: 'NanumSquareRoundEB', sans-serif;
 `;
 
@@ -130,11 +143,11 @@ const Skills = () => {
     const frontEndBoxRef = useRef<HTMLDivElement>(null);
     const backEndBoxRef = useRef<HTMLDivElement>(null);
     const versionToolBoxRef = useRef<HTMLDivElement>(null);
-    const [rerenderFlag, setRerenderFlag] = useState(false);
-    useEffect(() => {
-        // 드래그 버그때문에 강제 리렌더 한번 더
-        setRerenderFlag((prev) => !prev);
-    }, []);
+    const [rerenderFlag, setRerenderFlag] = useState(true);
+    // useEffect(() => {
+    //     // 드래그 버그때문에 강제 리렌더 한번 더
+    //     setRerenderFlag((prev) => !prev);
+    // }, []);
 
     return (
         <>
@@ -143,6 +156,9 @@ const Skills = () => {
                     <TitleBox>
                         <h1>SKILLS</h1>
                     </TitleBox>
+                    <IconMoveTitleBox>
+                        <span>아래 아이콘을 움직여보세요!</span>
+                    </IconMoveTitleBox>
                     <SkillBox>
                         <MainSkillBox>
                             <SkillTitle>

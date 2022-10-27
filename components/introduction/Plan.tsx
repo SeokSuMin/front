@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
     width: 60%;
     margin: 0 auto;
-    padding: 120px 0px 120px 0px;
+    padding: 7.5em 0px 11.25em 0px;
 
     h2 {
         font-size: 2.5rem;
