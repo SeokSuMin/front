@@ -1,11 +1,19 @@
 import styled from 'styled-components';
 import Slider from 'react-slick';
+import React, { useState } from 'react';
+import ImageViewer from 'react-simple-image-viewer';
 
 const Wrapper = styled.div`
     width: 100%;
     /* margin-top: 6.25em; */
     padding: 7.5em 0px 7.5em 0px;
     background-color: rgb(41, 131, 59);
+    .styles-module_close__2I1sI {
+        top: 4.375rem;
+    }
+    .styles-module_navigation__1pqAE {
+        height: 50%;
+    }
 `;
 
 const IntroBackgroundBox = styled.div`
@@ -162,6 +170,20 @@ const settings = {
 };
 
 const PortfolioIntro = () => {
+    const images = ['/mainView1.jpg', '/mainView2.jpg', 'detailView.jpg', '/login.jpg', '/write.jpg'];
+    const [currentImage, setCurrentImage] = useState(0);
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+    const openImageViewer = (index: number) => {
+        setCurrentImage(index);
+        setIsViewerOpen(true);
+    };
+
+    const closeImageViewer = () => {
+        setCurrentImage(0);
+        setIsViewerOpen(false);
+    };
+
     return (
         <Wrapper>
             <TitleBox>
@@ -173,21 +195,13 @@ const PortfolioIntro = () => {
                     <p>화면소개</p>
                     <div className="boundary"></div>
                     <Slider {...settings}>
-                        <div>
-                            <img src="/mainView1.jpg" />
-                        </div>
-                        <div>
-                            <img src="/mainView2.jpg" />
-                        </div>
-                        <div>
-                            <img src="/detailView.jpg" />
-                        </div>
-                        <div>
-                            <img src="/login.jpg" />
-                        </div>
-                        <div>
-                            <img src="/write.jpg" />
-                        </div>
+                        {images.map((src: string, i) => {
+                            return (
+                                <div key={src}>
+                                    <img src={src} onClick={() => openImageViewer(i)} />
+                                </div>
+                            );
+                        })}
                     </Slider>
                 </ImgBox>
                 <ContentBox>
@@ -215,7 +229,18 @@ const PortfolioIntro = () => {
                     </UseSkillcriptionBox>
                 </ContentBox>
             </IntroBox>
-            {/* </IntroBackgroundBox> */}
+            {isViewerOpen && (
+                <ImageViewer
+                    src={images}
+                    currentIndex={currentImage}
+                    onClose={closeImageViewer}
+                    disableScroll={true}
+                    backgroundStyle={{
+                        backgroundColor: 'rgba(0,0,0,0.9)',
+                    }}
+                    closeOnClickOutside={true}
+                />
+            )}
         </Wrapper>
     );
 };
