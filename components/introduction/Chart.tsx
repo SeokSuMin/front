@@ -96,7 +96,7 @@ const ApexCharts = ({ skill, changeSkill }: ISkillChart) => {
                     },
                     dataLabels: {
                         enabled: true,
-                        offsetX: -10,
+                        offsetX: -20,
                         style: {
                             fontSize: '14px',
                             colors: ['rgb(70, 35, 0)'],

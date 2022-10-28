@@ -20,57 +20,8 @@ import Skills from '../components/introduction/Skills';
 import SkillLevel from '../components/introduction/SkillLevel';
 import PortfolioIntro from '../components/introduction/PortfolioIntro';
 
-const Chart = dynamic(() => import('../components/introduction/Chart'), { ssr: false });
-
 const Wrapper = styled(motion.div)`
     width: 100%;
-`;
-
-const CurrentUseSkillBox = styled(motion.div)`
-    width: 55%;
-    max-width: 900px;
-    margin: 0 auto;
-    margin-top: 12.5em;
-    padding: 0.938em;
-    text-align: center;
-    h2 {
-        font-size: 2.5rem;
-        font-weight: bold;
-    }
-    p {
-        margin-top: 0.938em;
-        font-size: 1.25rem;
-        font-weight: bold;
-    }
-    @media screen and (max-width: 40.625rem) {
-        width: 80%;
-    }
-`;
-
-const SkillBox = styled(motion.div)`
-    width: 100%;
-    display: flex;
-    @media screen and (max-width: 40.625rem) {
-        flex-direction: column;
-    }
-`;
-
-const DetailSkillBox = styled.div`
-    margin-top: 1.875em;
-    &:first-child {
-        width: 70%;
-    }
-    &:last-child {
-        width: 30%;
-    }
-    @media screen and (max-width: 40.625rem) {
-        &:first-child {
-            width: 100%;
-        }
-        &:last-child {
-            width: 100%;
-        }
-    }
 `;
 
 const MoveBlogPageTextBox = styled.div`
@@ -79,7 +30,7 @@ const MoveBlogPageTextBox = styled.div`
     margin: 0 auto;
     display: flex;
     justify-content: center;
-    h1 {
+    /* h1 {
         font-size: 1.25em;
         cursor: pointer;
         display: flex;
@@ -92,30 +43,18 @@ const MoveBlogPageTextBox = styled.div`
     svg {
         width: 1em;
         margin-left: 0.313em;
-    }
+    } */
 `;
 
-const BannerImgBox = styled.div`
-    width: 100%;
-    background-image: url('/banner2.jpg');
-    // max-width: 1300px;
-    // min-width: 700px;
-    height: 700px;
-    img {
-        width: 100%;
-        height: 100%;
-    }
-`;
-
-const ProfileImage = styled.div`
-    width: 9.375rem;
-    height: 9.375rem;
-    background-image: url('/profile.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    border-radius: 50%;
-    border: 0.125em solid white;
+const BlogMoveBtn = styled.button`
+    width: 150px;
+    height: 50px;
+    border: none;
+    border-radius: 10rem;
+    color: white;
+    background-color: rgb(243, 94, 54);
+    cursor: pointer;
+    font-family: 'NanumSquareRoundEB', sans-serif;
 `;
 
 // InferGetServerSidePropsType<typeof getServerSideProps>
@@ -150,22 +89,9 @@ export default function Home() {
             <Skills />
             <SkillLevel skill={skill} changeSkill={changeSkill} />
             <PortfolioIntro />
-            {/* <Chart skill={skill} changeSkill={changeSkill} /> */}
-            {/* <CurrentUseSkillBox>
-                <h2>Current App Use Skill</h2>
-                <p>아이콘을 움직여 보세요!</p>
-                <SkillBox>
-                    <DetailSkillBox>
-                        <Skill />
-                    </DetailSkillBox>
-                    <DetailSkillBox>
-                        <Library />
-                    </DetailSkillBox>
-                </SkillBox>
-            </CurrentUseSkillBox> */}
             <Plan />
             <MoveBlogPageTextBox>
-                <h1
+                <BlogMoveBtn
                     onClick={() =>
                         router.push({
                             pathname: `/blog/categori_0`,
@@ -173,9 +99,8 @@ export default function Home() {
                         })
                     }
                 >
-                    블로그 방문하기
-                    <Rightsolid />
-                </h1>
+                    블로그 방문하기 ▶{/* <Rightsolid /> */}
+                </BlogMoveBtn>
             </MoveBlogPageTextBox>
         </Wrapper>
     );

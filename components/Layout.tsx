@@ -39,22 +39,8 @@ const Footer = styled.div<{ path: string }>`
     margin-top: auto;
     display: flex;
     flex-direction: column;
-    // justify-content: flex-start;
     align-items: center;
     border-top: 1px solid rgb(128, 128, 128);
-    // background: #c9d6ff; /* fallback for old browsers */
-    // background: -webkit-linear-gradient(to right, #e2e2e2, #c9d6ff); /* Chrome 10-25, Safari 5.1-6 */
-    /* background: linear-gradient(
-        to right,
-        #e2e2e2,
-        #c9d6ff
-    );  */
-    span {
-        font-size: 0.75rem;
-        margin-top: 1.25em;
-        margin-bottom: 2.5em;
-        color: rgb(128, 128, 128);
-    }
 `;
 
 const IconBox = styled.div`
@@ -67,6 +53,15 @@ const IconBox = styled.div`
     }
     svg:hover {
         fill: black;
+    }
+`;
+
+const FooterTextBox = styled.div`
+    font-size: 0.75rem;
+    color: rgb(128, 128, 128);
+    margin-top: 0.625em;
+    &:last-child {
+        margin-bottom: 1.875em;
     }
 `;
 
@@ -107,7 +102,21 @@ const Layout: React.FC<ILayoutProps> = ({ children }) => {
                         <GitHub />
                     </a>
                 </IconBox>
-                <span>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 디자인 및 이미지 무단 복사를 금지합니다.</span>
+                <FooterTextBox>
+                    <span>본 웹사이트는 개인이 작성한 포트폴리오 입니다. 디자인 및 이미지 무단 복사를 금지합니다.</span>
+                </FooterTextBox>
+                <FooterTextBox>
+                    <span>
+                        <a
+                            href="https://www.freepik.com/free-photo/product-display-white-podium-stand-pedestal-yellow-background-with-shadow-3d-illustration-empty-display-scene-presentation-product-placement_29667975.htm#page=9&query=mamewmy&position=36&from_view=search&track=sph"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Image by mamewmy
+                        </a>{' '}
+                        on Freepik
+                    </span>
+                </FooterTextBox>
             </Footer>
             {/* <BackTop>
                 <div style={style}>UP</div>

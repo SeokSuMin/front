@@ -46,6 +46,10 @@ const IconMoveTitleBox = styled.div`
     span {
         margin-right: 7px;
     }
+    @media screen and (max-width: 51.125rem) {
+        width: 25rem;
+        flex-direction: column;
+    }
 `;
 
 const SkillBox = styled.div`
