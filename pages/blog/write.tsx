@@ -7,7 +7,7 @@ import WriteInput from '../../components/blog/write/WriteTtile';
 import FileLists from '../../components/blog/write/FileLists';
 import FileUpload from '../../components/blog/write/FileUpload';
 import * as Cheerio from 'cheerio';
-import { copyPasteImageUpload } from '../../util';
+import { copyPasteImageUpload, rlto } from '../../util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import wrapper from '../../store/configStore';
 import axios from 'axios';
@@ -15,13 +15,14 @@ import { checkUserloginThunk, getAdminInfoThunk } from '../../thunk/userThunk';
 import { getCategoriMenuThunk, getDetailBoardThunk, getFavoriteBoardIdList, isnertBoard } from '../../thunk/blogThunk';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { imgExtFormat } from '../../config';
+import { fileBackUrl, imgExtFormat } from '../../config';
 import { useRouter } from 'next/router';
 import { addUploadFiles, deleteUploadFile } from '../../reducer/blog/fileProgress';
-import { deleteBoardFiles, IBoardData } from '../../reducer/blog/boardData';
+import boardData, { deleteBoardFiles, IBoardData } from '../../reducer/blog/boardData';
 import { ICategoriMenus } from '../../reducer/blog/categoriMenus';
 import Seo from '../../components/Seo';
 import { useBeforeunload } from 'react-beforeunload';
+import Thumbnail from '../../components/blog/write/Thumbnail';
 
 dayjs().format();
 
@@ -113,6 +114,7 @@ const Write = () => {
     const dispatch = useAppDispatch();
 
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const thumbInputRef = useRef<HTMLInputElement | null>(null);
     const titleInputRef = useRef<InputRef | null>(null);
     const quillRef = useRef<any>(null);
 
@@ -122,6 +124,9 @@ const Write = () => {
     const [files, setFiles] = useState<File[]>([]);
     const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
     const [uuid, setUuid] = useState('');
+
+    const [thumbImgURL, setThumbImgURL] = useState<string | ArrayBuffer>('');
+    const [originalThumbImgName, setOriginalThumbImgName] = useState<string>('');
 
     const [permissionLoading, setPermissionLoading] = useState(true);
 
@@ -138,19 +143,36 @@ const Write = () => {
         setCategoriId(value);
     };
 
-    const onUploadFileButtonClick = useCallback(() => {
-        if (!inputRef.current) {
+    const onUploadFileButtonClick = (type: string) => {
+        if (type === 'file') {
+            if (!inputRef.current) {
+                return;
+            }
+            inputRef.current.click();
+        } else {
+            if (!thumbInputRef.current) {
+                return;
+            }
+            thumbInputRef.current.click();
+        }
+    };
+
+    const onUploadFile = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+        if (!e.target.files) {
             return;
         }
-        inputRef.current.click();
-    }, [inputRef.current]);
-
-    const onUploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.length === 0) {
-            return;
+        if (type === 'file') {
+            const tempFiles = [...(e.target.files as FileList)];
+            setCommonFile(tempFiles);
+        } else {
+            const imgFile = e.target.files[0];
+            setThumbImg(imgFile);
         }
-        const tempFiles = [...(e.target.files as FileList)];
 
+        e.target.value = '';
+    };
+
+    const setCommonFile = (tempFiles: File[]) => {
         for (const file of tempFiles) {
             const extName = path.extname(file.name);
             if (!['.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pptx'].includes(extName)) {
@@ -158,7 +180,6 @@ const Write = () => {
                 return;
             }
         }
-
         const insertFiles = tempFiles.filter((newFile) => {
             const boardFileFlag = !detailBoard?.board_files?.find((file) => file.name === newFile.name);
             const viewFileFlag = !files?.some((prevFile) => prevFile.name === newFile.name);
@@ -180,8 +201,43 @@ const Write = () => {
                 }),
             );
         }
-        e.target.value = '';
     };
+
+    const setThumbImg = async (imgFile: File) => {
+        try {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                if (reader.result) {
+                    const fileId = detailBoard.board_files?.find((file) => file.name === thumbImgURL)?.file_id;
+                    if (fileId) {
+                        dispatch(deleteBoardFiles(fileId));
+                    }
+                    const fileName =
+                        (reader.result as string)
+                            .slice(-8)
+                            .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, '') +
+                        `${path.extname(imgFile.name)}`;
+                    const convertIamgeFile = await rlto(reader.result as string, fileName, {
+                        type: 'image/*',
+                    });
+                    setThumbImgURL(reader.result);
+                    console.log(files, originalThumbImgName);
+                    setFiles((prev) => [
+                        ...prev.filter((file) => file.name !== originalThumbImgName),
+                        convertIamgeFile,
+                    ]);
+                    setOriginalThumbImgName(fileName);
+                }
+            };
+            reader.onerror = () => {
+                message.error('이미지 로딩중 에러가 발생했습니다.');
+            };
+            reader.readAsDataURL(imgFile);
+        } catch (err) {
+            //
+        }
+    };
+
     const deleteFile = (type: string, fileName: string | number) => {
         if (type === 'new') {
             setFiles((prevFiles) => {
@@ -195,6 +251,15 @@ const Write = () => {
                 return [...prev, fileId];
             });
         }
+    };
+
+    const deleteThumbImg = () => {
+        const fileId = detailBoard.board_files?.find((file) => file.name === thumbImgURL)?.file_id;
+        if (fileId) {
+            dispatch(deleteBoardFiles(fileId));
+        }
+        setThumbImgURL('');
+        setOriginalThumbImgName('');
     };
 
     const submit = async () => {
@@ -217,10 +282,15 @@ const Write = () => {
                     ? detailBoard?.board_files
                         ? detailBoard?.board_files
                               .map((file) => file.name)
-                              .filter((file) => imgExtFormat.includes(path.extname(file).toLocaleLowerCase()))
+                              // 썸네일은 제외
+                              .filter(
+                                  (file) =>
+                                      file !== originalThumbImgName &&
+                                      imgExtFormat.includes(path.extname(file).toLocaleLowerCase()),
+                              )
                         : []
                     : [];
-            const boardData = { board_id: uuid } as IBoardData;
+            const boardData = { board_id: uuid, thumb_img_name: originalThumbImgName } as IBoardData;
 
             $ = await copyPasteImageUpload($, uuid);
             const allTags = Array.from($('#quillContent').find('*'));
@@ -292,6 +362,12 @@ const Write = () => {
                     setMenuId(menu.menu_id);
                     setCategoriId(findC.categori_id);
                     setUuid(boardResult.boardInfo.board_id);
+                    if (boardResult.boardInfo.thumb_img_name) {
+                        setThumbImgURL(
+                            fileBackUrl + boardResult.boardInfo.board_id + '/' + boardResult.boardInfo.thumb_img_name,
+                        );
+                        setOriginalThumbImgName(boardResult.boardInfo.thumb_img_name);
+                    }
                     // setPageCategori(router.query.categoriId as string);
                     break;
                 }
@@ -370,6 +446,9 @@ const Write = () => {
                         />
                         <FileUpload {...{ inputRef, onUploadFile, onUploadFileButtonClick }} />
                         <FileLists {...{ deleteFile }} />
+                        <Thumbnail
+                            {...{ thumbInputRef, onUploadFile, onUploadFileButtonClick, thumbImgURL, deleteThumbImg }}
+                        />
                         <ContentBox>
                             {!detailBoard.loading ? <QuillEditor {...{ quillRef, uuid }} /> : null}
                             {/* <CkEditors /> */}

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { BackUrl } from '../config';
+import { BackUrl, imgExtFormat } from '../config';
 import { ReducerType } from '../reducer/rootReducer';
 import path from 'path';
 import { getComments, IComment } from '../reducer/blog/comment';
@@ -108,13 +108,17 @@ export const isnertBoard = createAsyncThunk(
         { dispatch, getState, requestId, rejectWithValue },
     ) => {
         try {
-            // 이미지를 제외한 파일 업로드
+            const fileNames: {
+                board_id: string;
+                name: string;
+            }[] = [];
+            // 이미지를 제외한 파일 업로드 (썸네일은 포함)
             for (const file of insertData.boardData.uploadFiles) {
                 const formData = new FormData();
                 formData.append('boardId', insertData.boardData.board_id);
                 formData.append('file', file);
 
-                await axios({
+                const response = await axios({
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8;',
                     },
@@ -126,19 +130,23 @@ export const isnertBoard = createAsyncThunk(
                         const { loaded, total } = p;
                         const percentageProgress = Math.floor((loaded / total) * 100);
                         const extName = path.extname(file.name);
-                        if (extName !== '.png') {
+                        if (!imgExtFormat.includes(extName)) {
                             dispatch(progress({ fileId: String(file.lastModified), progress: percentageProgress }));
                         }
                     },
                 });
-            }
-            // 일반 파일 처리
-            const fileNames = insertData.boardData.uploadFiles.map((file) => {
-                return {
+
+                // 이미지 파일이 있으면 썸네일임, 없으면 썸네일 설정을 안한 것.
+                if (imgExtFormat.includes(path.extname((response.data.fileNames as string[])[0]).toLocaleLowerCase())) {
+                    insertData.boardData.thumb_img_name = (response.data.fileNames as string[])[0];
+                }
+
+                fileNames.push({
                     board_id: insertData.boardData.board_id,
-                    name: file.name,
-                };
-            });
+                    name: (response.data.fileNames as string[])[0],
+                });
+            }
+
             // 이미지 파일처리
             fileNames.push(...insertData.imgFileName);
             // delete insertData.boardData.uploadFiles;
@@ -147,6 +155,7 @@ export const isnertBoard = createAsyncThunk(
                 fileNames,
                 deleteFileIds: insertData.allFileDeleteIds,
             });
+
             return true;
         } catch (err) {
             if (err instanceof AxiosError) {

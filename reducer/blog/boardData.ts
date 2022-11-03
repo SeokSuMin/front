@@ -18,6 +18,7 @@ export interface IBoardData {
     content: string;
     writer: string;
     uploadFiles: File[];
+    thumb_img_name?: string | null;
     board_files?: IBoardFile[];
     like_count?: number;
     comment_count?: number;

@@ -116,13 +116,19 @@ const OneBoxList = ({ leaving, toggleLeaving }: IOneBoxListProps) => {
                                             style={{ cursor: 'pointer' }}
                                             onClick={() => moveDetailPage(item.board_id)}
                                         >
-                                            {item.board_files?.find((file) => {
-                                                if (file) {
-                                                    return imgExtFormat.includes(
-                                                        path.extname(file?.name).toLocaleLowerCase(),
-                                                    );
-                                                }
-                                            }) ? (
+                                            {item.thumb_img_name ? (
+                                                <img
+                                                    style={{ width: '8.5rem', height: '8.5rem' }}
+                                                    src={fileBackUrl + item.board_id + '/' + item.thumb_img_name}
+                                                    alt="thumbImg"
+                                                />
+                                            ) : item.board_files?.find((file) => {
+                                                  if (file) {
+                                                      return imgExtFormat.includes(
+                                                          path.extname(file?.name).toLocaleLowerCase(),
+                                                      );
+                                                  }
+                                              }) ? (
                                                 <img
                                                     style={{ width: '8.5rem', height: '8.5rem' }}
                                                     alt="example"

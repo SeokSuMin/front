@@ -137,11 +137,11 @@ const TopMenu = ({ menuTitle, categoriId, categoriTitle, setDeleteFlag, commentD
             </ModifyBoardButtonBox>
             <button onClick={() => commentDivRef?.current?.scrollIntoView({ behavior: 'smooth' })}>댓글 ▼</button>
             <MoveBoardButtonBox>
-                {detailBoard?.prevBoardId ? (
-                    <button onClick={() => moveDetailBoard(detailBoard.prevBoardId as string)}>이전글</button>
-                ) : null}
                 {detailBoard?.nextBoardId ? (
                     <button onClick={() => moveDetailBoard(detailBoard.nextBoardId as string)}>다음글</button>
+                ) : null}
+                {detailBoard?.prevBoardId ? (
+                    <button onClick={() => moveDetailBoard(detailBoard.prevBoardId as string)}>이전글</button>
                 ) : null}
                 <button onClick={moveMainPage}>목록</button>
             </MoveBoardButtonBox>

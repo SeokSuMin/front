@@ -88,7 +88,7 @@ const FileLists = ({ deleteFile }: IFileListsProps) => {
                         {router?.query?.mode === 'modify'
                             ? detailBoard?.board_files?.map((file) => {
                                   const extName = path.extname(file.name);
-                                  // 이미지 파일이 아닌 것 만
+                                  // 이미지 파일이 아닌것만
                                   if (!imgExtFormat.includes(extName.toLocaleLowerCase())) {
                                       return (
                                           <FileBox key={file.file_id}>

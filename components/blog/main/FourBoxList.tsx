@@ -275,13 +275,18 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                     transition={{ type: 'tween', duration: 0.2 }}
                                 >
                                     <ThumImg>
-                                        {board.board_files?.find((file) => {
-                                            if (file) {
-                                                return imgExtFormat.includes(
-                                                    path.extname(file?.name).toLocaleLowerCase(),
-                                                );
-                                            }
-                                        }) ? (
+                                        {board.thumb_img_name ? (
+                                            <img
+                                                src={fileBackUrl + board.board_id + '/' + board.thumb_img_name}
+                                                alt="thumbImg"
+                                            />
+                                        ) : board.board_files?.find((file) => {
+                                              if (file) {
+                                                  return imgExtFormat.includes(
+                                                      path.extname(file?.name).toLocaleLowerCase(),
+                                                  );
+                                              }
+                                          }) ? (
                                             <img
                                                 alt="example"
                                                 src={
@@ -301,7 +306,7 @@ const FourBoxList = ({ leaving, toggleLeaving }: IFourBoxListProps) => {
                                                 }
                                             />
                                         ) : (
-                                            <img alt="example" src="../../no-image.JPG" />
+                                            <img alt="emptyImg" src="../../no-image.JPG" />
                                         )}
                                     </ThumImg>
                                     <Content>

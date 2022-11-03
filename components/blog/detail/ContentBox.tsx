@@ -137,6 +137,9 @@ const ContentBox = ({
                 color: blue;
                 text-decoration: underline;
             }
+            #quillContent strong {
+                font-weight: bold;
+            }
             .ql-syntax {
                 background-color: #23241f;
                 color: #f8f8f2;
