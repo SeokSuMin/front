@@ -208,10 +208,6 @@ const Write = () => {
             const reader = new FileReader();
             reader.onloadend = async () => {
                 if (reader.result) {
-                    const fileId = detailBoard.board_files?.find((file) => file.name === thumbImgURL)?.file_id;
-                    if (fileId) {
-                        dispatch(deleteBoardFiles(fileId));
-                    }
                     const fileName =
                         (reader.result as string)
                             .slice(-8)
@@ -221,7 +217,6 @@ const Write = () => {
                         type: 'image/*',
                     });
                     setThumbImgURL(reader.result);
-                    console.log(files, originalThumbImgName);
                     setFiles((prev) => [
                         ...prev.filter((file) => file.name !== originalThumbImgName),
                         convertIamgeFile,
@@ -254,10 +249,7 @@ const Write = () => {
     };
 
     const deleteThumbImg = () => {
-        const fileId = detailBoard.board_files?.find((file) => file.name === thumbImgURL)?.file_id;
-        if (fileId) {
-            dispatch(deleteBoardFiles(fileId));
-        }
+        // submit에서 boardFiles 삭제 진행함.
         setThumbImgURL('');
         setOriginalThumbImgName('');
     };
