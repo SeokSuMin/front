@@ -249,7 +249,7 @@ const Write = () => {
     };
 
     const deleteThumbImg = () => {
-        // submit에서 boardFiles 삭제 진행함.
+        // 이전에 저장된 썸네일이 있으면 submit에서 boardFiles 삭제 진행함.
         setThumbImgURL('');
         setOriginalThumbImgName('');
     };
@@ -274,7 +274,7 @@ const Write = () => {
                     ? detailBoard?.board_files
                         ? detailBoard?.board_files
                               .map((file) => file.name)
-                              // 썸네일은 제외
+                              // 썸네일은 제외 (썸네일 수정되거나 삭제되면 originalThumbImgName이 달라 썸네일 이름도 반환됨)
                               .filter(
                                   (file) =>
                                       file !== originalThumbImgName &&
