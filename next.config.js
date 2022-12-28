@@ -10,8 +10,8 @@ const nextConfig = {
     async redirects() {
         return [
             {
-                source: '/contact/:id',
-                destination: 'https://www.naver.com',
+                source: '/',
+                destination: 'https://tteoksang.site/blog/categori_0?page=1&countList=15&type=CARD',
                 permanent: false,
             },
         ];
